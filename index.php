@@ -89,7 +89,7 @@ function sendExport() {
 			$line[18] = $instance['sess_mode'];
 			$line[19] = $instance['sess_id'];
 			preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
-			preg_match_all("/\(([A-Z][A-Z])\)/", $matches[2][$instance['sess_type']], $matches);
+			preg_match_all("/\(([A-Z]|[A-Z][A-Z])\)/", $matches[2][$instance['sess_type'] - 1], $matches);
 			$line[20] = $matches[1][0];
 			$line[21] = date("m/d/Y", strtotime($instance['sess_date']));
 			$line[22] = $instance['sess_weight'];
@@ -112,8 +112,10 @@ function sendExport() {
 
 // $records = \REDCap::getData(PROJECT_ID, 'array');
 // $project = new \Project(PROJECT_ID);
+// $labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
+// preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
 // echo("<pre>");
-// print_r($project->metadata);
+// print_r($matches);
 // echo("</pre>");
 
 sendExport();
