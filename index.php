@@ -121,14 +121,14 @@ function sendExport() {
 
 // sendExport();
 
-function getLDAP($type, $value)
+function getEmployeeID($uid)
 {
-	return LdapLookup::lookupUserDetailsByKeys(array($value), array($type), true, false);
+	$entry = LdapLookup::lookupUserDetailsByKeys($uid, "uid", true, false);
+	return $entry[0]['vanderbiltpersonemployeeid'][0];
 }
 
 $vunetid = "reedcw1";
-$result = getLDAP("uid", $vunetid);
 
 echo("<pre>");
-print_r($result);
+print_r(getEmployeeID($vunetid));
 echo("</pre>");
