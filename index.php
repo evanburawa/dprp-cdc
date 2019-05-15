@@ -2,6 +2,13 @@
 require('config.php');
 require('ldap.php');
 
+
+function getEmployeeID($uid)
+{
+	$entry = LdapLookup::lookupUserDetailsByKeys([$uid], ["uid"], true, false);
+	return $entry[0]['vanderbiltpersonemployeeid'][0];
+}
+
 // send cdc export as csv to user
 function sendExport() {
 	$headers = [
@@ -34,6 +41,11 @@ function sendExport() {
 	$data = [$headers];
 	$today = new DateTime("NOW");
 	
+	if (isset($_GET['orgcode'])) {
+		preg_match("/\d+/", $_GET['orgcode'], $orgcode);
+		$orgcode = $orgcode[0];
+	}
+	
 	// get all participant data
 	$records = \REDCap::getData(PROJECT_ID, 'array');
 	$project = new \Project(PROJECT_ID);
@@ -54,39 +66,42 @@ function sendExport() {
 	foreach ($records as $rid => $record) {
 		$eid = array_keys($record)[0];
 		
+		if (isset($orgcode) and $orgcode != $record[$eid]['orgcode']) continue;
+		
+		$line = array_fill(0, 23, null);
+		$line[0] = $record[$eid]['orgcode'];
+		
+		// determine participant ID
+		$participantID = $recordCreationDates[$rid];
+		preg_match_all($labelPattern, $project->metadata['participant_id_group']['element_enum'], $matches);
+		$participantID .= trim($matches[2][$record[$eid]['participant_id_group'] - 1]);
+		$participantID .= $record[$eid]['participant_id_group'];
+		preg_match_all("/\d+/", $record[$eid]['participant_employee_id'], $matches);
+		$participantID .= $matches[0][0];
+		
+		$line[1] = $participantID;
+		$line[2] = $record[$eid]['program_referral'] === null ? 10 : $record[$eid]['program_referral'];
+		$line[3] = $record[$eid]['payer'] === null ? 9 : $record[$eid]['payer'];
+		preg_match_all($labelPattern, $project->metadata['state']['element_enum'], $matches);
+		preg_match("/- ([A-Z]{2})(?:\s|$)/", $matches[2][$record[$eid]['state'] - 1], $matches);
+		$line[4] = $matches[1];
+		$line[5] = $record[$eid]['gluctest'] == 1 ? 1 : 2;
+		$line[6] = $record[$eid]['gdm'] == 1 ? 1 : 2;
+		$line[7] = $record[$eid]['risktest'] == 1 ? 1 : 2;
+		$dob = new DateTime($record[$eid]['dob']);
+		$line[8] = $dob->diff($today)->format('%y');
+		$line[9] = $record[$eid]['ethnicity'] == null ? 9 : $record[$eid]['ethnicity'];
+		$line[10] = $record[$eid]['race'][1] == 1 ? 1 : 2;
+		$line[11] = $record[$eid]['race'][2] == 1 ? 1 : 2;
+		$line[12] = $record[$eid]['race'][3] == 1 ? 1 : 2;
+		$line[13] = $record[$eid]['race'][4] == 1 ? 1 : 2;
+		$line[14] = $record[$eid]['race'][5] == 1 ? 1 : 2;
+		$line[15] = $record[$eid]['sex'] == null ? 9 : $record[$eid]['sex'];
+		preg_match_all("/[\d]+/", $record[$eid]['height'], $matches);
+		$line[16] = @$matches[0][0] * 12 + $matches[0][1];
+		$line[17] = $record[$eid]['education'] == null ? 9 : $record[$eid]['education'];
+		
 		foreach ($record['repeat_instances'][$eid]['sessionscoaching_log'] as $i => $instance) {
-			$line = array_fill(0, 23, null);
-			$line[0] = $record[$eid]['orgcode'];
-			
-			// determine participant ID
-			$participantID = $recordCreationDates[$rid];
-			preg_match_all($labelPattern, $project->metadata['participant_id_group']['element_enum'], $matches);
-			$participantID .= trim($matches[2][$record[$eid]['participant_id_group'] - 1]);
-			$participantID .= $record[$eid]['participant_id_group'];
-			preg_match_all("/\d+/", $record[$eid]['participant_employee_id'], $matches);
-			$participantID .= $matches[0][0];
-			
-			$line[1] = $participantID;
-			$line[2] = $record[$eid]['program_referral'] === null ? 10 : $record[$eid]['program_referral'];
-			$line[3] = $record[$eid]['payer'] === null ? 9 : $record[$eid]['payer'];
-			preg_match_all($labelPattern, $project->metadata['state']['element_enum'], $matches);
-			preg_match("/- ([A-Z]{2})(?:\s|$)/", $matches[2][$record[$eid]['state'] - 1], $matches);
-			$line[4] = $matches[1];
-			$line[5] = $record[$eid]['gluctest'] == 1 ? 1 : 2;
-			$line[6] = $record[$eid]['gdm'] == 1 ? 1 : 2;
-			$line[7] = $record[$eid]['risktest'] == 1 ? 1 : 2;
-			$dob = new DateTime($record[$eid]['dob']);
-			$line[8] = $dob->diff($today)->format('%y');
-			$line[9] = $record[$eid]['ethnicity'] == null ? 9 : $record[$eid]['ethnicity'];
-			$line[10] = $record[$eid]['race'][1] == 1 ? 1 : 2;
-			$line[11] = $record[$eid]['race'][2] == 1 ? 1 : 2;
-			$line[12] = $record[$eid]['race'][3] == 1 ? 1 : 2;
-			$line[13] = $record[$eid]['race'][4] == 1 ? 1 : 2;
-			$line[14] = $record[$eid]['race'][5] == 1 ? 1 : 2;
-			$line[15] = $record[$eid]['sex'] == null ? 9 : $record[$eid]['sex'];
-			preg_match_all("/[\d]+/", $record[$eid]['height'], $matches);
-			$line[16] = @$matches[0][0] * 12 + $matches[0][1];
-			$line[17] = $record[$eid]['education'] == null ? 9 : $record[$eid]['education'];
 			$line[18] = $instance['sess_mode'];
 			$line[19] = $instance['sess_id'];
 			preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
@@ -111,6 +126,7 @@ function sendExport() {
 	fclose($fp);
 }
 
+// // test record fetching / regex
 // $records = \REDCap::getData(PROJECT_ID, 'array');
 // $project = new \Project(PROJECT_ID);
 // $labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
@@ -119,16 +135,10 @@ function sendExport() {
 // print_r($matches);
 // echo("</pre>");
 
-// sendExport();
+// // test getEmployeeID
+// echo("<pre>");
+// $vunetid = "reedcw1";
+// print_r(getEmployeeID($vunetid));
+// echo("</pre>");
 
-function getEmployeeID($uid)
-{
-	$entry = LdapLookup::lookupUserDetailsByKeys([$uid], ["uid"], true, false);
-	return $entry[0]['vanderbiltpersonemployeeid'][0];
-}
-
-$vunetid = "reedcw1";
-
-echo("<pre>");
-print_r(getEmployeeID($vunetid));
-echo("</pre>");
+sendExport();
