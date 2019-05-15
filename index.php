@@ -123,7 +123,7 @@ function sendExport() {
 
 function getEmployeeID($uid)
 {
-	$entry = LdapLookup::lookupUserDetailsByKeys($uid, "uid", true, false);
+	$entry = LdapLookup::lookupUserDetailsByKeys([$uid], ["uid"], true, false);
 	return $entry[0]['vanderbiltpersonemployeeid'][0];
 }
 
