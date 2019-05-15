@@ -1,5 +1,6 @@
 <?php
 require('config.php');
+require('ldap.php');
 
 // send cdc export as csv to user
 function sendExport() {
@@ -118,4 +119,16 @@ function sendExport() {
 // print_r($matches);
 // echo("</pre>");
 
-sendExport();
+// sendExport();
+
+function getLDAP($type, $value)
+{
+	return LdapLookup::lookupUserDetailsByKeys(array($value), array($type), true, false);
+}
+
+$vunetid = "reedcw1";
+$result = getLDAP("uid", $vunetid);
+
+echo("<pre>");
+print_r($result);
+echo("</pre>");
