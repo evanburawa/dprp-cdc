@@ -112,7 +112,7 @@ function validateLine(& $line) {
 	// validate PA
 	if (preg_match('/[^0-9]/', $line[23]))
 		$errors[] = "PA must contain numeric characters only";
-	if ((intval($line[23]) < 0 or intval($line[23]) > 997) and intval($line[23]) !== 999)
+	if ($line[23] == "" or $line[23] == null or ((intval($line[23]) < 0 or intval($line[23]) > 997) and intval($line[23]) !== 999))
 		$errors[] = "PA must be an integer value 0-997 OR 999 (if not reported)";
 	
 	// append error messages to end of line array
