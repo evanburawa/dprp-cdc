@@ -1,7 +1,6 @@
 <?php
 define("NOAUTH", true);
 require('config.php');
-require('ldap.php');
 
 foreach ($_GET as $key => $val) {
 	$_GET[strtolower($key)] = $val;
@@ -17,10 +16,14 @@ if (isset($_GET['orgcode'])) {
 	<br />https://redcap.vanderbilt.edu/plugins/dprp-cdc/index.php<b>?noncompliant</b>");
 }
 
-function getEmployeeID($uid) {
-	$entry = LdapLookup::lookupUserDetailsByKeys([$uid], ["uid"], true, false);
-	return $entry[0]['vanderbiltpersonemployeeid'][0];
-}
+$filename = "DPRP CDC Export";
+if (strval($orgcode) == "8540168")
+	$filename .= " - In-Person";
+if (strval($orgcode) == "792184")
+	$filename .= " - Digital";
+if (isset($_GET['noncompliant']))
+	$filename .= " Non-Compliant";
+$filename .= ".csv";
 
 // detect which if any values are not compliant with DPRP standards
 // if non-compliance is detected, error messages are appended to $line
@@ -122,6 +125,7 @@ function validateLine(& $line) {
 // send cdc export as csv to user
 function sendExport() {
 	global $orgcode;
+	global $filename;
 	$headers = [
 		"ORGCODE",	//0
 		"PARTICIP",
@@ -175,6 +179,8 @@ function sendExport() {
 		
 		// skip if orgcode set and not match
 		if (isset($orgcode) and $orgcode != $record[$eid]['orgcode']) continue;
+		// skip if have diabietes
+		if ($record[$eid]['have_diabetes'] == 1) continue;
 		
 		$line = array_fill(0, 23, null);
 		$line[0] = $record[$eid]['orgcode'];
@@ -209,13 +215,15 @@ function sendExport() {
 		$line[16] = @$matches[0][0] * 12 + $matches[0][1];
 		$line[17] = $record[$eid]['education'] == null ? 9 : $record[$eid]['education'];
 		
+		$instanceSum = 0;
 		foreach ($record['repeat_instances'][$eid]['sessionscoaching_log'] as $i => $instance) {
+			$instanceSum++;
 			$line[18] = $instance['sess_mode'];
 			$line[19] = $instance['sess_id'];
 			preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
 			preg_match_all("/\(([A-Z]|[A-Z][A-Z])\)/", $matches[2][$instance['sess_type'] - 1], $matches);
 			$line[20] = $matches[1][0];
-			$line[21] = date("m/d/Y", strtotime($instance['sess_date']));
+			$line[21] = $instance['sess_date'] == null ? null : date("m/d/Y", strtotime($instance['sess_date']));
 			$line[22] = $instance['sess_weight'];
 			$line[23] = $instance['sess_pa'];
 			
@@ -231,10 +239,14 @@ function sendExport() {
 				$data[] = $line;
 			}
 		}
+		
+		// send participant records with no session data to noncompliant set
+		if ($instanceSum == 0)
+			$noncompliant[] = $line;
 	}
 	
 	header('Content-Type: text/csv');
-	header('Content-Disposition: attachment; filename="DPRP CDC Export.csv"');
+	header("Content-Disposition: attachment; filename=\"$filename\"");
 	$fp = fopen('php://output', 'wb');
 	
 	// non-compliance report
@@ -249,13 +261,13 @@ function sendExport() {
 }
 
 // // test record fetching / regex
-// $records = \REDCap::getData(PROJECT_ID, 'array');
-// $project = new \Project(PROJECT_ID);
+$records = \REDCap::getData(35);
+$project = new \Project(35);
 // $labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
 // preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
-// echo("<pre>");
-// print_r($matches);
-// echo("</pre>");
+echo("<pre>");
+print_r($records);
+echo("</pre>");
 
 // // test getEmployeeID
 // echo("<pre>");
@@ -264,4 +276,4 @@ function sendExport() {
 // echo("</pre>");
 
 
-sendExport();
+// sendExport();
