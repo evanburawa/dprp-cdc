@@ -240,7 +240,6 @@ function sendExport() {
 	// non-compliance report
 	if (isset($_GET['noncompliant'])) {
 		$data = $noncompliant;
-		exit('error');
 	}
 	
 	foreach ($data as $line) {
