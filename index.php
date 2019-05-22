@@ -261,13 +261,13 @@ function sendExport() {
 }
 
 // // test record fetching / regex
-$records = \REDCap::getData(35);
-$project = new \Project(35);
+// $records = \REDCap::getData(35);
+// $project = new \Project(35);
 // $labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
 // preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
-echo("<pre>");
-print_r($records);
-echo("</pre>");
+// echo("<pre>");
+// print_r($records);
+// echo("</pre>");
 
 // // test getEmployeeID
 // echo("<pre>");
@@ -276,4 +276,4 @@ echo("</pre>");
 // echo("</pre>");
 
 
-// sendExport();
+sendExport();
