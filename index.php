@@ -180,7 +180,7 @@ function sendExport() {
 		// skip if orgcode set and not match
 		if (isset($orgcode) and $orgcode != $record[$eid]['orgcode']) continue;
 		// skip if have diabietes
-		if ($record[$eid]['have_diabetes'] == 1) continue;
+		if ($record[$eid]['have_diabetes'] == 1 or $record[$eid]['enter_roster'] == 0) continue;
 		
 		$line = array_fill(0, 23, null);
 		$line[0] = $record[$eid]['orgcode'];
