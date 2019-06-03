@@ -18,9 +18,9 @@ if (isset($_GET['orgcode'])) {
 
 $filename = "DPRP CDC Export";
 if (strval($orgcode) == "8540168")
-	$filename .= " - In-Person";
-if (strval($orgcode) == "792184")
 	$filename .= " - Digital";
+if (strval($orgcode) == "792184")
+	$filename .= " - In-Person";
 if (isset($_GET['noncompliant']))
 	$filename .= " Non-Compliant";
 $filename .= ".csv";
@@ -119,7 +119,11 @@ function validateLine(& $line) {
 		$errors[] = "PA must be an integer value 0-997 OR 999 (if not reported)";
 	
 	// append error messages to end of line array
-	$line = array_merge($line, $errors);
+	// $line = array_merge($line, $errors);
+	foreach ($errors as $i => $err) {
+		$line[] = $err;
+	}
+	unset($errors);
 }
 
 // send cdc export as csv to user
@@ -179,7 +183,7 @@ function sendExport() {
 		
 		// skip if orgcode set and not match
 		if (isset($orgcode) and $orgcode != $record[$eid]['orgcode']) continue;
-		// skip if have diabietes
+		// skip if have diabietes or not confirmed into the program
 		if ($record[$eid]['have_diabetes'] == 1 or $record[$eid]['enter_roster'] == 0) continue;
 		
 		$line = array_fill(0, 23, null);
@@ -189,7 +193,7 @@ function sendExport() {
 		$participantID = $recordCreationDates[$rid];
 		preg_match_all($labelPattern, $project->metadata['participant_id_group']['element_enum'], $matches);
 		$participantID .= trim($matches[2][$record[$eid]['participant_id_group'] - 1]);
-		$participantID .= $record[$eid]['participant_id_group'];
+		$participantID .= $record[$eid]['participant_id_category'];
 		preg_match_all("/\d+/", $record[$eid]['participant_employee_id'], $matches);
 		$participantID .= $matches[0][0];
 		
@@ -211,38 +215,46 @@ function sendExport() {
 		$line[13] = $record[$eid]['race'][4] == 1 ? 1 : 2;
 		$line[14] = $record[$eid]['race'][5] == 1 ? 1 : 2;
 		$line[15] = $record[$eid]['sex'] == null ? 9 : $record[$eid]['sex'];
-		preg_match_all("/[0-9]{1,2}/", $record[$eid]['height'], $matches);
+		
+		// old height calc, when it was a textarea
+		// preg_match_all("/[0-9]{2}/", $record[$eid]['height'], $matches);
+		
+		// new height calc (drop down)
+		preg_match_all($labelPattern, $project->metadata['height']['element_enum'], $matches);
+		preg_match_all("/[0-9]{1,2}/", $matches[2][$record[$eid]['height'] - 1], $matches);
 		$line[16] = @$matches[0][0] * 12 + $matches[0][1];
 		$line[17] = $record[$eid]['education'] == null ? 9 : $record[$eid]['education'];
 		
 		$instanceSum = 0;
 		foreach ($record['repeat_instances'][$eid]['sessionscoaching_log'] as $i => $instance) {
 			$instanceSum++;
-			$line[18] = $instance['sess_mode'];
-			$line[19] = $instance['sess_id'];
+			$sessionLine = $line;
+			$sessionLine[18] = $instance['sess_mode'];
+			$sessionLine[19] = $instance['sess_id'];
 			preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
 			preg_match_all("/\(([A-Z]|[A-Z][A-Z])\)/", $matches[2][$instance['sess_type'] - 1], $matches);
-			$line[20] = $matches[1][0];
-			$line[21] = $instance['sess_date'] == null ? null : date("m/d/Y", strtotime($instance['sess_date']));
-			$line[22] = $instance['sess_weight'];
-			$line[23] = $instance['sess_pa'];
+			$sessionLine[20] = $matches[1][0];
+			$sessionLine[21] = $instance['sess_date'] == null ? null : date("m/d/Y", strtotime($instance['sess_date']));
+			$sessionLine[22] = $instance['sess_weight'];
+			$sessionLine[23] = $instance['sess_pa'];
 			
-			validateLine($line);
+			validateLine($sessionLine);
 			
 			// if error messages were appended...
-			if (isset($line[24]) and isset($_GET['noncompliant'])) {
-				$noncompliant[] = $line;
+			if (isset($sessionLine[24]) and isset($_GET['noncompliant'])) {
+				$noncompliant[] = $sessionLine;
 			}
 			
 			// no errors and no non-compliant param
-			if (!isset($line[24]) and !isset($_GET['noncompliant'])) {
-				$data[] = $line;
+			if (!isset($sessionLine[24]) and !isset($_GET['noncompliant'])) {
+				$data[] = $sessionLine;
 			}
 		}
 		
 		// send participant records with no session data to noncompliant set
 		if ($instanceSum == 0)
 			$noncompliant[] = $line;
+		unset($line);
 	}
 	
 	header('Content-Type: text/csv');
