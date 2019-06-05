@@ -59,7 +59,7 @@ if ($_GET['action'] == 'export') {
 	
 	// make weekly loss stat arrays doing calculations in PHP
 	// we will add these to dppData a bit further down
-	$stat_ave = ["Average", NULL, NULL, NULL, "=AVERAGE(E2:E$row)"];
+	$stat_ave = ["Average", NULL, NULL, NULL, "=ROUND(AVERAGE(E2:E$row), 0)"];
 	$stat_goal7 = ["Weekly Wt Loss", NULL, NULL, "7% goal", "N/A"];
 	$stat_goal5 = [NULL, NULL, NULL, "5%", "N/A"];
 	$stat_totalLoss = ["Total Wt Loss", NULL, NULL, NULL, "N/A"];
