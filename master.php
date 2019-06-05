@@ -100,16 +100,30 @@ if ($_GET['action'] == 'export') {
 	// write formulas for stat cells
 	$lastCol = "E";
 	$lastRow = $row - 1 ;
+	$lastRow5 = $lastRow + 5;
 	for ($i = 2; $i <= 25; $i++) {
-		$col = numberToExcelColumn(4 + $i);
+		if ($i > 16) {
+			$col = numberToExcelColumn(6 + $i);
+		} else {
+			$col = numberToExcelColumn(3 + $i);
+		}
 		
-		file_put_contents("log.txt", "\n formula written: \"=AVERAGE({$col}2:{$col}{$lastRow})\"", FILE_APPEND);
-		$stat_ave[] = "=ROUND(AVERAGE({$col}2:{$col}{$lastRow}), 0)";
-		$stat_goal7[] = "=ROUND(0.07*SUM({$lastCol}2:{$lastCol}{$lastRow}), 1)";
-		// $stat_goal5[] = "=ROUND(0.05*SUM({$lastCol}2:{$lastCol}{$row}), 1)";
-		// $stat_totalLoss[] = "=ROUND(SUM({$lastCol}2:{$lastCol}{$row}) - SUM({$col}2:{$col}{$row}), 0)";
-		// $stat_percentLoss[] = "=ROUND({$col}({$row} + 5) * 100 / SUM({$lastCol}2:{$lastCol}{$row}), 1) & \"%\"";
+		$range = "$col" . "2:$col" . $lastRow;
+		$lastRange = "$lastCol" . "2:$lastCol" . $lastRow;
 		
+		if ($i == 17) {	// handle post-core session 1 column
+			$stat_ave[] = "=ROUND(AVERAGE($range), 0)";
+			$stat_goal7[] = "N/A";
+			$stat_goal5[] = "N/A";
+			$stat_totalLoss[] = "N/A";
+			$stat_percentLoss[] = "N/A";
+		} else {
+			$stat_ave[] = "=ROUND(AVERAGE($range), 0)";
+			$stat_goal7[] = "=ROUND(0.07*SUM($lastRange), 1)";
+			$stat_goal5[] = "=ROUND(0.05*SUM($lastRange), 1)";
+			$stat_totalLoss[] = "=ROUND(SUMIF($range, \"<>\", $lastRange) - SUMIF($lastRange, \"<>\", $range), 0)";
+			$stat_percentLoss[] = "=ROUND({$col}{$lastRow5} * 100 / SUMIF($range, \"<>\", $lastRange), 1) & \"%\"";
+		}
 		if ($i == 16) {		// add 3 blank cells to each stat row (for WT LOSS CORE and other calc columns)
 			for ($j = 1; $j <= 3; $j++) {
 				$stat_ave[] = NULL;
