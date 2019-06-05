@@ -16,7 +16,7 @@ function numberToExcelColumn($n) {
 
 if ($_GET['action'] == 'export') {
 	// make DPP file
-	$spreadsheet = IOFactory::load("DPPMasterTemplate.xlsx");
+	$spreadsheet = IOFactory::load("masterTemplate.xlsx");
 	
 	// this will hold data that we want to write to DPP excel file
 	$dppData = [];
