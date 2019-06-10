@@ -15,14 +15,19 @@ function numberToExcelColumn($n) {
 }
 
 if ($_GET['action'] == 'export') {
+	// iterate through records
+	$records = \REDCap::getData(PROJECT_ID);
+	
+	// regex for getting labels for project fields (like state, sess_type, etc)
+	$labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
+	$project = new \Project(PROJECT_ID);
+	
 	// make DPP file
 	$spreadsheet = IOFactory::load("masterTemplate.xlsx");
 	
 	// this will hold data that we want to write to DPP excel file
 	$dppData = [];
 	
-	// iterate through records
-	$records = \REDCap::getData(PROJECT_ID);
 	$row = 2;
 	foreach ($records as $rid => $record) {
 		$participant = [];
@@ -32,7 +37,10 @@ if ($_GET['action'] == 'export') {
 		$participant[] = $record[$eid]["last_name"];
 		$participant[] = $record[$eid]["first_name"];
 		$participant[] = $record[$eid]["participant_employee_id"];
-		$participant[] = $record[$eid]["orgcode"];
+		
+		preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
+		$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
+		// $participant[] = $record[$eid]["status"];
 		
 		// add sessions 1-16 weights
 		for ($i = 1; $i <= 25; $i++) {
@@ -56,92 +64,60 @@ if ($_GET['action'] == 'export') {
 		$dppData[] = $participant;
 		$row++;
 	}
+	$lastRow = $row - 1;
 	
 	// make weekly loss stat arrays doing calculations in PHP
 	// we will add these to dppData a bit further down
-	$stat_ave = ["Average", NULL, NULL, NULL, "=ROUND(AVERAGE(E2:E$row), 0)"];
-	$stat_goal7 = ["Weekly Wt Loss", NULL, NULL, "7% goal", "N/A"];
-	$stat_goal5 = [NULL, NULL, NULL, "5%", "N/A"];
-	$stat_totalLoss = ["Total Wt Loss", NULL, NULL, NULL, "N/A"];
-	$stat_percentLoss = ["Percent Loss", NULL, NULL, NULL, "N/A"];
+	$stat_sum = ["Group weight—sum", NULL, NULL, NULL];
+	$stat_ave = ["Group weight—average", NULL, NULL, NULL];
+	$stat_weekly = ["Weekly weight loss—group", NULL, NULL, NULL];
 	
-	/*		// write values directly
-	for ($i = 1; $i <= 16; $i++) {
-		$weightSum = 0;
-		$weightCount = 0;
-		for ($j = 0; $j <= count($records); $j++) {
-			if (!empty($dppData[$j][3 + $i])) {
-				$weightSum += $dppData[$j][3 + $i];
-				$weightCount++;
-			}
-		}
-		
-		$stat_ave[3 + $i] = NULL;
-		$stat_goal7[3 + $i] = NULL;
-		$stat_goal5[3 + $i] = NULL;
-		$stat_totalLoss[3 + $i] = NULL;
-		$stat_percentLoss[3 + $i] = NULL;
-		
-		if ($weightCount != 0) {
-			$stat_ave[3 + $i] = round($weightSum / $weightCount);
-			if (!empty($lastWeightSum)) {
-				$stat_totalLoss[3 + $i] = round($lastWeightSum - $weightSum);
-				$stat_goal7[3 + $i] = round($lastWeightSum * .07);
-				$stat_goal5[3 + $i] = round($lastWeightSum * .05);
-				$stat_percentLoss[3 + $i] = round(($lastWeightSum - $weightSum) * 100 / $lastWeightSum, 1) . "%";
-			}
-			$lastWeightSum = $weightSum;
-		}
-	}
-	*/
+	$row = $lastRow + 2;
+	$row_3 = $row + 3;
+	$stat_program = ["Program weight loss—group", NULL, NULL, "=E$row - LOOKUP(2,1/(ISNUMBER(E$row:AF$row)), E$row:AF$row)"];
+	$stat_percent = ["Percent loss", NULL, NULL, "=ROUND((D$row_3/E$row), 3) * 100 & \"%\""];
+	$stat_goal7 = ["Program weight loss goal—7%", NULL, NULL, "=ROUND(0.07*SUM(E2:E$lastRow), 0)"];
+	$stat_goal5 = ["Program weight loss goal—5%", NULL, NULL, "=ROUND(0.05*SUM(E2:E$lastRow), 0)"];
 	
-	file_put_contents("log.txt", "start log");
+	// file_put_contents("log.txt", "start log");
 	
-	// write formulas for stat cells
+	// write formulas for stat_sum, stat_ave, stat_weekly
 	$lastCol = "E";
-	$lastRow = $row - 1 ;
-	$lastRow5 = $lastRow + 5;
-	for ($i = 2; $i <= 25; $i++) {
+	for ($i = 1; $i <= 25; $i++) {
 		if ($i > 16) {
 			$col = numberToExcelColumn(6 + $i);
 		} else {
-			$col = numberToExcelColumn(3 + $i);
+			$col = numberToExcelColumn(4 + $i);
 		}
 		
-		$range = "$col" . "2:$col" . $lastRow;
-		$lastRange = "$lastCol" . "2:$lastCol" . $lastRow;
-		
-		if ($i == 17) {	// handle post-core session 1 column
-			$stat_ave[] = "=ROUND(AVERAGE($range), 0)";
-			$stat_goal7[] = "N/A";
-			$stat_goal5[] = "N/A";
-			$stat_totalLoss[] = "N/A";
-			$stat_percentLoss[] = "N/A";
+		$stat_sum[] = "=SUM({$col}2:$col$lastRow)";
+		$stat_ave[] = "=ROUND(AVERAGE({$col}2:$col$lastRow), 0)";
+		if ($i == 1 or $i == 17) {
+			$stat_weekly[] = 0;
 		} else {
-			$stat_ave[] = "=ROUND(AVERAGE($range), 0)";
-			$stat_goal7[] = "=ROUND(0.07*SUM($lastRange), 1)";
-			$stat_goal5[] = "=ROUND(0.05*SUM($lastRange), 1)";
-			$stat_totalLoss[] = "=ROUND(SUMIF($range, \"<>\", $lastRange) - SUMIF($lastRange, \"<>\", $range), 0)";
-			$stat_percentLoss[] = "=ROUND({$col}{$lastRow5} * 100 / SUMIF($range, \"<>\", $lastRange), 1) & \"%\"";
+			$stat_weekly[] = "=$lastCol$row - $col$row";
 		}
+		
+		// file_put_contents("log.txt", "\n formula written: \"=AVERAGE({$col}2:{$col}{$lastRow})\"", FILE_APPEND);
+		$lastCol = $col;
 		if ($i == 16) {		// add 3 blank cells to each stat row (for WT LOSS CORE and other calc columns)
 			for ($j = 1; $j <= 3; $j++) {
+				$stat_sum[] = NULL;
 				$stat_ave[] = NULL;
-				$stat_goal7[] = NULL;
-				$stat_goal5[] = NULL;
-				$stat_totalLoss[] = NULL;
-				$stat_percentLoss[] = NULL;
+				$stat_weekly[] = NULL;
 			}
 		}
-		$lastCol = $col;
 	}
 	
 	$dppData[] = [];	// insert blank row
+	$dppData[] = $stat_sum;
 	$dppData[] = $stat_ave;
+	$dppData[] = $stat_weekly;
+	$dppData[] = $stat_program;
+	$dppData[] = $stat_percent;
+	$dppData[] = [];	// insert blank row
 	$dppData[] = $stat_goal7;
 	$dppData[] = $stat_goal5;
-	$dppData[] = $stat_totalLoss;
-	$dppData[] = $stat_percentLoss;
 	
 	// write dpp data to spreadsheet
 	$spreadsheet->getActiveSheet()
