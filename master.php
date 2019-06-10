@@ -72,7 +72,7 @@ function appendStatRows(&$sheetMatrix) {
 }
 
 if ($_GET['action'] == 'export') {
-	file_put_contents("log.txt", "start log");
+	// file_put_contents("log.txt", "start log");
 	
 	// iterate through records
 	$records = \REDCap::getData(PROJECT_ID);
@@ -133,11 +133,16 @@ if ($_GET['action'] == 'export') {
 		$coach = trim($matches[2][$record[$eid]['coach_name'] - 1]);
 		preg_match_all($labelPattern, $project->metadata['cohort']['element_enum'], $matches);
 		$cohort = trim($matches[2][$record[$eid]['cohort'] - 1]);
-		$targetSheetName = $coach . " -- " . $cohort;
+		
+		if (empty($coach) or empty($cohort)) {
+			$targetSheetName = "MISSING COACH OR COHORT VALUE";
+		} else {
+			$targetSheetName = $coach . " -- " . $cohort;
+		}
 		
 		// see if coach-cohort sheet is created, if not, create it
 		if (in_array($targetSheetName, array_keys($dppData)) === FALSE) {
-			file_put_contents("log.txt", "\n\$targetSheetName: $targetSheetName", FILE_APPEND);
+			// file_put_contents("log.txt", "\n\$targetSheetName: $targetSheetName", FILE_APPEND);
 			$dppData[$targetSheetName] = [];
 			$cloneSheet = clone $workbook->getSheetByName("Combined");
 			$cloneSheet->setTitle($targetSheetName);
