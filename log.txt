@@ -1,0 +1,2593 @@
+Array
+(
+    [1] => Array
+        (
+            [108] => Array
+                (
+                    [record_id] => 1
+                    [first_name] => Test1
+                    [last_name] => Test1
+                    [status] => 2
+                    [work_location] => 
+                    [other_location] => 
+                    [work_address] => 
+                    [work_zip] => 
+                    [work_city_state] => 
+                    [vunetid] => 
+                    [spouse_name] => 
+                    [employee_date_of_birth] => 
+                    [sex] => 2
+                    [gdm] => 
+                    [have_diabetes] => 1
+                    [pcp_referral] => 1
+                    [have_prediabetes] => 0
+                    [nothanks] => 
+                    [blood_test] => 5
+                    [a1c_value] => 
+                    [fasting_plasma] => 
+                    [plasma_glucose] => 
+                    [blood_test_inpastyear] => 1
+                    [datebloodtest] => Jan-19
+                    [bloodtest_repeat] => 
+                    [risk_test] => 1
+                    [pcp] => 1
+                    [find_pcp] => Array
+                        (
+                            [1] => 0
+                        )
+
+                    [nameofprovider] => VUMC
+                    [vumc_provider_yes_no] => 1
+                    [pcp_practice_name] => 
+                    [vumc_provider_consent] => 1
+                    [consent_not_vumc] => 
+                    [signature] => 
+                    [email] => email@example.com
+                    [phone] => 5555555555
+                    [dob] => 1990-01-01
+                    [state] => 44
+                    [ethnicity] => 2
+                    [race] => Array
+                        (
+                            [1] => 0
+                            [2] => 0
+                            [3] => 0
+                            [4] => 0
+                            [5] => 0
+                        )
+
+                    [height] => 61
+                    [weight] => 202
+                    [education] => 4
+                    [program_referral] => 2
+                    [other_hear] => 
+                    [deliverymode] => Array
+                        (
+                            [1] => 1
+                            [2] => 0
+                            [3] => 0
+                        )
+
+                    [class_select] => Array
+                        (
+                            [3] => 1
+                            [4] => 1
+                            [5] => 1
+                            [7] => 0
+                        )
+
+                    [more_info] => 
+                    [comments] => 
+                    [enrollment_form_complete] => 2
+                    [participant_id_group] => 1
+                    [participant_id_category] => 1
+                    [cohort] => 1
+                    [coach_name] => 1
+                    [participant_employee_id] => 12345
+                    [orgcode] => 792184
+                    [payer] => 7
+                    [gluctest] => 2
+                    [risktest] => 2
+                    [enter_roster] => 1
+                    [not_entered_roster] => 
+                    [processing_form_complete] => 2
+                    [sess_date] => 
+                    [sess_month] => 
+                    [sess_mode] => 
+                    [sess_id] => 
+                    [sess_type] => 
+                    [sess_weight] => 
+                    [sess_pa] => 
+                    [sessionscoaching_log_complete] => 
+                )
+
+            [repeat_instances] => Array
+                (
+                    [108] => Array
+                        (
+                            [sessionscoaching_log] => Array
+                                (
+                                    [1] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 1
+                                            [sess_type] => 1
+                                            [sess_weight] => 202
+                                            [sess_pa] => 164
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [2] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 2
+                                            [sess_type] => 1
+                                            [sess_weight] => 201
+                                            [sess_pa] => 122
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [3] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 3
+                                            [sess_type] => 1
+                                            [sess_weight] => 199
+                                            [sess_pa] => 176
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [4] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 4
+                                            [sess_type] => 1
+                                            [sess_weight] => 198
+                                            [sess_pa] => 281
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [5] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 5
+                                            [sess_type] => 1
+                                            [sess_weight] => 197
+                                            [sess_pa] => 371
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [6] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 6
+                                            [sess_type] => 1
+                                            [sess_weight] => 195
+                                            [sess_pa] => 294
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [7] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 7
+                                            [sess_type] => 1
+                                            [sess_weight] => 193
+                                            [sess_pa] => 152
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [8] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 8
+                                            [sess_type] => 1
+                                            [sess_weight] => 191
+                                            [sess_pa] => 13
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [9] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 9
+                                            [sess_type] => 1
+                                            [sess_weight] => 190
+                                            [sess_pa] => 288
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [10] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 10
+                                            [sess_type] => 1
+                                            [sess_weight] => 188
+                                            [sess_pa] => 368
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [11] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 11
+                                            [sess_type] => 1
+                                            [sess_weight] => 187
+                                            [sess_pa] => 329
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [12] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 12
+                                            [sess_type] => 1
+                                            [sess_weight] => 187
+                                            [sess_pa] => 272
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [13] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 13
+                                            [sess_type] => 1
+                                            [sess_weight] => 185
+                                            [sess_pa] => 194
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [14] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 14
+                                            [sess_type] => 1
+                                            [sess_weight] => 184
+                                            [sess_pa] => 133
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [15] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 15
+                                            [sess_type] => 1
+                                            [sess_weight] => 184
+                                            [sess_pa] => 187
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [16] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 16
+                                            [sess_type] => 1
+                                            [sess_weight] => 183
+                                            [sess_pa] => 20
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [17] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 17
+                                            [sess_type] => 1
+                                            [sess_weight] => 183
+                                            [sess_pa] => 89
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [18] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 18
+                                            [sess_type] => 1
+                                            [sess_weight] => 182
+                                            [sess_pa] => 377
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [19] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 19
+                                            [sess_type] => 1
+                                            [sess_weight] => 181
+                                            [sess_pa] => 334
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [20] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 20
+                                            [sess_type] => 1
+                                            [sess_weight] => 181
+                                            [sess_pa] => 396
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [21] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 21
+                                            [sess_type] => 1
+                                            [sess_weight] => 180
+                                            [sess_pa] => 406
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [22] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 22
+                                            [sess_type] => 1
+                                            [sess_weight] => 179
+                                            [sess_pa] => 400
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [23] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 23
+                                            [sess_type] => 1
+                                            [sess_weight] => 177
+                                            [sess_pa] => 13
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [24] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 24
+                                            [sess_type] => 1
+                                            [sess_weight] => 177
+                                            [sess_pa] => 55
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                    [25] => Array
+                                        (
+                                            [record_id] => 1
+                                            [first_name] => 
+                                            [last_name] => 
+                                            [status] => 
+                                            [work_location] => 
+                                            [other_location] => 
+                                            [work_address] => 
+                                            [work_zip] => 
+                                            [work_city_state] => 
+                                            [vunetid] => 
+                                            [spouse_name] => 
+                                            [employee_date_of_birth] => 
+                                            [sex] => 
+                                            [gdm] => 
+                                            [have_diabetes] => 
+                                            [pcp_referral] => 
+                                            [have_prediabetes] => 
+                                            [nothanks] => 
+                                            [blood_test] => 
+                                            [a1c_value] => 
+                                            [fasting_plasma] => 
+                                            [plasma_glucose] => 
+                                            [blood_test_inpastyear] => 
+                                            [datebloodtest] => 
+                                            [bloodtest_repeat] => 
+                                            [risk_test] => 
+                                            [pcp] => 
+                                            [find_pcp] => Array
+                                                (
+                                                    [1] => 
+                                                )
+
+                                            [nameofprovider] => 
+                                            [vumc_provider_yes_no] => 
+                                            [pcp_practice_name] => 
+                                            [vumc_provider_consent] => 
+                                            [consent_not_vumc] => 
+                                            [signature] => 
+                                            [email] => 
+                                            [phone] => 
+                                            [dob] => 
+                                            [state] => 
+                                            [ethnicity] => 
+                                            [race] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                )
+
+                                            [height] => 
+                                            [weight] => 
+                                            [education] => 
+                                            [program_referral] => 
+                                            [other_hear] => 
+                                            [deliverymode] => Array
+                                                (
+                                                    [1] => 
+                                                    [2] => 
+                                                    [3] => 
+                                                )
+
+                                            [class_select] => Array
+                                                (
+                                                    [3] => 
+                                                    [4] => 
+                                                    [5] => 
+                                                    [7] => 
+                                                )
+
+                                            [more_info] => 
+                                            [comments] => 
+                                            [enrollment_form_complete] => 
+                                            [participant_id_group] => 
+                                            [participant_id_category] => 
+                                            [cohort] => 
+                                            [coach_name] => 
+                                            [participant_employee_id] => 
+                                            [orgcode] => 
+                                            [payer] => 
+                                            [gluctest] => 
+                                            [risktest] => 
+                                            [enter_roster] => 
+                                            [not_entered_roster] => 
+                                            [processing_form_complete] => 
+                                            [sess_date] => 2019-06-03
+                                            [sess_month] => 1
+                                            [sess_mode] => 1
+                                            [sess_id] => 25
+                                            [sess_type] => 1
+                                            [sess_weight] => 177
+                                            [sess_pa] => 59
+                                            [sessionscoaching_log_complete] => 2
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+)

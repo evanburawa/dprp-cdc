@@ -1,0 +1,25 @@
+// recompile command (in git bash in plugins/nitin folder):
+//sass.bat css/base.scss css/base.css
+
+// @import "C:/UniServerZ/www/redcap/plugins/nitin/css/_normalize.scss";
+// @import "_normalize.scss";
+@import "bootstrap/bootstrap.scss";
+
+#container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+#notes {
+	display: none;
+}
+
+#results {
+	display: none;
+}
+
+.custom-file-control.selected:lang(en)::after {
+	content: "" !important;
+}
