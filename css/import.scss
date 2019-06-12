@@ -17,9 +17,27 @@
 }
 
 #results {
-	display: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	margin: 22px;
 }
 
 .custom-file-control.selected:lang(en)::after {
 	content: "" !important;
+}
+
+table, th, td {
+	padding: 8px;
+	border: 1px solid black;
+	.updated {
+		background-color: #C7FFBD;
+	}
+	.neutral {
+		background-color: #DFDFDF;
+	}
+	.deleted {
+		background-color: #FFE8BD;
+	}
 }

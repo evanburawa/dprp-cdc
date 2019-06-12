@@ -9667,11 +9667,29 @@ h3 {
 }
 
 #results {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 22px;
 }
 
 .custom-file-control.selected:lang(en)::after {
   content: "" !important;
+}
+
+table, th, td {
+  padding: 8px;
+  border: 1px solid black;
+}
+table .updated, th .updated, td .updated {
+  background-color: #C7FFBD;
+}
+table .neutral, th .neutral, td .neutral {
+  background-color: #DFDFDF;
+}
+table .deleted, th .deleted, td .deleted {
+  background-color: #FFE8BD;
 }
 
 /*# sourceMappingURL=import.css.map */
