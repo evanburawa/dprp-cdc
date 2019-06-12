@@ -155,15 +155,16 @@ while (!$done) {
 			$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
 			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 			
+			$participant["recordID"] = $rid;
 			$participant["before"] = [];
 			$participant["after"] = [];
 			for ($i = 1; $i <= 16; $i++) {
-				$participant["before"][$i] = json_encode($sessions[$i]["sess_weight"]);
+				$participant["before"][$i] = json_encode((int) $sessions[$i]["sess_weight"]);
 				$sessions[$i]["sess_weight"] = $workbook->getActiveSheet()->getCellByColumnAndRow($i + 4, $row)->getValue();
 				$participant["after"][$i] = json_encode($sessions[$i]["sess_weight"]);
 			}
 			for ($i = 17; $i <= 25; $i++) {
-				$participant["before"][$i] = json_encode($sessions[$i]["sess_weight"]);
+				$participant["before"][$i] = json_encode((int) $sessions[$i]["sess_weight"]);
 				$sessions[$i]["sess_weight"] = $workbook->getActiveSheet()->getCellByColumnAndRow($i + 7, $row)->getValue();
 				$participant["after"][$i] = json_encode($sessions[$i]["sess_weight"]);
 			}
@@ -196,6 +197,5 @@ if (empty($participants)) {
 }
 
 exit(json_encode([
-	"success" => true,
 	"participants" => $participants
 ]));
