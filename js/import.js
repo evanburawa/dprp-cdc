@@ -65,32 +65,43 @@ function writeResultsTable(participants) {
 							<th>Current Value</th>
 							<th>Change Status</th>
 						</tr>`;
-		for (i=1; i<=25; i++) {
-			let status = "No change";
-			let style = "neutral";
-			let a = participant.before[i];
-			let b = participant.after[i];
-			if (a == "0" && b == "null") {
-				// do nothing; this is for when there was no value in REDCap and no value in import, so no change
-			} else if (b == "null" && a != "0") {
-				status = "Weight deleted";
-				style = "deleted";
-			} else if (b != "null" && (b != a)) {
-				status = "Weight updated";
-				style = "updated";
-			}
+		if (typeof participant.error == "string") {
 			results += `
 						<tr>
-							<td>${i}</td>
-							<td>${participant.before[i]}</td>
-							<td>${participant.after[i]}</td>
-							<td class="${style}">${status}</td>
+							<th>Error</th>
+							<td colspan="3">${participant.error}</td>
 						</tr>`;
+		} else {
+			for (i=1; i<=25; i++) {
+				if (participant.before.hasOwnProperty(i)) {
+					let status = "No change";
+					let style = "neutral";
+					let a = participant.before[i];
+					let b = participant.after[i];
+					if (a == "0" && b == "null") {
+						// do nothing; this is for when there was no value in REDCap and no value in import, so no change
+					} else if (b == "null" && a != "0") {
+						status = "Weight deleted";
+						style = "deleted";
+					} else if (b != "null" && (b != a)) {
+						status = "Weight updated";
+						style = "updated";
+					}
+					results += `
+							<tr>
+								<td>${i}</td>
+								<td>${participant.before[i]}</td>
+								<td>${participant.after[i]}</td>
+								<td class="${style}">${status}</td>
+							</tr>`;
+				}
+			}
+			results += `
+					</tbody>
+				</table>`;
 		}
 		results += `
-					</tbody>
-				</table>
-				<br \>`;
+				<br>`;
 	});
 	$("#results div").html(results)
 	$("#results").show();

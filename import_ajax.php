@@ -158,21 +158,19 @@ while (!$done) {
 			$participant["recordID"] = $rid;
 			$participant["before"] = [];
 			$participant["after"] = [];
-			for ($i = 1; $i <= 16; $i++) {
-				$participant["before"][$i] = json_encode((int) $sessions[$i]["sess_weight"]);
-				$sessions[$i]["sess_weight"] = $workbook->getActiveSheet()->getCellByColumnAndRow($i + 4, $row)->getValue();
-				$participant["after"][$i] = json_encode($sessions[$i]["sess_weight"]);
-			}
-			for ($i = 17; $i <= 25; $i++) {
-				$participant["before"][$i] = json_encode((int) $sessions[$i]["sess_weight"]);
-				$sessions[$i]["sess_weight"] = $workbook->getActiveSheet()->getCellByColumnAndRow($i + 7, $row)->getValue();
-				$participant["after"][$i] = json_encode($sessions[$i]["sess_weight"]);
+			for ($i = 1; $i <= 25; $i++) {
+				$offset = ($i >= 17) ? 7 : 4;
+				if (isset($sessions[$i]["sess_weight"])) {
+					$participant["before"][$i] = json_encode((int) $sessions[$i]["sess_weight"]);
+					$sessions[$i]["sess_weight"] = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
+					$participant["after"][$i] = json_encode($sessions[$i]["sess_weight"]);
+				}
 			}
 			
 			// save data
 			$result = \REDCap::saveData(PROJECT_ID, 'array', $records);
 			if (!empty($result["errors"])) {
-				$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap";
+				$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap--have your REDCap administrator check the saveDataErrors log.";
 				if (!file_exists("saveDataErrors.txt")) {
 					file_put_contents("saveDataErrors.txt", print_r($result["errors"], true));
 				} else {
