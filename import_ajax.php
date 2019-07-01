@@ -48,6 +48,37 @@ function humanFileSize($size,$unit="") {
 }
 /////////////
 
+function getParticipantRowNumber($firstName, $lastName, $empID) {
+	// return row number of 2nd table that has args given
+	global $workbook;
+	// first, find header row of 2nd table
+	$headerRow = 0;
+	for ($i = 2; $i <= 19999; $i++) {
+		if ($workbook->getActiveSheet()->getCellByColumnAndRow(1, $i)->getValue() != "LAST NAME") {
+			$headerRow = $i;
+			break;
+		}
+	}
+	
+	if ($headerRow == 0) {
+		return "DPRP plugin couldn't find 2nd table of participant data. Please see sample master file for formatting help.";
+	}
+	
+	$participantRow = 0;
+	$nextRow = $headerRow + 1;
+	while ($participantRow == 0) {
+		$thisRowLastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $nextRow)->getValue();
+		$thisRowFirstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $nextRow)->getValue();
+		$thisRowEmpID = $workbook->getActiveSheet()->getCellByColumnAndRow(3, $nextRow)->getValue();
+		if (empty($thisRowLastName) and empty($thisRowFirstName) and empty($thisRowEmpID)) {
+			return "DPRP plugin couldn't find this participant in 2nd data table (first name, last name, and employee ID must match).";
+		} elseif ($thisRowLastName == $lastName and $thisRowFirstName == $firstName and $thisRowEmpID == $empID) {
+			return $nextRow;
+		}
+		$nextRow++;
+	}
+}
+
 // check for $_FILES["workbook"]
 if (empty($_FILES["workbook"])) {
 	exit(json_encode([
@@ -139,6 +170,10 @@ while (!$done) {
 	if (empty($firstName) and empty($lastName) and empty($empID)) {
 		$done = true;
 	} else {
+		
+		// get row number for this participant in 2nd table
+		$row2 = getParticipantRowNumber($firstName, $lastName, $empID);
+		
 		$participant = [
 			"firstName" => $firstName,
 			"lastName" => $lastName,
@@ -149,6 +184,8 @@ while (!$done) {
 		
 		if (empty($records)) {
 			$participant["error"] = "No record found with first name: $firstName, last name: $lastName, and employee ID: $empID";
+		// } elseif (is_string($row2)) {
+			// $participant["error"] = $row2;
 		} else {
 			$rid = array_keys($records)[0];
 			$eid = array_keys($records[$rid])[0];
