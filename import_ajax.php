@@ -195,12 +195,31 @@ while (!$done) {
 			$participant["recordID"] = $rid;
 			$participant["before"] = [];
 			$participant["after"] = [];
+			
+			// $participant["session_id"] = [];
+			// $participant["session_type"] = [];
+			// $participant["delivery_mode"] = [];
+			// $participant["session_date"] = [];
+			// $participant["month_in_program"] = [];
+			// $participant["session_weight"] = [];
+			// $participant["session_physical_activity"] = [];
+			
 			for ($i = 1; $i <= 25; $i++) {
 				$offset = ($i >= 17) ? 7 : 4;
-				if (isset($sessions[$i]["sess_weight"])) {
-					$participant["before"][$i] = json_encode((int) $sessions[$i]["sess_weight"]);
-					$sessions[$i]["sess_weight"] = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
-					$participant["after"][$i] = json_encode($sessions[$i]["sess_weight"]);
+				if (isset($sessions[$i])) {
+					// $participant["before"][$i] = json_encode((int) $sessions[$i]["sess_weight"]);
+					// $sessions[$i]["sess_weight"] = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
+					// $participant["after"][$i] = json_encode($sessions[$i]["sess_weight"]);
+					
+					$participant["before"][$i] = [
+						"sess_id" => $sessions[$i]["sess_id"],
+						"sess_type" => $sessions[$i]["sess_type"],
+						"sess_mode" => $sessions[$i]["sess_mode"],
+						"sess_month" => $sessions[$i]["sess_month"],
+						"sess_date" => $sessions[$i]["sess_date"],
+						"sess_weight" => $sessions[$i]["sess_weight"],
+						"sess_pa" => $sessions[$i]["sess_pa"]
+					];
 				}
 			}
 			
@@ -213,6 +232,28 @@ while (!$done) {
 				} else {
 					file_put_contents("saveDataErrors.txt", print_r($result["errors"], true), FILE_APPEND);
 				}
+			}
+		}
+		
+		// write "after" import table
+		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = \"$firstName\" AND [last_name] = \"$lastName\" AND [participant_employee_id] = \"$empID\"");
+		$rid = array_keys($records)[0];
+		$eid = array_keys($records[$rid])[0];
+		$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
+		$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
+			
+		for ($i = 1; $i <= 25; $i++) {
+			$offset = ($i >= 17) ? 7 : 4;
+			if (isset($sessions[$i])) {
+				$participant["after"][$i] = [
+					"sess_id" => $sessions[$i]["sess_id"],
+					"sess_type" => $sessions[$i]["sess_type"],
+					"sess_mode" => $sessions[$i]["sess_mode"],
+					"sess_month" => $sessions[$i]["sess_month"],
+					"sess_date" => $sessions[$i]["sess_date"],
+					"sess_weight" => $sessions[$i]["sess_weight"],
+					"sess_pa" => $sessions[$i]["sess_pa"]
+				];
 			}
 		}
 		

@@ -34,13 +34,15 @@ $('#upload').on('click', function() {
 		}
 	});
 });
-
+M
 $('.custom-file-input').on('change', function() { 
 	let fileName = $(this).val().split('\\').pop(); 
 	$(this).next('.custom-file-label').addClass("selected").html(fileName); 
 });
 
 function writeResultsTable(participants) {
+	let beforeTable = "";
+	let afterTable = "";
 	let results = `
 				<h5>Import Results:</h5>`;
 	participants.forEach(function(participant, partIndex) {
@@ -58,12 +60,6 @@ function writeResultsTable(participants) {
 							<td>${participant.firstName}</td>
 							<td>${participant.lastName}</td>
 							<td>${participant.empID}</td>
-						</tr>
-						<tr>
-							<th>Session ID</th>
-							<th>Previous Value</th>
-							<th>Current Value</th>
-							<th>Change Status</th>
 						</tr>`;
 		if (typeof participant.error == "string") {
 			results += `
@@ -72,8 +68,43 @@ function writeResultsTable(participants) {
 							<td colspan="3">${participant.error}</td>
 						</tr>`;
 		} else {
+			// fill before and after tables
+			beforeTable = `
+				<table>
+					<tbody>
+						<tr>
+							<th>Session ID</th>
+							<th>Type</th>
+							<th>Delivery Mode</th>
+							<th>Date</th>
+							<th>Month in Program</th>
+							<th>Weight</th>
+							<th>Physical Activity</th>
+						</tr>`;
+			afterTable = beforeTable;
 			for (i=1; i<=25; i++) {
 				if (participant.before.hasOwnProperty(i)) {
+					beforeTable += `
+						<tr>
+							<td>${participant.before[i]["sess_id"]}</td>
+							<td>${participant.before[i]["sess_type"]}</td>
+							<td>${participant.before[i]["sess_mode"]}</td>
+							<td>${participant.before[i]["sess_date"]}</td>
+							<td>${participant.before[i]["sess_month"]}</td>
+							<td>${participant.before[i]["sess_weight"]}</td>
+							<td>${participant.before[i]["sess_pa"]}</td>
+						</tr>`;
+					afterTable += `
+						<tr>
+							<td>${participant.after[i]["sess_id"]}</td>
+							<td>${participant.after[i]["sess_type"]}</td>
+							<td>${participant.after[i]["sess_mode"]}</td>
+							<td>${participant.after[i]["sess_date"]}</td>
+							<td>${participant.after[i]["sess_month"]}</td>
+							<td>${participant.after[i]["sess_weight"]}</td>
+							<td>${participant.after[i]["sess_pa"]}</td>
+						</tr>`;
+					
 					let status = "No change";
 					let style = "neutral";
 					let a = participant.before[i];
