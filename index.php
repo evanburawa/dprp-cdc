@@ -18,9 +18,9 @@ if (isset($_GET['orgcode'])) {
 
 $filename = "DPRP CDC Export";
 if (strval($orgcode) == "8540168")
-	$filename .= " - In-Person";
-if (strval($orgcode) == "792184")
 	$filename .= " - Digital";
+if (strval($orgcode) == "792184")
+	$filename .= " - In-Person";
 if (isset($_GET['noncompliant']))
 	$filename .= " Non-Compliant";
 $filename .= ".csv";
