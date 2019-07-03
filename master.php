@@ -14,6 +14,24 @@ function numberToExcelColumn($n) {
     return $r;
 }
 
+file_put_contents("C:/vumc/log.txt", "log start\n");
+
+function appendTableTwo(&$sheetMatrix) {
+	global $records;
+	global $project;
+	global $workbook;
+	global $labelPattern;
+	for ($i = 1; $i <= 28; $i++) {
+		if ($i > 16) {
+			$col = numberToExcelColumn(6 + $i);
+		} else {
+			$col = numberToExcelColumn(3 + $i);
+		}
+		
+		
+	}
+}
+
 function appendStatRows(&$sheetMatrix) {
 	// create and append rows of statistics that should show below participant data rows
 	$stat_sum = ["Group weight—sum", NULL, NULL, NULL];
@@ -31,15 +49,39 @@ function appendStatRows(&$sheetMatrix) {
 	$stat_goal5 = ["Program weight loss goal—5%", NULL, NULL, "=ROUND(0.05*SUM(E2:E$lastRow), 0)"];
 	
 	// write formulas for stat_sum, stat_ave, stat_weekly -- fill in arrays with formula values
-	for ($i = 1; $i <= 25; $i++) {
+	for ($i = 1; $i <= 28; $i++) {
 		if ($i > 16) {
 			$col = numberToExcelColumn(6 + $i);
 		} else {
 			$col = numberToExcelColumn(3 + $i);
 		}
 		
-		$stat_sum[] = "=SUM({$col}2:$col$lastRow)";
-		$stat_ave[] = "=ROUND(AVERAGE({$col}2:$col$lastRow), 0)";
+		// // need more complicated summing / averaging formulae
+		// $stat_sum[] = "=SUM({$col}2:$col$lastRow)";
+		// $stat_ave[] = "=ROUND(AVERAGE({$col}2:$col$lastRow), 0)";
+		
+		$average_formula = "=ROUND(AVERAGE(";
+		$sum_formula = "=ROUND(SUM(";
+		for ($j = 1; $j <= count($sheetMatrix); $j++) {
+			$j2 = $j + 1;
+			$range1 = "E$j2:$col{$j2}";
+			$last_value1 = "LOOKUP(2, 1/(ISNUMBER($range1)), $range1)";
+			if ($i > 16) {
+				$range1 = "E$j2:T{$j2}";
+				$last_value1 = "LOOKUP(2, 1/(ISNUMBER($range1)), $range1)";
+				$range2 = "X$j2:$col{$j2}";
+				$last_value2 = "LOOKUP(2, 1/(ISNUMBER($range2)), $range2)";
+				$formula = "IF(ISERROR($last_value2), $last_value1, $last_value2)";
+				$average_formula .= $j == count($sheetMatrix) ? "$formula), 0)" : "$formula, ";
+				$sum_formula .= $j == count($sheetMatrix) ? "$formula), 0)" : "$formula, ";
+			} else {
+				$average_formula .= $j == count($sheetMatrix) ? "$last_value1), 0)" : "$last_value1, ";
+				$sum_formula .= $j == count($sheetMatrix) ? "$last_value1), 0)" : "$last_value1, ";
+			}
+		}
+		$stat_sum[] = $sum_formula;
+		$stat_ave[] = $average_formula;
+		
 		if ($i == 1 or $i == 17) {
 			$stat_weekly[] = 0;
 		} else {
@@ -104,7 +146,7 @@ if ($_GET['action'] == 'export') {
 		// $participant[] = $record[$eid]["status"];
 		
 		// add sessions 1-16 weights
-		for ($i = 1; $i <= 25; $i++) {
+		for ($i = 1; $i <= 28; $i++) {
 			$instance = $record["repeat_instances"][$eid]["sessionscoaching_log"][$i];
 			$participant[] = $instance["sess_weight"];
 			if ($i == 16) {
@@ -113,7 +155,7 @@ if ($_GET['action'] == 'export') {
 				$participant[] = "=ROUND(U$row / E$row, 3) * 100 & \"%\"";
 				$participant[] = "=COUNTA(E$row:T$row)";
 			}
-			if ($i == 25) {
+			if ($i == 28) {
 				// add final 5 formula cells
 				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AF$row)), X$row:AF$row)";
 				$participant[] = "=U$row+AG$row";
@@ -163,7 +205,7 @@ if ($_GET['action'] == 'export') {
 		// $participant[] = $record[$eid]["status"];
 		
 		// add sessions 1-16 weights
-		for ($i = 1; $i <= 25; $i++) {
+		for ($i = 1; $i <= 28; $i++) {
 			$instance = $record["repeat_instances"][$eid]["sessionscoaching_log"][$i];
 			$participant[] = $instance["sess_weight"];
 			if ($i == 16) {
@@ -172,7 +214,7 @@ if ($_GET['action'] == 'export') {
 				$participant[] = "=ROUND(U$row / E$row, 3) * 100 & \"%\"";
 				$participant[] = "=COUNTA(E$row:T$row)";
 			}
-			if ($i == 25) {
+			if ($i == 28) {
 				// add final 5 formula cells
 				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AF$row)), X$row:AF$row)";
 				$participant[] = "=U$row+AG$row";
@@ -190,6 +232,7 @@ if ($_GET['action'] == 'export') {
 	foreach ($dppData as $name => $sheetData) {
 		// add stat rows to sheet, below participant data
 		appendStatRows($sheetData);
+		appendTableTwo($sheetData);
 		
 		$workbook->setActiveSheetIndex($i);
 		$workbook->getActiveSheet()
