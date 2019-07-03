@@ -152,7 +152,7 @@ class LdapLookup {
 				include "/app001/credentials/con_redcap_ldap_user.php";
 			}
 			
-			self::$ldapConn = ldap_connect("ldaps://ldap.vunetid.vanderbilt.edu");
+			self::$ldapConn = ldap_connect("ldaps://ldap.vunetid.mc.vanderbilt.edu");
 
 			// Bind to LDAP server
 			self::$ldapBind = ldap_bind(self::$ldapConn, "uid=".$ldapuser.",ou=special users,dc=vanderbilt,dc=edu", $ldappass);

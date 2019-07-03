@@ -34,7 +34,7 @@ $('#upload').on('click', function() {
 		}
 	});
 });
-M
+
 $('.custom-file-input').on('change', function() { 
 	let fileName = $(this).val().split('\\').pop(); 
 	$(this).next('.custom-file-label').addClass("selected").html(fileName); 
@@ -47,6 +47,8 @@ function writeResultsTable(participants) {
 				<h5>Import Results:</h5>`;
 	participants.forEach(function(participant, partIndex) {
 		results += `
+				<hr>
+				<h6>Participant ${participant.recordID}</h6>
 				<table>
 					<tbody>
 						<tr>
@@ -67,10 +69,22 @@ function writeResultsTable(participants) {
 							<th>Error</th>
 							<td colspan="3">${participant.error}</td>
 						</tr>`;
-		} else {
-			// fill before and after tables
+		}
+		results += `
+					</tbody>
+				</table>
+				<br>
+				<div class="row">`;
+		
+		beforeTable = "";
+		afterTable = "";
+		
+		// if no error, add before/after tables
+		if (typeof participant.error != "string") {
 			beforeTable = `
-				<table>
+				<div class="col">
+				<h6>Before Import:</h6>
+				<table class="before">
 					<tbody>
 						<tr>
 							<th>Session ID</th>
@@ -81,7 +95,20 @@ function writeResultsTable(participants) {
 							<th>Weight</th>
 							<th>Physical Activity</th>
 						</tr>`;
-			afterTable = beforeTable;
+			afterTable = `
+				<div class="col">
+				<h6>After Import:</h6>
+				<table class="after">
+					<tbody>
+						<tr>
+							<th>Session ID</th>
+							<th>Type</th>
+							<th>Delivery Mode</th>
+							<th>Date</th>
+							<th>Month in Program</th>
+							<th>Weight</th>
+							<th>Physical Activity</th>
+						</tr>`;
 			for (i=1; i<=25; i++) {
 				if (participant.before.hasOwnProperty(i)) {
 					beforeTable += `
@@ -94,44 +121,48 @@ function writeResultsTable(participants) {
 							<td>${participant.before[i]["sess_weight"]}</td>
 							<td>${participant.before[i]["sess_pa"]}</td>
 						</tr>`;
+					
+					// select style for each cell
+					let styles = [];
+					let fields = ["sess_id", "sess_type", "sess_mode", "sess_date", "sess_month", "sess_weight", "sess_pa"];
+					fields.forEach(function(field) {
+						if (participant.after[i][field] == null)
+							participant.after[i][field] = "";
+						let a = participant.before[i][field];
+						let b = participant.after[i][field];
+						let style = "neutral";
+						if (a && !b) {
+							style = "deleted";
+						} else if (a != b && b) {
+							style = "updated";
+						}
+						// console.log(typeof a + " -- " + typeof b + " -- " + style);
+						styles.push(style);
+					});
+					
 					afterTable += `
 						<tr>
-							<td>${participant.after[i]["sess_id"]}</td>
-							<td>${participant.after[i]["sess_type"]}</td>
-							<td>${participant.after[i]["sess_mode"]}</td>
-							<td>${participant.after[i]["sess_date"]}</td>
-							<td>${participant.after[i]["sess_month"]}</td>
-							<td>${participant.after[i]["sess_weight"]}</td>
-							<td>${participant.after[i]["sess_pa"]}</td>
+							<td class="${styles[0]}">${participant.after[i]["sess_id"]}</td>
+							<td class="${styles[1]}">${participant.after[i]["sess_type"]}</td>
+							<td class="${styles[2]}">${participant.after[i]["sess_mode"]}</td>
+							<td class="${styles[3]}">${participant.after[i]["sess_date"]}</td>
+							<td class="${styles[4]}">${participant.after[i]["sess_month"]}</td>
+							<td class="${styles[5]}">${participant.after[i]["sess_weight"]}</td>
+							<td class="${styles[6]}">${participant.after[i]["sess_pa"]}</td>
 						</tr>`;
-					
-					let status = "No change";
-					let style = "neutral";
-					let a = participant.before[i];
-					let b = participant.after[i];
-					if (a == "0" && b == "null") {
-						// do nothing; this is for when there was no value in REDCap and no value in import, so no change
-					} else if (b == "null" && a != "0") {
-						status = "Weight deleted";
-						style = "deleted";
-					} else if (b != "null" && (b != a)) {
-						status = "Weight updated";
-						style = "updated";
-					}
-					results += `
-							<tr>
-								<td>${i}</td>
-								<td>${participant.before[i]}</td>
-								<td>${participant.after[i]}</td>
-								<td class="${style}">${status}</td>
-							</tr>`;
 				}
 			}
-			results += `
+			beforeTable += `
 					</tbody>
-				</table>`;
+				</table>
+				</div>`;
+			afterTable += `
+					</tbody>
+				</table>
+				</div>`;
 		}
-		results += `
+		results += beforeTable + afterTable + `
+				</div>
 				<br>`;
 	});
 	$("#results div").html(results)

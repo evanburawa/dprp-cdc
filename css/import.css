@@ -9671,7 +9671,19 @@ h3 {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  margin: 22px;
+  width: 90%;
+}
+#results .row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+#results .row .col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .custom-file-control.selected:lang(en)::after {
@@ -9686,7 +9698,7 @@ table .updated, th .updated, td .updated {
   background-color: #C7FFBD;
 }
 table .neutral, th .neutral, td .neutral {
-  background-color: #DFDFDF;
+  background-color: #FFFFFF;
 }
 table .deleted, th .deleted, td .deleted {
   background-color: #FFE8BD;

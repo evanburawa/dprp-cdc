@@ -173,7 +173,7 @@ function sendExport() {
 	
 	// regex for getting labels for project fields (like state, sess_type, etc)
 	$labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
-	
+	file_put_contents("C:/vumc/log.txt", "begin log\n");
 	foreach ($records as $rid => $record) {
 		$eid = array_keys($record)[0];
 		
@@ -211,32 +211,36 @@ function sendExport() {
 		$line[13] = $record[$eid]['race'][4] == 1 ? 1 : 2;
 		$line[14] = $record[$eid]['race'][5] == 1 ? 1 : 2;
 		$line[15] = $record[$eid]['sex'] == null ? 9 : $record[$eid]['sex'];
-		preg_match_all("/[0-9]{1,2}/", $record[$eid]['height'], $matches);
-		$line[16] = @$matches[0][0] * 12 + $matches[0][1];
+		preg_match_all($labelPattern, $project->metadata['height']['element_enum'], $matches);
+		file_put_contents("C:/vumc/log.txt", "label: " . print_r($matches[2][$record[$eid]['height'] - 1], true) . "\n", FILE_APPEND);
+		preg_match_all("/[0-9]{1,2}/", $matches[2][$record[$eid]['height'] - 1], $matches);
+		$line[16] = @((int) $matches[0][0] * 12 + (int) $matches[0][1]);
+		file_put_contents("C:/vumc/log.txt", "regex results: " . print_r($matches, true) . "\n", FILE_APPEND);
 		$line[17] = $record[$eid]['education'] == null ? 9 : $record[$eid]['education'];
 		
 		$instanceSum = 0;
 		foreach ($record['repeat_instances'][$eid]['sessionscoaching_log'] as $i => $instance) {
 			$instanceSum++;
-			$line[18] = $instance['sess_mode'];
-			$line[19] = $instance['sess_id'];
+			$line_copy = $line;
+			$line_copy[18] = $instance['sess_mode'];
+			$line_copy[19] = $instance['sess_id'];
 			preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
 			preg_match_all("/\(([A-Z]|[A-Z][A-Z])\)/", $matches[2][$instance['sess_type'] - 1], $matches);
-			$line[20] = $matches[1][0];
-			$line[21] = $instance['sess_date'] == null ? null : date("m/d/Y", strtotime($instance['sess_date']));
-			$line[22] = $instance['sess_weight'];
-			$line[23] = $instance['sess_pa'];
+			$line_copy[20] = $matches[1][0];
+			$line_copy[21] = $instance['sess_date'] == null ? null : date("m/d/Y", strtotime($instance['sess_date']));
+			$line_copy[22] = $instance['sess_weight'];
+			$line_copy[23] = $instance['sess_pa'];
 			
-			validateLine($line);
+			validateLine($line_copy);
 			
 			// if error messages were appended...
-			if (isset($line[24]) and isset($_GET['noncompliant'])) {
-				$noncompliant[] = $line;
+			if (isset($line_copy[24]) and isset($_GET['noncompliant'])) {
+				$noncompliant[] = $line_copy;
 			}
 			
 			// no errors and no non-compliant param
-			if (!isset($line[24]) and !isset($_GET['noncompliant'])) {
-				$data[] = $line;
+			if (!isset($line_copy[24]) and !isset($_GET['noncompliant'])) {
+				$data[] = $line_copy;
 			}
 		}
 		

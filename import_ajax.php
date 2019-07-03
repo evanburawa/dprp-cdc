@@ -53,8 +53,8 @@ function getParticipantRowNumber($firstName, $lastName, $empID) {
 	global $workbook;
 	// first, find header row of 2nd table
 	$headerRow = 0;
-	for ($i = 2; $i <= 19999; $i++) {
-		if ($workbook->getActiveSheet()->getCellByColumnAndRow(1, $i)->getValue() != "LAST NAME") {
+	for ($i = 3; $i <= 19999; $i++) {
+		if ($workbook->getActiveSheet()->getCellByColumnAndRow(1, $i)->getValue() == "LAST NAME") {
 			$headerRow = $i;
 			break;
 		}
@@ -64,9 +64,8 @@ function getParticipantRowNumber($firstName, $lastName, $empID) {
 		return "DPRP plugin couldn't find 2nd table of participant data. Please see sample master file for formatting help.";
 	}
 	
-	$participantRow = 0;
 	$nextRow = $headerRow + 1;
-	while ($participantRow == 0) {
+	while (true) {
 		$thisRowLastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $nextRow)->getValue();
 		$thisRowFirstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $nextRow)->getValue();
 		$thisRowEmpID = $workbook->getActiveSheet()->getCellByColumnAndRow(3, $nextRow)->getValue();
@@ -159,10 +158,13 @@ try {
 // $writer = IOFactory::createWriter($workbook, 'Xlsx');
 // $writer->save("workbook check.xlsx");
 
-// iterate through participant data and make changes, noting failures
+file_put_contents("C:/vumc/log.txt", "temp log:\n");
+
+// iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
 $done = false;
 $row = 2;
+$project = new Project(PROJECT_ID);
 while (!$done) {
 	$firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
 	$lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
@@ -170,9 +172,10 @@ while (!$done) {
 	if (empty($firstName) and empty($lastName) and empty($empID)) {
 		$done = true;
 	} else {
-		
+		file_put_contents("C:/vumc/log.txt", "fn, ln, eid: $firstName, $lastName, $empID \n", FILE_APPEND);
 		// get row number for this participant in 2nd table
 		$row2 = getParticipantRowNumber($firstName, $lastName, $empID);
+		file_put_contents("C:/vumc/log.txt", "participant row number: " . $row2 . "\n", FILE_APPEND);
 		
 		$participant = [
 			"firstName" => $firstName,
@@ -182,10 +185,10 @@ while (!$done) {
 		
 		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = \"$firstName\" AND [last_name] = \"$lastName\" AND [participant_employee_id] = \"$empID\"");
 		
-		if (empty($records)) {
-			$participant["error"] = "No record found with first name: $firstName, last name: $lastName, and employee ID: $empID";
-		// } elseif (is_string($row2)) {
-			// $participant["error"] = $row2;
+		if (empty($records) and (!is_int($row2) and !is_string($row2))) {
+			$participant["error"] = "The DPRP plugin found no record with first name: $firstName, last name: $lastName, and employee ID: $empID in the second table.";
+		} elseif (is_string($row2)) {
+			$participant["error"] = $row2;
 		} else {
 			$rid = array_keys($records)[0];
 			$eid = array_keys($records[$rid])[0];
@@ -196,21 +199,10 @@ while (!$done) {
 			$participant["before"] = [];
 			$participant["after"] = [];
 			
-			// $participant["session_id"] = [];
-			// $participant["session_type"] = [];
-			// $participant["delivery_mode"] = [];
-			// $participant["session_date"] = [];
-			// $participant["month_in_program"] = [];
-			// $participant["session_weight"] = [];
-			// $participant["session_physical_activity"] = [];
-			
 			for ($i = 1; $i <= 25; $i++) {
 				$offset = ($i >= 17) ? 7 : 4;
 				if (isset($sessions[$i])) {
-					// $participant["before"][$i] = json_encode((int) $sessions[$i]["sess_weight"]);
-					// $sessions[$i]["sess_weight"] = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
-					// $participant["after"][$i] = json_encode($sessions[$i]["sess_weight"]);
-					
+					// record info so client can build "Before Import:" table
 					$participant["before"][$i] = [
 						"sess_id" => $sessions[$i]["sess_id"],
 						"sess_type" => $sessions[$i]["sess_type"],
@@ -220,42 +212,143 @@ while (!$done) {
 						"sess_weight" => $sessions[$i]["sess_weight"],
 						"sess_pa" => $sessions[$i]["sess_pa"]
 					];
-				}
-			}
+					
+					// -- -- -- -- -- -- -- -- -- -- -- -- --
+					// change data in $records to be saved via REDCap::saveData
+					
+					// establish some defaults
+					$sess_id = $i;
+					$sess_type = 1; // for "C" = core
+					
+					// use default group from processing form
+					if ((string) $records[$rid][$eid]["orgcode"] == "8540168") {
+						$sess_mode = 3; // 3 for "digital / distance learning" in sessions form
+					} elseif ((string) $records[$rid][$eid]["orgcode"] == "792184") {
+						$sess_mode = 1; // 1 for "In-person"
+					}
+					
+					// get scheduled date (from header row)
+					$headerValue = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue();
+					preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $headerValue, $matches);
+					$sess_date = empty($matches) ? NULL : $matches[0];
+					
+					// get weight from table 1
+					$sess_weight = (int) $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
+					
+					// must be retrieved from table 2
+					$sess_pa = NULL;
+					
+					$table_2_values = explode(",", $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row2)->getValue());
+					$table_2_cell_color = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row2)->getStyle()->getFill()->getStartColor()->getRGB();
+					foreach ($table_2_values as $value) {
+						$value = trim($value);
+						if (is_numeric($value))
+							$sess_pa = (int) $value;
+						preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $value, $matches);
+						$date = empty($matches) ? NULL : $matches[0];
+						if ($date !== NULL)
+							$sess_date = $date;
+						if ($value === "I")
+							$sess_mode = 1;
+						if ($value === "O")
+							$sess_mode = 2;
+						if ($value === "D")
+							$sess_mode = 3;
+						if ($value == "M" or ($table_2_cell_color != "000000" and $table_2_cell_color != "FFFFFF")) // OR table 2 cell HIGHLIGHTED (TODO)
+							$sess_type = 3; // 3 is "MU" or make-up session
+					}
+					
+					// determine sess_month
+					$session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
+					preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $session_1_header_value, $matches);
+					$sess_month = NULL;
+					if (!empty($matches) and !empty($sess_date)) {
+						$d1 = new DateTime($matches[0]);
+						$d2 = new DateTime($sess_date);
+						$sess_month = 12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + 1;
+						
+						// $d1 = new DateTime($matches[0]);
+						// $d1->setDate($d1->format("Y"), $d1->format("m"), 1);
+						// $d2 = new DateTime($sess_date);
+						// $d2->setDate($d2->format("Y"), $d2->format("m"), 1);
+						// $sess_month = (int) $d1->diff($d2)->format("%R%m") + 1;
+						
+						// $session_1_month = (int) substr($matches[0], 0, 2); // now is a value between 1 and 12
+						// $this_session_month = (int) substr($sess_date, 0, 2);
+						
+						// if ($session_1_month !== 0 and $this_session_month !== 0) {
+							// if ($session_1_month > $this_session_month) {
+								// $sess_month = 12 + $this_session_month - $session_1_month + 1;
+							// } elseif ($sess_1_month <= $this_session_month) {
+								// $sess_month = $this_session_month - $session_1_month + 1;
+							// }
+						// }
+					}
+					
+					// convert date to Y-m-d
+					if (!empty($sess_date)) {
+						$sess_date = new DateTime($sess_date);
+						$sess_date = $sess_date->format("Y-m-d");
+					}
+					
+					// apply determined session values
+					$sessions[$i]["sess_id"] = $sess_id;
+					$sessions[$i]["sess_type"] = $sess_type;
+					$sessions[$i]["sess_mode"] = $sess_mode;
+					$sessions[$i]["sess_month"] = $sess_month;
+					$sessions[$i]["sess_date"] = $sess_date;
+					$sessions[$i]["sess_weight"] = $sess_weight;
+					$sessions[$i]["sess_pa"] = $sess_pa;
 			
-			// save data
-			$result = \REDCap::saveData(PROJECT_ID, 'array', $records);
-			if (!empty($result["errors"])) {
-				$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap--have your REDCap administrator check the saveDataErrors log.";
-				if (!file_exists("saveDataErrors.txt")) {
-					file_put_contents("saveDataErrors.txt", print_r($result["errors"], true));
-				} else {
-					file_put_contents("saveDataErrors.txt", print_r($result["errors"], true), FILE_APPEND);
+					// save data
+					$result = \REDCap::saveData(PROJECT_ID, 'array', $records, 'overwrite');
+					if (!empty($result["errors"])) {
+						$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap--have your REDCap administrator check the saveDataErrors log.";
+						if (!file_exists("saveDataErrors.txt")) {
+							file_put_contents("saveDataErrors.txt", print_r($result["errors"], true));
+						} else {
+							file_put_contents("saveDataErrors.txt", print_r($result["errors"], true), FILE_APPEND);
+						}
+						$row++;
+						$participants[] = $participant;
+						continue;
+					} else {
+						$participant["after"][$i] = [
+							"sess_id" => $sessions[$i]["sess_id"],
+							"sess_type" => $sessions[$i]["sess_type"],
+							"sess_mode" => $sessions[$i]["sess_mode"],
+							"sess_month" => $sessions[$i]["sess_month"],
+							"sess_date" => $sessions[$i]["sess_date"],
+							"sess_weight" => $sessions[$i]["sess_weight"],
+							"sess_pa" => $sessions[$i]["sess_pa"]
+						];
+					}
 				}
 			}
 		}
 		
-		// write "after" import table
-		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = \"$firstName\" AND [last_name] = \"$lastName\" AND [participant_employee_id] = \"$empID\"");
-		$rid = array_keys($records)[0];
-		$eid = array_keys($records[$rid])[0];
-		$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
-		$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
+		 // we are deciding to do this without re-fetching from REDCap getData
+		// // write "after" import table
+		// $records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = \"$firstName\" AND [last_name] = \"$lastName\" AND [participant_employee_id] = \"$empID\"");
+		// $rid = array_keys($records)[0];
+		// $eid = array_keys($records[$rid])[0];
+		// $records = \REDCap::getData(PROJECT_ID, 'array', $rid);
+		// $sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 			
-		for ($i = 1; $i <= 25; $i++) {
-			$offset = ($i >= 17) ? 7 : 4;
-			if (isset($sessions[$i])) {
-				$participant["after"][$i] = [
-					"sess_id" => $sessions[$i]["sess_id"],
-					"sess_type" => $sessions[$i]["sess_type"],
-					"sess_mode" => $sessions[$i]["sess_mode"],
-					"sess_month" => $sessions[$i]["sess_month"],
-					"sess_date" => $sessions[$i]["sess_date"],
-					"sess_weight" => $sessions[$i]["sess_weight"],
-					"sess_pa" => $sessions[$i]["sess_pa"]
-				];
-			}
-		}
+		// for ($i = 1; $i <= 25; $i++) {
+			// $offset = ($i >= 17) ? 7 : 4;
+			// if (isset($sessions[$i])) {
+				// $participant["after"][$i] = [
+					// "sess_id" => $sessions[$i]["sess_id"],
+					// "sess_type" => $sessions[$i]["sess_type"],
+					// "sess_mode" => $sessions[$i]["sess_mode"],
+					// "sess_month" => $sessions[$i]["sess_month"],
+					// "sess_date" => $sessions[$i]["sess_date"],
+					// "sess_weight" => $sessions[$i]["sess_weight"],
+					// "sess_pa" => $sessions[$i]["sess_pa"]
+				// ];
+			// }
+		// }
 		
 		$participants[] = $participant;
 	}

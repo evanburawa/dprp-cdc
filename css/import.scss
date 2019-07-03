@@ -21,7 +21,20 @@
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	margin: 22px;
+	
+	.row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: row;
+		.col {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+		}
+	}
+	width: 90%;
 }
 
 .custom-file-control.selected:lang(en)::after {
@@ -35,7 +48,7 @@ table, th, td {
 		background-color: #C7FFBD;
 	}
 	.neutral {
-		background-color: #DFDFDF;
+		background-color: #FFFFFF;
 	}
 	.deleted {
 		background-color: #FFE8BD;
