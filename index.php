@@ -173,7 +173,7 @@ function sendExport() {
 	
 	// regex for getting labels for project fields (like state, sess_type, etc)
 	$labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
-	file_put_contents("C:/vumc/log.txt", "begin log\n");
+	
 	foreach ($records as $rid => $record) {
 		$eid = array_keys($record)[0];
 		
@@ -212,10 +212,8 @@ function sendExport() {
 		$line[14] = $record[$eid]['race'][5] == 1 ? 1 : 2;
 		$line[15] = $record[$eid]['sex'] == null ? 9 : $record[$eid]['sex'];
 		preg_match_all($labelPattern, $project->metadata['height']['element_enum'], $matches);
-		file_put_contents("C:/vumc/log.txt", "label: " . print_r($matches[2][$record[$eid]['height'] - 1], true) . "\n", FILE_APPEND);
 		preg_match_all("/[0-9]{1,2}/", $matches[2][$record[$eid]['height'] - 1], $matches);
 		$line[16] = @((int) $matches[0][0] * 12 + (int) $matches[0][1]);
-		file_put_contents("C:/vumc/log.txt", "regex results: " . print_r($matches, true) . "\n", FILE_APPEND);
 		$line[17] = $record[$eid]['education'] == null ? 9 : $record[$eid]['education'];
 		
 		$instanceSum = 0;
