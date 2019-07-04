@@ -16,20 +16,81 @@ function numberToExcelColumn($n) {
 
 file_put_contents("C:/vumc/log.txt", "log start\n");
 
-function appendTableTwo(&$sheetMatrix) {
+function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	global $records;
 	global $project;
 	global $workbook;
 	global $labelPattern;
-	for ($i = 1; $i <= 28; $i++) {
-		if ($i > 16) {
-			$col = numberToExcelColumn(6 + $i);
-		} else {
-			$col = numberToExcelColumn(3 + $i);
+	
+	$participants = [];
+	foreach ($records as $rid => $record) {
+		$eid = array_keys($record)[0];
+		$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
+		
+		$participant = [];
+		$participant[] = $record[$eid]["last_name"];
+		$participant[] = $record[$eid]["first_name"];
+		$participant[] = $record[$eid]["participant_employee_id"];
+		preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
+		$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
+		
+		$orgcode = $record[$eid]["orgcode"];
+		
+		// add physical activity and possibly other info to spreadsheet
+		for ($i = 1; $i <= 28; $i++) {
+			if (!isset($sessions[$i]))
+				continue;
+			if ($i > 16) {
+				$col = numberToExcelColumn(6 + $i);
+			} else {
+				$col = numberToExcelColumn(3 + $i);
+			}
+			
+			$cell_value = "";
+			
+			// add physical activity minutes if possible
+			if (!empty($sessions[$i]["sess_pa"])) {
+				$cell_value .= $sessions[$i]["sess_pa"];
+			}
+			
+			// add date if actual date present and not same as scheduled date
+			if (!empty($sessions[$i]["sess_actual_date"]) and ($sessions[$i]["sess_actual_date"] != $sessions[$i]["sess_scheduled_date"])) {
+				$act_date = new DateTime($sessions[$i]["sess_actual_date"]);
+				$cell_value .= ", " . $act_date->format("m/d/Y");
+			}
+			
+			// highlight if this was a make-up session
+			if ($sessions[$i]["sess_type"] == 3) {
+				$cell_address = $col . (1 + count($sheetMatrix) + 1);
+				file_put_contents("C:/vumc/log.txt", "highlighting cell at $cell_address for participant $rid, session $i\n", FILE_APPEND);
+				$workbook->getSheet($sheetNumber)->getStyle($cell_address)->getFill->getStartColor()->setARGB('FFFF0000');
+				// $cell_value .= ", HIGHLIGHT_THIS_CELL";
+				// we will check for this token later and remove it, while highlighting the relevant cell
+				// this is because it would be hard to find out which cell this is right now
+			}
+			
+			// add token for sess_mode if needed
+			if ($orgcode == "8540168") {							// participant is in Digital group
+				if ($sessions[$i]["sess_mode"] == 1)
+					$cell_value .= "I";
+				if ($sessions[$i]["sess_mode"] == 2)
+					$cell_value .= "O";
+			} elseif ($orgcode == "792184") {						// participant is in In-Person group
+				if ($sessions[$i]["sess_mode"] == 2)
+					$cell_value .= "O";
+				if ($sessions[$i]["sess_mode"] == 3)
+					$cell_value .= "D";
+			}
+			
+			$participant[] = $cell_value;
 		}
-		
-		
+		$participants[] = $participant;
 	}
+	
+	// add empty row, then header, then table 2 data to sheetMatrix
+	$sheetMatrix[] = [];
+	$sheetMatrix[] = $worksheet->getSheet(1)->rangeToArray("A1:AN1", NULL, TRUE, TRUE, TRUE);
+	$sheetMatrix[] = $participants;
 }
 
 function appendStatRows(&$sheetMatrix) {
@@ -43,7 +104,7 @@ function appendStatRows(&$sheetMatrix) {
 	$weeklyRow = $lastRow + 4;
 	$programRow = $lastRow + 5;
 	
-	$stat_program = ["Program weight loss—group", NULL, NULL, "=SUM(F$weeklyRow:AF$weeklyRow)"];
+	$stat_program = ["Program weight loss—group", NULL, NULL, "=SUM(F$weeklyRow:AI$weeklyRow)"];
 	$stat_percent = ["Percent loss", NULL, NULL, "=ROUND((D$programRow/E$sumRow), 3) * 100 & \"%\""];
 	$stat_goal7 = ["Program weight loss goal—7%", NULL, NULL, "=ROUND(0.07*SUM(E2:E$lastRow), 0)"];
 	$stat_goal5 = ["Program weight loss goal—5%", NULL, NULL, "=ROUND(0.05*SUM(E2:E$lastRow), 0)"];
@@ -157,10 +218,10 @@ if ($_GET['action'] == 'export') {
 			}
 			if ($i == 28) {
 				// add final 5 formula cells
-				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AF$row)), X$row:AF$row)";
-				$participant[] = "=U$row+AG$row";
-				$participant[] = "=ROUND(AH$row / E$row, 3) * 100 & \"%\"";
-				$participant[] = "=COUNTA(X$row:AF$row)";
+				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
+				$participant[] = "=U$row+AI$row";
+				$participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA(X$row:AI$row)";
 				$participant[] = "=W$row+AJ$row";
 			}
 		}
@@ -216,10 +277,10 @@ if ($_GET['action'] == 'export') {
 			}
 			if ($i == 28) {
 				// add final 5 formula cells
-				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AF$row)), X$row:AF$row)";
-				$participant[] = "=U$row+AG$row";
-				$participant[] = "=ROUND(AH$row / E$row, 3) * 100 & \"%\"";
-				$participant[] = "=COUNTA(X$row:AF$row)";
+				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
+				$participant[] = "=U$row+AI$row";
+				$participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA(X$row:AI$row)";
 				$participant[] = "=W$row+AJ$row";
 			}
 		}
@@ -232,7 +293,7 @@ if ($_GET['action'] == 'export') {
 	foreach ($dppData as $name => $sheetData) {
 		// add stat rows to sheet, below participant data
 		appendStatRows($sheetData);
-		appendTableTwo($sheetData);
+		appendTableTwo($sheetData, $i);
 		
 		$workbook->setActiveSheetIndex($i);
 		$workbook->getActiveSheet()
