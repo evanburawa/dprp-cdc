@@ -46,6 +46,13 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 				$col = numberToExcelColumn(3 + $i);
 			}
 			
+			if ($i == 17) {
+				// skip 3 stat columns
+				for ($j = 1; $j<= 3; $j++) {
+					$participant[] = NULL;
+				}
+			}
+			
 			$cell_value = "";
 			
 			// add physical activity minutes if possible
@@ -89,8 +96,29 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	
 	// add empty row, then header, then table 2 data to sheetMatrix
 	$sheetMatrix[] = [];
-	$sheetMatrix[] = $worksheet->getSheet(1)->rangeToArray("A1:AN1", NULL, TRUE, TRUE, TRUE);
-	$sheetMatrix[] = $participants;
+	
+	$header = $workbook->getSheet(1)->rangeToArray("A1:AN1", NULL, TRUE, TRUE, TRUE)[1];
+	$temp_header_array = [];
+	foreach ($header as $col => $value) {
+		if (array_search($col, [2, "U", "V", "W", "AJ", "AK", "AL", "AM", "AN"])) {
+			$temp_header_array[] = NULL;
+		} else {
+			$temp_header_array[] = $value;
+		}
+	}
+	$sheetMatrix[] = $temp_header_array;
+	
+	// style new header row
+	$header_cells_range = "A" . (1 + count($sheetMatrix)) . ":AN" . (1 + count($sheetMatrix));
+	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getFont()->setBold(true);
+	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getAlignment()->setWrapText(true);
+	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+	$workbook->getSheet($sheetNumber)->getStyle("D" . (1 + count($sheetMatrix)))->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+	$workbook->getSheet($sheetNumber)->getRowDimension((string) 1 + count($sheetMatrix))->setRowHeight(45.75);
+	
+	foreach ($participants as $p) {
+		$sheetMatrix[] = $p;
+	}
 }
 
 function appendStatRows(&$sheetMatrix) {
@@ -151,7 +179,6 @@ function appendStatRows(&$sheetMatrix) {
 			$stat_weekly[] = "=SUMIF($range1, \"<>\", $range2) - SUMIF($range2, \"<>\", $range1)";
 		}
 		
-		// file_put_contents("log.txt", "\n formula written: \"=AVERAGE({$col}2:{$col}{$lastRow})\"", FILE_APPEND);
 		$lastCol = $col;
 		if ($i == 16) {		// add 3 blank cells to each stat row (for WT LOSS CORE and other calc columns)
 			for ($j = 1; $j <= 3; $j++) {
@@ -175,8 +202,6 @@ function appendStatRows(&$sheetMatrix) {
 }
 
 if ($_GET['action'] == 'export') {
-	// file_put_contents("log.txt", "start log");
-	
 	// iterate through records
 	$records = \REDCap::getData(PROJECT_ID);
 	
@@ -245,7 +270,6 @@ if ($_GET['action'] == 'export') {
 		
 		// see if coach-cohort sheet is created, if not, create it
 		if (in_array($targetSheetName, array_keys($dppData)) === FALSE) {
-			// file_put_contents("log.txt", "\n\$targetSheetName: $targetSheetName", FILE_APPEND);
 			$dppData[$targetSheetName] = [];
 			$cloneSheet = clone $workbook->getSheetByName("Combined");
 			$cloneSheet->setTitle($targetSheetName);
