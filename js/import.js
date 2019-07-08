@@ -24,13 +24,13 @@ $('#upload').on('click', function() {
 			} else if (typeof(response.participants) != "object") {
 				$("#notes").show();
 				$("#notes div").append("<li>There was a problem importing the workbook, please try again.</li>");
-				console.log(response);
+				// console.log(response);
 			} else {
 				writeResultsTable(response.participants);
 			}
 		},
 		complete: function(data) {
-			console.log(data);
+			// console.log(data);
 		}
 	});
 });
@@ -45,7 +45,7 @@ function writeResultsTable(participants) {
 	let afterTable = "";
 	let results = `
 				<h5>Import Results:</h5>`;
-	participants.forEach(function(participant, partIndex) {
+	participants.forEach(function(participant, p_index) {
 		results += `
 				<hr>
 				<h6>Participant ${participant.recordID}</h6>
@@ -76,56 +76,70 @@ function writeResultsTable(participants) {
 				<br>
 				<div class="row">`;
 		
-		beforeTable = "";
-		afterTable = "";
+		beforeAfterTable = "";
+		// afterTable = "";
 		
 		// if no error, add before/after tables
 		if (typeof participant.error != "string") {
-			beforeTable = `
+			beforeAfterTable = `
 				<div class="col">
-				<h6>Before Import:</h6>
 				<table class="before">
 					<tbody>
 						<tr>
-							<th>Session ID</th>
-							<th>Type</th>
-							<th>Delivery Mode</th>
-							<th>Date</th>
-							<th>Month in Program</th>
-							<th>Weight</th>
-							<th>Physical Activity</th>
-						</tr>`;
-			afterTable = `
-				<div class="col">
-				<h6>After Import:</h6>
-				<table class="after">
-					<tbody>
+							<th colspan="8">Before Import:</th>
+							<th colspan="8">After Import:</th>
+						</tr>
 						<tr>
 							<th>Session ID</th>
 							<th>Type</th>
 							<th>Delivery Mode</th>
-							<th>Date</th>
+							<th>Scheduled Date</th>
+							<th>Actual Date</th>
+							<th>Month in Program</th>
+							<th>Weight</th>
+							<th>Physical Activity</th>
+							<th>Session ID</th>
+							<th>Type</th>
+							<th>Delivery Mode</th>
+							<th>Scheduled Date</th>
+							<th>Actual Date</th>
 							<th>Month in Program</th>
 							<th>Weight</th>
 							<th>Physical Activity</th>
 						</tr>`;
-			for (i=1; i<=25; i++) {
+			// afterTable = `
+				// <div class="col">
+				// <h6>After Import:</h6>
+				// <table class="after">
+					// <tbody>
+						// <tr>
+							// <th>Session ID</th>
+							// <th>Type</th>
+							// <th>Delivery Mode</th>
+							// <th>Scheduled Date</th>
+							// <th>Actual Date</th>
+							// <th>Month in Program</th>
+							// <th>Weight</th>
+							// <th>Physical Activity</th>
+						// </tr>`;
+			for (i=1; i<=28; i++) {
 				if (participant.before.hasOwnProperty(i)) {
-					beforeTable += `
-						<tr>
-							<td>${participant.before[i]["sess_id"]}</td>
-							<td>${participant.before[i]["sess_type"]}</td>
-							<td>${participant.before[i]["sess_mode"]}</td>
-							<td>${participant.before[i]["sess_date"]}</td>
-							<td>${participant.before[i]["sess_month"]}</td>
-							<td>${participant.before[i]["sess_weight"]}</td>
-							<td>${participant.before[i]["sess_pa"]}</td>
-						</tr>`;
+					// beforeTable += `
+						// <tr>
+							// <td>${participant.before[i]["sess_id"]}</td>
+							// <td>${participant.before[i]["sess_type"]}</td>
+							// <td>${participant.before[i]["sess_mode"]}</td>
+							// <td>${participant.before[i]["sess_scheduled_date"]}</td>
+							// <td>${participant.before[i]["sess_actual_date"]}</td>
+							// <td>${participant.before[i]["sess_month"]}</td>
+							// <td>${participant.before[i]["sess_weight"]}</td>
+							// <td>${participant.before[i]["sess_pa"]}</td>
+						// </tr>`;
 					
 					// select style for each cell
 					let styles = [];
-					let fields = ["sess_id", "sess_type", "sess_mode", "sess_date", "sess_month", "sess_weight", "sess_pa"];
-					fields.forEach(function(field) {
+					let fields = ["sess_id", "sess_type", "sess_mode", "sess_scheduled_date", "sess_actual_date", "sess_month", "sess_weight", "sess_pa"];
+					fields.forEach(function(field, f_index) {
 						if (participant.after[i][field] == null)
 							participant.after[i][field] = "";
 						let a = participant.before[i][field];
@@ -136,32 +150,53 @@ function writeResultsTable(participants) {
 						} else if (a != b && b) {
 							style = "updated";
 						}
-						// console.log(typeof a + " -- " + typeof b + " -- " + style);
+						
 						styles.push(style);
+						
+						// if (p_index == 0 && i == 1 && field == "sess_pa") {
+							// console.log("field: " + field);
+							// console.log("a: " + a);
+							// console.log("b: " + b);
+							// console.log("typeof a: " + typeof a);
+							// console.log("typeof b: " + typeof b);
+							// console.log("!a: " + !a);
+							// console.log("!b: " + !b);
+							// console.log("style: " + style);
+							// console.log("styles: " + styles);
+						// }
 					});
 					
-					afterTable += `
+					beforeAfterTable += `
 						<tr>
+							<td>${participant.before[i]["sess_id"]}</td>
+							<td>${participant.before[i]["sess_type"]}</td>
+							<td>${participant.before[i]["sess_mode"]}</td>
+							<td>${participant.before[i]["sess_scheduled_date"]}</td>
+							<td>${participant.before[i]["sess_actual_date"]}</td>
+							<td>${participant.before[i]["sess_month"]}</td>
+							<td>${participant.before[i]["sess_weight"]}</td>
+							<td>${participant.before[i]["sess_pa"]}</td>
 							<td class="${styles[0]}">${participant.after[i]["sess_id"]}</td>
 							<td class="${styles[1]}">${participant.after[i]["sess_type"]}</td>
 							<td class="${styles[2]}">${participant.after[i]["sess_mode"]}</td>
-							<td class="${styles[3]}">${participant.after[i]["sess_date"]}</td>
-							<td class="${styles[4]}">${participant.after[i]["sess_month"]}</td>
-							<td class="${styles[5]}">${participant.after[i]["sess_weight"]}</td>
-							<td class="${styles[6]}">${participant.after[i]["sess_pa"]}</td>
+							<td class="${styles[3]}">${participant.after[i]["sess_scheduled_date"]}</td>
+							<td class="${styles[4]}">${participant.after[i]["sess_actual_date"]}</td>
+							<td class="${styles[5]}">${participant.after[i]["sess_month"]}</td>
+							<td class="${styles[6]}">${participant.after[i]["sess_weight"]}</td>
+							<td class="${styles[7]}">${participant.after[i]["sess_pa"]}</td>
 						</tr>`;
 				}
 			}
-			beforeTable += `
+			beforeAfterTable += `
 					</tbody>
 				</table>
 				</div>`;
-			afterTable += `
-					</tbody>
-				</table>
-				</div>`;
+			// afterTable += `
+					// </tbody>
+				// </table>
+				// </div>`;
 		}
-		results += beforeTable + afterTable + `
+		results += beforeAfterTable + `
 				</div>
 				<br>`;
 	});

@@ -14,7 +14,7 @@ function numberToExcelColumn($n) {
     return $r;
 }
 
-file_put_contents("C:/vumc/log.txt", "log start\n");
+// file_put_contents("C:/vumc/log.txt", "log start\n");
 
 function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	global $records;
@@ -26,6 +26,18 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	foreach ($records as $rid => $record) {
 		$eid = array_keys($record)[0];
 		$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
+		
+		// see if this participant needs to be added to this sheet
+		preg_match_all($labelPattern, $project->metadata['coach_name']['element_enum'], $matches);
+		$coach = trim($matches[2][$record[$eid]['coach_name'] - 1]);
+		preg_match_all($labelPattern, $project->metadata['cohort']['element_enum'], $matches);
+		$cohort = trim($matches[2][$record[$eid]['cohort'] - 1]);
+		
+		$sheetTitle = $workbook->getSheet($sheetNumber)->getTitle();
+		$need_record_for_non_conform_sheet = ($sheetTitle == "MISSING COACH OR COHORT VALUE" and (empty($cohort) or empty($coach)));
+		if ($sheetTitle != $coach . " -- " . $cohort and $sheetTitle != "Combined" and !$need_record_for_non_conform_sheet)
+			continue;
+		unset($coach, $cohort, $sheetTitle, $need_record_for_non_conform_sheet);
 		
 		$participant = [];
 		$participant[] = $record[$eid]["last_name"];
@@ -68,9 +80,9 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 			
 			// highlight if this was a make-up session
 			if ($sessions[$i]["sess_type"] == 3) {
-				$cell_address = $col . (1 + count($sheetMatrix) + 1);
-				file_put_contents("C:/vumc/log.txt", "highlighting cell at $cell_address for participant $rid, session $i\n", FILE_APPEND);
-				$workbook->getSheet($sheetNumber)->getStyle($cell_address)->getFill->getStartColor()->setARGB('FFFF0000');
+				$cell_address = $col . (1 + count($sheetMatrix) + 3);
+				// file_put_contents("C:/vumc/log.txt", "highlighting cell at $cell_address for participant $rid, session $i\n", FILE_APPEND);
+				$workbook->getSheet($sheetNumber)->getStyle($cell_address)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF00');
 				// $cell_value .= ", HIGHLIGHT_THIS_CELL";
 				// we will check for this token later and remove it, while highlighting the relevant cell
 				// this is because it would be hard to find out which cell this is right now
@@ -79,14 +91,14 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 			// add token for sess_mode if needed
 			if ($orgcode == "8540168") {							// participant is in Digital group
 				if ($sessions[$i]["sess_mode"] == 1)
-					$cell_value .= "I";
+					$cell_value .= ", I";
 				if ($sessions[$i]["sess_mode"] == 2)
-					$cell_value .= "O";
+					$cell_value .= ", O";
 			} elseif ($orgcode == "792184") {						// participant is in In-Person group
 				if ($sessions[$i]["sess_mode"] == 2)
-					$cell_value .= "O";
+					$cell_value .= ", O";
 				if ($sessions[$i]["sess_mode"] == 3)
-					$cell_value .= "D";
+					$cell_value .= ", D";
 			}
 			
 			$participant[] = $cell_value;
@@ -244,10 +256,10 @@ if ($_GET['action'] == 'export') {
 			if ($i == 28) {
 				// add final 5 formula cells
 				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
-				$participant[] = "=U$row+AI$row";
+				$participant[] = "=U$row+AJ$row";
 				$participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
 				$participant[] = "=COUNTA(X$row:AI$row)";
-				$participant[] = "=W$row+AJ$row";
+				$participant[] = "=W$row+AM$row";
 			}
 		}
 		
@@ -302,10 +314,10 @@ if ($_GET['action'] == 'export') {
 			if ($i == 28) {
 				// add final 5 formula cells
 				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
-				$participant[] = "=U$row+AI$row";
+				$participant[] = "=U$row+AJ$row";
 				$participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
 				$participant[] = "=COUNTA(X$row:AI$row)";
-				$participant[] = "=W$row+AJ$row";
+				$participant[] = "=W$row+AM$row";
 			}
 		}
 		

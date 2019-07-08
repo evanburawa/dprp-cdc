@@ -145,6 +145,7 @@ try {
 	} else {
 		file_put_contents("libs/errorlog.txt", $e, FILE_APPEND);
 	}
+	REDCap::logEvent("DPRP import failure", "PhpSpreadsheet library errors -> " . print_r($e, true) . "\n", null, $rid, $eid, PROJECT_ID);
     exit(json_encode([
 		"error" => true,
 		"notes" => [
@@ -158,7 +159,7 @@ try {
 // $writer = IOFactory::createWriter($workbook, 'Xlsx');
 // $writer->save("workbook check.xlsx");
 
-file_put_contents("C:/vumc/log.txt", "temp log:\n");
+// file_put_contents("C:/vumc/log.txt", "temp log:\n");
 
 // iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
@@ -172,10 +173,10 @@ while (!$done) {
 	if (empty($firstName) and empty($lastName) and empty($empID)) {
 		$done = true;
 	} else {
-		file_put_contents("C:/vumc/log.txt", "fn, ln, eid: $firstName, $lastName, $empID \n", FILE_APPEND);
+		// file_put_contents("C:/vumc/log.txt", "fn, ln, eid: $firstName, $lastName, $empID \n", FILE_APPEND);
 		// get row number for this participant in 2nd table
 		$row2 = getParticipantRowNumber($firstName, $lastName, $empID);
-		file_put_contents("C:/vumc/log.txt", "participant row number: " . $row2 . "\n", FILE_APPEND);
+		// file_put_contents("C:/vumc/log.txt", "participant row number: " . $row2 . "\n", FILE_APPEND);
 		
 		$participant = [
 			"firstName" => $firstName,
@@ -199,7 +200,7 @@ while (!$done) {
 			$participant["before"] = [];
 			$participant["after"] = [];
 			
-			for ($i = 1; $i <= 25; $i++) {
+			for ($i = 1; $i <= 28; $i++) {
 				$offset = ($i >= 17) ? 7 : 4;
 				if (isset($sessions[$i])) {
 					// record info so client can build "Before Import:" table
@@ -208,7 +209,8 @@ while (!$done) {
 						"sess_type" => $sessions[$i]["sess_type"],
 						"sess_mode" => $sessions[$i]["sess_mode"],
 						"sess_month" => $sessions[$i]["sess_month"],
-						"sess_date" => $sessions[$i]["sess_date"],
+						"sess_scheduled_date" => $sessions[$i]["sess_scheduled_date"],
+						"sess_actual_date" => $sessions[$i]["sess_actual_date"],
 						"sess_weight" => $sessions[$i]["sess_weight"],
 						"sess_pa" => $sessions[$i]["sess_pa"]
 					];
@@ -230,7 +232,7 @@ while (!$done) {
 					// get scheduled date (from header row)
 					$headerValue = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue();
 					preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $headerValue, $matches);
-					$sess_date = empty($matches) ? NULL : $matches[0];
+					$sess_scheduled_date = empty($matches) ? NULL : trim($matches[0]);
 					
 					// get weight from table 1
 					$sess_weight = (int) $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
@@ -247,7 +249,7 @@ while (!$done) {
 						preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $value, $matches);
 						$date = empty($matches) ? NULL : $matches[0];
 						if ($date !== NULL)
-							$sess_date = $date;
+							$sess_actual_date = $date;
 						if ($value === "I")
 							$sess_mode = 1;
 						if ($value === "O")
@@ -262,33 +264,25 @@ while (!$done) {
 					$session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
 					preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $session_1_header_value, $matches);
 					$sess_month = NULL;
+					$sess_date = $sess_actual_date;
+					if (empty($sess_actual_date))
+						$sess_date = $sess_scheduled_date;
 					if (!empty($matches) and !empty($sess_date)) {
 						$d1 = new DateTime($matches[0]);
 						$d2 = new DateTime($sess_date);
 						$sess_month = 12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + 1;
-						
-						// $d1 = new DateTime($matches[0]);
-						// $d1->setDate($d1->format("Y"), $d1->format("m"), 1);
-						// $d2 = new DateTime($sess_date);
-						// $d2->setDate($d2->format("Y"), $d2->format("m"), 1);
-						// $sess_month = (int) $d1->diff($d2)->format("%R%m") + 1;
-						
-						// $session_1_month = (int) substr($matches[0], 0, 2); // now is a value between 1 and 12
-						// $this_session_month = (int) substr($sess_date, 0, 2);
-						
-						// if ($session_1_month !== 0 and $this_session_month !== 0) {
-							// if ($session_1_month > $this_session_month) {
-								// $sess_month = 12 + $this_session_month - $session_1_month + 1;
-							// } elseif ($sess_1_month <= $this_session_month) {
-								// $sess_month = $this_session_month - $session_1_month + 1;
-							// }
-						// }
 					}
 					
 					// convert date to Y-m-d
-					if (!empty($sess_date)) {
-						$sess_date = new DateTime($sess_date);
-						$sess_date = $sess_date->format("Y-m-d");
+					if (!empty($sess_actual_date)) {
+						$sess_actual_date = new DateTime($sess_actual_date);
+						$sess_actual_date = $sess_actual_date->format("Y-m-d");
+					}
+					
+					// convert date to Y-m-d
+					if (!empty($sess_scheduled_date)) {
+						$sess_scheduled_date = new DateTime($sess_scheduled_date);
+						$sess_scheduled_date = trim($sess_scheduled_date->format("Y-m-d"));
 					}
 					
 					// apply determined session values
@@ -296,33 +290,12 @@ while (!$done) {
 					$sessions[$i]["sess_type"] = $sess_type;
 					$sessions[$i]["sess_mode"] = $sess_mode;
 					$sessions[$i]["sess_month"] = $sess_month;
-					$sessions[$i]["sess_date"] = $sess_date;
+					$sessions[$i]["sess_scheduled_date"] = $sess_scheduled_date;
+					$sessions[$i]["sess_actual_date"] = $sess_actual_date;
 					$sessions[$i]["sess_weight"] = $sess_weight;
 					$sessions[$i]["sess_pa"] = $sess_pa;
-			
-					// save data
-					$result = \REDCap::saveData(PROJECT_ID, 'array', $records, 'overwrite');
-					if (!empty($result["errors"])) {
-						$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap--have your REDCap administrator check the saveDataErrors log.";
-						if (!file_exists("saveDataErrors.txt")) {
-							file_put_contents("saveDataErrors.txt", print_r($result["errors"], true));
-						} else {
-							file_put_contents("saveDataErrors.txt", print_r($result["errors"], true), FILE_APPEND);
-						}
-						$row++;
-						$participants[] = $participant;
-						continue;
-					} else {
-						$participant["after"][$i] = [
-							"sess_id" => $sessions[$i]["sess_id"],
-							"sess_type" => $sessions[$i]["sess_type"],
-							"sess_mode" => $sessions[$i]["sess_mode"],
-							"sess_month" => $sessions[$i]["sess_month"],
-							"sess_date" => $sessions[$i]["sess_date"],
-							"sess_weight" => $sessions[$i]["sess_weight"],
-							"sess_pa" => $sessions[$i]["sess_pa"]
-						];
-					}
+					
+					unset($sess_id, $sess_type, $sess_mode, $sess_month, $sess_scheduled_date, $sess_actual_date, $sess_weight, $sess_pa, $sess_date);
 				}
 			}
 		}
@@ -334,21 +307,39 @@ while (!$done) {
 		// $eid = array_keys($records[$rid])[0];
 		// $records = \REDCap::getData(PROJECT_ID, 'array', $rid);
 		// $sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
-			
-		// for ($i = 1; $i <= 25; $i++) {
-			// $offset = ($i >= 17) ? 7 : 4;
-			// if (isset($sessions[$i])) {
-				// $participant["after"][$i] = [
-					// "sess_id" => $sessions[$i]["sess_id"],
-					// "sess_type" => $sessions[$i]["sess_type"],
-					// "sess_mode" => $sessions[$i]["sess_mode"],
-					// "sess_month" => $sessions[$i]["sess_month"],
-					// "sess_date" => $sessions[$i]["sess_date"],
-					// "sess_weight" => $sessions[$i]["sess_weight"],
-					// "sess_pa" => $sessions[$i]["sess_pa"]
-				// ];
-			// }
-		// }
+		
+		// save data
+		// file_put_contents("C:/vumc/log.txt", "sess_scheduled_date:" . $sessions[1]["sess_scheduled_date"] . "\n", FILE_APPEND);
+		$result = \REDCap::saveData(PROJECT_ID, 'array', $records, 'overwrite');
+		if (!empty($result["errors"])) {
+			$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
+			if (!file_exists("saveDataErrors.txt")) {
+				// file_put_contents("saveDataErrors.txt", date("Y-m-d H:m:s --") . print_r($result["errors"], true) . "\n");
+				REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
+			} else {
+				// file_put_contents("saveDataErrors.txt", date("Y-m-d H:m:s --") . print_r($result["errors"], true) . "\n", FILE_APPEND);
+				REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
+			}
+			$row++;
+			$participants[] = $participant;
+			continue;
+		}
+		
+		for ($i = 1; $i <= 28; $i++) {
+			$offset = ($i >= 17) ? 7 : 4;
+			if (isset($sessions[$i])) {
+				$participant["after"][$i] = [
+					"sess_id" => $sessions[$i]["sess_id"],
+					"sess_type" => $sessions[$i]["sess_type"],
+					"sess_mode" => $sessions[$i]["sess_mode"],
+					"sess_month" => $sessions[$i]["sess_month"],
+					"sess_scheduled_date" => $sessions[$i]["sess_scheduled_date"],
+					"sess_actual_date" => $sessions[$i]["sess_actual_date"],
+					"sess_weight" => $sessions[$i]["sess_weight"],
+					"sess_pa" => $sessions[$i]["sess_pa"]
+				];
+			}
+		}
 		
 		$participants[] = $participant;
 	}

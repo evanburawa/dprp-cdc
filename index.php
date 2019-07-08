@@ -105,8 +105,8 @@ function validateLine(& $line) {
 	$month = substr($line[21], 0, 2);
 	$day = substr($line[21], 3, 2);
 	$year = substr($line[21], 6, 4);
-	if (preg_match("/[^0-9\/]/", $line[21]) or !checkdate($month, $day, $year))
-		$errors[] = "DATE must be a valid date in format 'mm/dd/yyyy'";
+	if (preg_match("/[^0-9\/\-]/", $line[21]) or !checkdate($month, $day, $year))
+		$errors[] = "DATE must be a valid date in format 'mm/dd/yyyy' -- plugin may have failed in conversion";
 	// validate WEIGHT
 	if (preg_match('/[^0-9]/', $line[22]))
 		$errors[] = "WEIGHT must contain numeric characters only";
@@ -218,14 +218,28 @@ function sendExport() {
 		
 		$instanceSum = 0;
 		foreach ($record['repeat_instances'][$eid]['sessionscoaching_log'] as $i => $instance) {
+			// only add data that's within last 6 months!
+			$sess_date = $instance["sess_actual_date"];
+			if (empty($sess_date))
+				$sess_date = $instance["sess_scheduled_date"];
+			if (empty($sess_date) or (strtotime($sess_date) < strtotime("-6 months")) or (strtotime($sess_date) > strtotime("now"))) {
+				continue;
+			}
+			
 			$instanceSum++;
 			$line_copy = $line;
 			$line_copy[18] = $instance['sess_mode'];
 			$line_copy[19] = $instance['sess_id'];
+			if ($instance["sess_month"] >= 7) {
+				$line_copy[19] = 99;
+				$line_copy[20] = "CM";
+			}
+			if ($instance["sess_month"] >= 7)
+				$line_copy[20] = "OM";
 			preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
 			preg_match_all("/\(([A-Z]|[A-Z][A-Z])\)/", $matches[2][$instance['sess_type'] - 1], $matches);
 			$line_copy[20] = $matches[1][0];
-			$line_copy[21] = $instance['sess_date'] == null ? null : date("m/d/Y", strtotime($instance['sess_date']));
+			$line_copy[21] = $sess_date == null ? null : date("m/d/Y", strtotime($sess_date));
 			$line_copy[22] = $instance['sess_weight'];
 			$line_copy[23] = $instance['sess_pa'];
 			
@@ -268,7 +282,7 @@ function sendExport() {
 // $labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
 // preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
 // echo("<pre>");
-// print_r($records);
+// print_r($records[1]);
 // echo("</pre>");
 
 // // test getEmployeeID
