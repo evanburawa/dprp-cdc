@@ -176,4 +176,8 @@ function writeResultsTable(participants) {
 
 $(function() {
 	$("#results").hide();
+	$("#notes").hide();
+	// $("head").append($("<link rel='stylesheet' href='style.css' type='text/css' media='screen' />"));
+	$("head").append("<link rel=\"stylesheet\" href=\"css/import.css\">");
+	$("body > nav").hide();
 });
