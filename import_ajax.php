@@ -235,7 +235,7 @@ while (!$done) {
 					$sess_scheduled_date = empty($matches) ? NULL : trim($matches[0]);
 					
 					// get weight from table 1
-					$sess_weight = (int) $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
+					$sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
 					
 					// must be retrieved from table 2
 					$sess_pa = NULL;

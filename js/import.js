@@ -107,34 +107,8 @@ function writeResultsTable(participants) {
 							<th>Weight</th>
 							<th>Physical Activity</th>
 						</tr>`;
-			// afterTable = `
-				// <div class="col">
-				// <h6>After Import:</h6>
-				// <table class="after">
-					// <tbody>
-						// <tr>
-							// <th>Session ID</th>
-							// <th>Type</th>
-							// <th>Delivery Mode</th>
-							// <th>Scheduled Date</th>
-							// <th>Actual Date</th>
-							// <th>Month in Program</th>
-							// <th>Weight</th>
-							// <th>Physical Activity</th>
-						// </tr>`;
 			for (i=1; i<=28; i++) {
 				if (participant.before.hasOwnProperty(i)) {
-					// beforeTable += `
-						// <tr>
-							// <td>${participant.before[i]["sess_id"]}</td>
-							// <td>${participant.before[i]["sess_type"]}</td>
-							// <td>${participant.before[i]["sess_mode"]}</td>
-							// <td>${participant.before[i]["sess_scheduled_date"]}</td>
-							// <td>${participant.before[i]["sess_actual_date"]}</td>
-							// <td>${participant.before[i]["sess_month"]}</td>
-							// <td>${participant.before[i]["sess_weight"]}</td>
-							// <td>${participant.before[i]["sess_pa"]}</td>
-						// </tr>`;
 					
 					// select style for each cell
 					let styles = [];
@@ -191,10 +165,6 @@ function writeResultsTable(participants) {
 					</tbody>
 				</table>
 				</div>`;
-			// afterTable += `
-					// </tbody>
-				// </table>
-				// </div>`;
 		}
 		results += beforeAfterTable + `
 				</div>
