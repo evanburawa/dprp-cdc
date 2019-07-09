@@ -109,7 +109,7 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	// add empty row, then header, then table 2 data to sheetMatrix
 	$sheetMatrix[] = [];
 	
-	$header = $workbook->getSheet(1)->rangeToArray("A1:AN1", NULL, TRUE, TRUE, TRUE)[1];
+	$header = $workbook->getSheet(0)->rangeToArray("A1:AN1", NULL, TRUE, TRUE, TRUE)[1];
 	$temp_header_array = [];
 	foreach ($header as $col => $value) {
 		if (array_search($col, [2, "U", "V", "W", "AJ", "AK", "AL", "AM", "AN"])) {
