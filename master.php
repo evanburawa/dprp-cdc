@@ -180,10 +180,8 @@ function appendStatRows(&$sheetMatrix) {
 				$sum_formula .= $j == count($sheetMatrix) ? "$last_value1), 0)" : "$last_value1, ";
 			}
 		}
-		$stat_sum[] = NULL;
-		$stat_ave[] = NULL;
-		// $stat_sum[] = $sum_formula;
-		// $stat_ave[] = $average_formula;
+		$stat_sum[] = $sum_formula;
+		$stat_ave[] = $average_formula;
 		
 		if ($i == 1 or $i == 17) {
 			$stat_weekly[] = 0;
@@ -251,25 +249,17 @@ if ($_GET['action'] == 'export') {
 			$participant[] = $instance["sess_weight"];
 			if ($i == 16) {
 				// add WT LOSS CORE, % CHANGE CORE, and Number sessions attended formulas
-				$participant[] = NULL;
-				$participant[] = NULL;
-				$participant[] = NULL;
-				// $participant[] = "=E$row - LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row)";
-				// $participant[] = "=ROUND(U$row / E$row, 3) * 100 & \"%\"";
-				// $participant[] = "=COUNTA(E$row:T$row)";
+				$participant[] = "=E$row - LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row)";
+				$participant[] = "=ROUND(U$row / E$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA(E$row:T$row)";
 			}
 			if ($i == 28) {
 				// add final 5 formula cells
-				$participant[] = NULL;
-				$participant[] = NULL;
-				$participant[] = NULL;
-				$participant[] = NULL;
-				$participant[] = NULL;
-				// $participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
-				// $participant[] = "=U$row+AJ$row";
-				// $participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
-				// $participant[] = "=COUNTA(X$row:AI$row)";
-				// $participant[] = "=W$row+AM$row";
+				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
+				$participant[] = "=U$row+AJ$row";
+				$participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA(X$row:AI$row)";
+				$participant[] = "=W$row+AM$row";
 			}
 		}
 		
@@ -317,25 +307,17 @@ if ($_GET['action'] == 'export') {
 			$participant[] = $instance["sess_weight"];
 			if ($i == 16) {
 				// add WT LOSS CORE, % CHANGE CORE, and Number sessions attended formulas
-				$participant[] = NULL;
-				$participant[] = NULL;
-				$participant[] = NULL;
-				// $participant[] = "=E$row - LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row)";
-				// $participant[] = "=ROUND(U$row / E$row, 3) * 100 & \"%\"";
-				// $participant[] = "=COUNTA(E$row:T$row)";
+				$participant[] = "=E$row - LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row)";
+				$participant[] = "=ROUND(U$row / E$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA(E$row:T$row)";
 			}
 			if ($i == 28) {
 				// add final 5 formula cells
-				$participant[] = NULL;
-				$participant[] = NULL;
-				$participant[] = NULL;
-				$participant[] = NULL;
-				$participant[] = NULL;
-				// $participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
-				// $participant[] = "=U$row+AJ$row";
-				// $participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
-				// $participant[] = "=COUNTA(X$row:AI$row)";
-				// $participant[] = "=W$row+AM$row";
+				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
+				$participant[] = "=U$row+AJ$row";
+				$participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA(X$row:AI$row)";
+				$participant[] = "=W$row+AM$row";
 			}
 		}
 		
