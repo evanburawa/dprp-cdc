@@ -311,7 +311,7 @@ while (!$done) {
 		// save data
 		// file_put_contents("C:/vumc/log.txt", "sess_scheduled_date:" . $sessions[1]["sess_scheduled_date"] . "\n", FILE_APPEND);
 		$result = \REDCap::saveData(PROJECT_ID, 'array', $records, "overwrite");
-		\Records::resetRecordCountAndListCache(PROJECT_ID);
+		// \Records::resetRecordCountAndListCache(PROJECT_ID);
 		if (!empty($result["errors"])) {
 			$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
 			REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
