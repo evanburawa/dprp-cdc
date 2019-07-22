@@ -15,7 +15,7 @@ function numberToExcelColumn($n) {
 }
 
 // file_put_contents("C:/vumc/log.txt", "log start\n");
-REDCap::("DPRP", "Generating DPP Master File", null, $rid, $eid, PROJECT_ID);
+\REDCap::logEvent("DPRP", "Generating DPP Master File", null, $rid, $eid, PROJECT_ID);
 function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	// REDCap::logEvent("DPRP", "In appendTableTwo", null, $rid, $eid, PROJECT_ID);
 	global $records;
@@ -230,6 +230,11 @@ if ($_GET['action'] == 'export') {
 	$dppData = [];
 	$dppData["Combined"] = [];
 	
+	if (empty($records)) {
+		$dppData["Combined"][] = ["[no records in project]"];
+		goto writeWorkbook;
+	}
+	
 	// iterate over records, adding all participants to "Combined" sheet
 	$row = 2;
 	// REDCap::logEvent("DPRP", "Iterating over records", null, $rid, $eid, PROJECT_ID);
@@ -327,6 +332,7 @@ if ($_GET['action'] == 'export') {
 		$dppData[$targetSheetName][] = $participant;
 	}
 	
+	writeWorkbook:
 	// write all sheet data to workbook
 	$i = 0;
 	foreach ($dppData as $name => $sheetData) {
