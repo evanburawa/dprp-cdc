@@ -1,13 +1,6 @@
 <?php
 require_once "../../redcap_connect.php";
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
-
-// echo "<pre>";
-// print_r(\Records::getRecordCount(35));
-// echo "\n";
-// print_r(\Records::getRecordListAllDags(35, true));
-// echo "\n";
-// echo "</pre>";
 ?>
 <div id="container">
 	<div id="notes" class="card p5" style="width: 50rem;">
