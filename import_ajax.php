@@ -313,13 +313,7 @@ while (!$done) {
 		$result = \REDCap::saveData(PROJECT_ID, 'array', $records, 'overwrite');
 		if (!empty($result["errors"])) {
 			$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
-			if (!file_exists("saveDataErrors.txt")) {
-				// file_put_contents("saveDataErrors.txt", date("Y-m-d H:m:s --") . print_r($result["errors"], true) . "\n");
-				REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
-			} else {
-				// file_put_contents("saveDataErrors.txt", date("Y-m-d H:m:s --") . print_r($result["errors"], true) . "\n", FILE_APPEND);
-				REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
-			}
+			REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
 			$row++;
 			$participants[] = $participant;
 			continue;

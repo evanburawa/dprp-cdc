@@ -15,9 +15,9 @@ function numberToExcelColumn($n) {
 }
 
 // file_put_contents("C:/vumc/log.txt", "log start\n");
-REDCap::logEvent("DPRP", "Generating DPP Master File", null, $rid, $eid, PROJECT_ID);
+REDCap::("DPRP", "Generating DPP Master File", null, $rid, $eid, PROJECT_ID);
 function appendTableTwo(&$sheetMatrix, $sheetNumber) {
-	REDCap::logEvent("DPRP", "In appendTableTwo", null, $rid, $eid, PROJECT_ID);
+	// REDCap::logEvent("DPRP", "In appendTableTwo", null, $rid, $eid, PROJECT_ID);
 	global $records;
 	global $project;
 	global $workbook;
@@ -135,7 +135,7 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 }
 
 function appendStatRows(&$sheetMatrix) {
-	REDCap::logEvent("DPRP", "In appendStatRows()", null, $rid, $eid, PROJECT_ID);
+	// REDCap::logEvent("DPRP", "In appendStatRows()", null, $rid, $eid, PROJECT_ID);
 	// create and append rows of statistics that should show below participant data rows
 	$stat_sum = ["Group weight—sum", NULL, NULL, NULL];
 	$stat_ave = ["Group weight—average", NULL, NULL, NULL];
@@ -232,7 +232,7 @@ if ($_GET['action'] == 'export') {
 	
 	// iterate over records, adding all participants to "Combined" sheet
 	$row = 2;
-	REDCap::logEvent("DPRP", "Iterating over records", null, $rid, $eid, PROJECT_ID);
+	// REDCap::logEvent("DPRP", "Iterating over records", null, $rid, $eid, PROJECT_ID);
 	foreach ($records as $rid => $record) {
 		$participant = [];
 		$eid = array_keys($record)[0];
@@ -330,7 +330,7 @@ if ($_GET['action'] == 'export') {
 	// write all sheet data to workbook
 	$i = 0;
 	foreach ($dppData as $name => $sheetData) {
-		REDCap::logEvent("DPRP", "Writing data to sheet " . ($i+1), null, $rid, $eid, PROJECT_ID);
+		// REDCap::logEvent("DPRP", "Writing data to sheet " . ($i+1), null, $rid, $eid, PROJECT_ID);
 		// add stat rows to sheet, below participant data
 		appendStatRows($sheetData);
 		appendTableTwo($sheetData, $i);
@@ -350,7 +350,7 @@ if ($_GET['action'] == 'export') {
 	$workbook->setActiveSheetIndex(0);
 	
 	// Redirect output to a client’s web browser (Xlsx)
-	REDCap::logEvent("DPRP", "Sending master file to user's browser", null, $rid, $eid, PROJECT_ID);
+	// REDCap::logEvent("DPRP", "Sending master file to user's browser", null, $rid, $eid, PROJECT_ID);
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	header('Content-Disposition: attachment;filename="DPP Participant Sessions.xlsx"');
 	header('Cache-Control: max-age=0');
