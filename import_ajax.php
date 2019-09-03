@@ -159,7 +159,7 @@ try {
 // $writer = IOFactory::createWriter($workbook, 'Xlsx');
 // $writer->save("workbook check.xlsx");
 
-// file_put_contents("C:/vumc/log.txt", "temp log:\n");
+file_put_contents("C:/vumc/log.txt", "temp log:\n");
 
 // iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
@@ -202,6 +202,12 @@ while (!$done) {
 			
 			for ($i = 1; $i <= 28; $i++) {
 				$offset = ($i >= 17) ? 7 : 4;
+				
+				$sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
+				if (empty($sessions[$i]) and !empty($sess_weight)) {
+					$sessions[$i] = [];
+				}
+				
 				if (isset($sessions[$i])) {
 					// record info so client can build "Before Import:" table
 					$participant["before"][$i] = [
@@ -235,7 +241,7 @@ while (!$done) {
 					$sess_scheduled_date = empty($matches) ? NULL : trim($matches[0]);
 					
 					// get weight from table 1
-					$sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
+					// $sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
 					
 					// must be retrieved from table 2
 					$sess_pa = NULL;
