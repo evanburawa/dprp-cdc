@@ -196,6 +196,8 @@ while (!$done) {
 			$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
 			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 			
+			file_put_contents("C:/vumc/log.txt", print_r($sessions[1], true));
+			
 			$participant["recordID"] = $rid;
 			$participant["before"] = [];
 			$participant["after"] = [];
@@ -300,6 +302,7 @@ while (!$done) {
 					$sessions[$i]["sess_actual_date"] = $sess_actual_date;
 					$sessions[$i]["sess_weight"] = $sess_weight;
 					$sessions[$i]["sess_pa"] = $sess_pa;
+					$sessions[$i]["sessionscoaching_log_complete"] = 2;
 					
 					unset($sess_id, $sess_type, $sess_mode, $sess_month, $sess_scheduled_date, $sess_actual_date, $sess_weight, $sess_pa, $sess_date);
 				}
