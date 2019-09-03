@@ -27,7 +27,13 @@ echo "
 		<label class='custom-control-label' for='reportNoncompliantRadio'>Non-compliant</label>
 	</div>
 	<h5>Select report date range</h5>
-	
+	<label for='firstDate'>Filter out participant sessions before:</label>
+	<input type='text' id='firstDate' class='datepicker'>
+	<br/>
+	<label for='lastDate'>Filter out participant sessions after:</label>
+	<input type='text' id='lastDate' class='datepicker'>
+	<br/>
+	<button id='genReportButton' class='btn btn-primary' style='margin: 32px 80px'>Generate Report</button>
 ";
 
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/footer.php';

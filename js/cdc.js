@@ -1,4 +1,13 @@
 // on document ready
-$(function() {
-	
+$(document).ready(
+	function() {
+		$('.datepicker').datepicker({
+			changeMonth: true,
+			changeYear: true
+		});
+	}
+);
+
+$('body').on('click', '#genReportButton', function() {
+	// do ajax here
 });
