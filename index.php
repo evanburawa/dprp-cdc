@@ -6,6 +6,11 @@ foreach ($_GET as $key => $val) {
 	$_GET[strtolower($key)] = $val;
 }
 
+$firstdate = $_GET['firstdate'];
+$lastdate = $_GET['lastdate'];
+
+file_put_contents("C:/vumc/log.txt", print_r($_GET, true));
+
 if (isset($_GET['orgcode'])) {
 	preg_match("/\d+/", $_GET['orgcode'], $orgcode);
 	$orgcode = $orgcode[0];
@@ -222,8 +227,9 @@ function sendExport() {
 			$sess_date = $instance["sess_actual_date"];
 			if (empty($sess_date))
 				$sess_date = $instance["sess_scheduled_date"];
-			if (empty($sess_date) or (strtotime($sess_date) < strtotime("-6 months")) or (strtotime($sess_date) > strtotime("now"))) {
-				continue;
+			
+			if (empty($sess_date) or strtotime($firstdate) > strtotime($sess_date) or strtotime($lastdate) < strtotime($sess_date)) {
+				$continue;
 			}
 			
 			$instanceSum++;
