@@ -10,11 +10,11 @@ echo "
 	<h2>Generate CDC Report</h2>
 	<h5>Select participant class</h5>
 	<div class='custom-control custom-radio'>
-		<input type='radio' id='reportInPersonRadio' name='customRadio' class='custom-control-input'>
+		<input type='radio' id='reportInPersonRadio' name='customRadio' class='custom-control-input' value='792184'>
 		<label class='custom-control-label' for='reportInPersonRadio'>In-Person</label>
 	</div>
 	<div class='custom-control custom-radio'>
-		<input type='radio' id='reportDigitalRadio' name='customRadio' class='custom-control-input'>
+		<input type='radio' id='reportDigitalRadio' name='customRadio' class='custom-control-input' value='8540168'>
 		<label class='custom-control-label' for='reportDigitalRadio'>Digital</label>
 	</div>
 	<h5>Select participant type</h5>

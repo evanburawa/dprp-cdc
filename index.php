@@ -6,19 +6,19 @@ foreach ($_GET as $key => $val) {
 	$_GET[strtolower($key)] = $val;
 }
 
-$firstdate = $_GET['firstdate'];
-$lastdate = $_GET['lastdate'];
+$firstdate = strtotime($_GET['firstdate']);
+if ((int) $firstdate !== $firstdate)
+	$firstdate = null;
+$lastdate = strtotime($_GET['lastdate']);
+if ((int) $lastdate !== $lastdate)
+	$lastdate = null;
 
-file_put_contents("C:/vumc/log.txt", print_r($_GET, true));
+file_put_contents("C:/log.txt", print_r($_GET, true) . "\n");
+file_put_contents("C:/log.txt", "firstdate: " . gettype($firstdate) . "\n", FILE_APPEND);
 
 if (isset($_GET['orgcode'])) {
 	preg_match("/\d+/", $_GET['orgcode'], $orgcode);
 	$orgcode = $orgcode[0];
-} elseif (!isset($_GET['noncompliant'])) {
-	exit("Please supply an orgcode URL parameter and/or 'noncompliant' URL parameter
-	<br />e.g.:
-	<br />https://redcap.vanderbilt.edu/plugins/dprp-cdc/index.php<b>?orgcode=8540168</b>
-	<br />https://redcap.vanderbilt.edu/plugins/dprp-cdc/index.php<b>?noncompliant</b>");
 }
 
 $filename = "DPRP CDC Export";
@@ -29,6 +29,8 @@ if (strval($orgcode) == "792184")
 if (isset($_GET['noncompliant']))
 	$filename .= " Non-Compliant";
 $filename .= ".csv";
+
+file_put_contents("C:/log.txt", "\$filename: $filename\n", FILE_APPEND);
 
 // detect which if any values are not compliant with DPRP standards
 // if non-compliance is detected, error messages are appended to $line
@@ -131,6 +133,8 @@ function validateLine(& $line) {
 function sendExport() {
 	global $orgcode;
 	global $filename;
+	global $firstdate;
+	global $lastdate;
 	$headers = [
 		"ORGCODE",	//0
 		"PARTICIP",
@@ -176,6 +180,9 @@ function sendExport() {
 		}
 	}
 	
+	file_put_contents("C:/log.txt", print_r($sql, true));
+	// file_put_contents("C:/log.txt", print_r($recordCreationDates, true));
+	
 	// regex for getting labels for project fields (like state, sess_type, etc)
 	$labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
 	
@@ -183,7 +190,11 @@ function sendExport() {
 		$eid = array_keys($record)[0];
 		
 		// skip if orgcode set and not match
-		if (isset($orgcode) and $orgcode != $record[$eid]['orgcode']) continue;
+		if (isset($orgcode) and $orgcode != $record[$eid]['orgcode']) {
+			file_put_contents("C:/log.txt", "filtering $rid - $i - orgcode mismatch - $orgcode - " . $record[$eid]['orgcode'] . "\n", FILE_APPEND);
+			continue;
+		}
+		
 		// skip if have diabietes
 		if ($record[$eid]['have_diabetes'] == 1 or $record[$eid]['enter_roster'] == 0) continue;
 		
@@ -225,11 +236,14 @@ function sendExport() {
 		foreach ($record['repeat_instances'][$eid]['sessionscoaching_log'] as $i => $instance) {
 			// only add data that's within last 6 months!
 			$sess_date = $instance["sess_actual_date"];
-			if (empty($sess_date))
+			if (empty($sess_date)) {
 				$sess_date = $instance["sess_scheduled_date"];
+			}
 			
-			if (empty($sess_date) or strtotime($firstdate) > strtotime($sess_date) or strtotime($lastdate) < strtotime($sess_date)) {
-				$continue;
+			$thisdate = strtotime($sess_date);
+			if (empty($sess_date) or (!empty($firstdate) and $firstdate > $thisdate) or (!empty($lastdate) and $lastdate < $thisdate)) {
+				file_put_contents("C:/log.txt", "skipping $rid - $i : $firstdate $thisdate $lastdate\n", FILE_APPEND);
+				continue;
 			}
 			
 			$instanceSum++;
@@ -258,6 +272,7 @@ function sendExport() {
 			
 			// no errors and no non-compliant param
 			if (!isset($line_copy[24]) and !isset($_GET['noncompliant'])) {
+				file_put_contents("C:/log.txt", "writing line: $rid - $i\n", FILE_APPEND);
 				$data[] = $line_copy;
 			}
 		}

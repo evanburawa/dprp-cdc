@@ -12,18 +12,22 @@ $('body').on('click', '#genReportButton', function() {
 	let pid = getUrlParameter('pid');
 	let firstdate = $("#firstDate").val();
 	let lastdate = $("#lastDate").val();
-	let url = 'index.php?pid={pid}&orgcode=8540168';
+	let orgcode = $('input[name=customRadio]:checked').val();
+	let noncompliant = $("#reportNoncompliantRadio").prop('checked');
+	
+	// determine url
+	let url = `index.php?pid=${pid}`;
+	if (orgcode)
+		url += `&orgcode=${orgcode}`;
 	if (firstdate)
-		url += 'firstdate={firstdate}';
+		url += `&firstdate=${firstdate}`;
 	if (lastdate)
-		url += 'lastdate={lastdate}';
+		url += `&lastdate=${lastdate}`;
+	if (noncompliant)
+		url += `&noncompliant`;
+	
 	console.log('url', url);
-	// $.get({
-		// url: 'index.php?pid={pid}&orgcode=8540168&firstdate={firstdate}&lastdate={lastdate}',
-		// success: function(response) {
-			// console.log(response);
-		// }
-	// });
+	window.open(url);
 });
 
 // thanks: https://stackoverflow.com/questions/19491336/get-url-parameter-jquery-or-how-to-get-query-string-values-in-js
