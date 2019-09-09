@@ -14,6 +14,26 @@ function numberToExcelColumn($n) {
     return $r;
 }
 
+$columns = [
+	"org" => "D",
+	"s1" => "E",
+	"s2" => "F",
+	"s16" => "T",
+	"s17" => "X",
+	"s18" => "Y",
+	"s28" => "AI",
+	"stat_1a" => "U",
+	"stat_1b" => "V",
+	"stat_1c" => "W",
+	"stat_2a" => "AJ",
+	"stat_2b" => "AK",
+	"stat_2c" => "AL",
+	"stat_2d" => "AM",
+	"last" => "AN",
+	"offset1" => 3,
+	"offset2" => 6
+];
+
 // file_put_contents("C:/vumc/log.txt", "log start\n");
 \REDCap::logEvent("DPRP", "Generating DPP Master File", null, $rid, $eid, PROJECT_ID);
 function appendTableTwo(&$sheetMatrix, $sheetNumber) {
@@ -22,6 +42,7 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	global $project;
 	global $workbook;
 	global $labelPattern;
+	global $columns;
 	
 	$participants = [];
 	foreach ($records as $rid => $record) {
@@ -43,7 +64,7 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 		$participant = [];
 		$participant[] = $record[$eid]["last_name"];
 		$participant[] = $record[$eid]["first_name"];
-		$participant[] = $record[$eid]["participant_employee_id"];
+		// $participant[] = $record[$eid]["participant_employee_id"];
 		preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
 		$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
 		
@@ -54,9 +75,9 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 			if (!isset($sessions[$i]))
 				continue;
 			if ($i > 16) {
-				$col = numberToExcelColumn(6 + $i);
+				$col = numberToExcelColumn($columns['offset2'] + $i);
 			} else {
-				$col = numberToExcelColumn(3 + $i);
+				$col = numberToExcelColumn($columns['offset1'] + $i);
 			}
 			
 			if ($i == 17) {
@@ -110,7 +131,7 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	// add empty row, then header, then table 2 data to sheetMatrix
 	$sheetMatrix[] = [];
 	
-	$header = $workbook->getSheet(0)->rangeToArray("A1:AN1", NULL, TRUE, TRUE, TRUE)[1];
+	$header = $workbook->getSheet(0)->rangeToArray("A1:{$columns['last']}1", NULL, TRUE, TRUE, TRUE)[1];
 	$temp_header_array = [];
 	foreach ($header as $col => $value) {
 		if (array_search($col, [2, "U", "V", "W", "AJ", "AK", "AL", "AM", "AN"])) {
@@ -137,6 +158,8 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 function appendStatRows(&$sheetMatrix) {
 	// REDCap::logEvent("DPRP", "In appendStatRows()", null, $rid, $eid, PROJECT_ID);
 	// create and append rows of statistics that should show below participant data rows
+	
+	global $columns;
 	$stat_sum = ["Group weight—sum", NULL, NULL, NULL];
 	$stat_ave = ["Group weight—average", NULL, NULL, NULL];
 	$stat_weekly = ["Weekly weight loss—group", NULL, NULL, NULL];
@@ -216,6 +239,8 @@ function appendStatRows(&$sheetMatrix) {
 }
 
 if ($_GET['action'] == 'export') {
+	global $columns;
+	
 	// iterate through records
 	$records = \REDCap::getData(PROJECT_ID);
 	
@@ -257,17 +282,17 @@ if ($_GET['action'] == 'export') {
 			$participant[] = $instance["sess_weight"];
 			if ($i == 16) {
 				// add WT LOSS CORE, % CHANGE CORE, and Number sessions attended formulas
-				$participant[] = "=E$row - LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row)";
-				$participant[] = "=ROUND(U$row / E$row, 3) * 100 & \"%\"";
-				$participant[] = "=COUNTA(E$row:T$row)";
+				$participant[] = "={$columns['s1']}$row - LOOKUP(2,1/(ISNUMBER({$columns['s1']}$row:{$columns['s16']}$row)), {$columns['s1']}$row:{$columns['s16']}$row)";
+				$participant[] = "=ROUND({$columns['stat_1a']}$row / {$columns['s1']}$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA({$columns['s1']}$row:{$columns['s16']}$row)";
 			}
 			if ($i == 28) {
 				// add final 5 formula cells
-				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
-				$participant[] = "=U$row+AJ$row";
-				$participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
-				$participant[] = "=COUNTA(X$row:AI$row)";
-				$participant[] = "=W$row+AM$row";
+				$participant[] = "=LOOKUP(2,1/(ISNUMBER({$columns['s1']}$row:{$columns['s16']}$row)), {$columns['s1']}$row:{$columns['s16']}$row) - LOOKUP(2,1/(ISNUMBER({$columns['s17']}$row:{$columns['s28']}$row)), {$columns['s17']}$row:{$columns['s28']}$row)";
+				$participant[] = "={$columns['stat_1a']}$row+{$columns['stat_2a']}$row";
+				$participant[] = "=ROUND({$columns['stat_2b']}$row / {$columns['s1']}$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA({$columns['s17']}$row:{$columns['s28']}$row)";
+				$participant[] = "={$columns['stat_1c']}$row+{$columns['stat_2d']}$row";
 			}
 		}
 		
@@ -315,17 +340,17 @@ if ($_GET['action'] == 'export') {
 			$participant[] = $instance["sess_weight"];
 			if ($i == 16) {
 				// add WT LOSS CORE, % CHANGE CORE, and Number sessions attended formulas
-				$participant[] = "=E$row - LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row)";
-				$participant[] = "=ROUND(U$row / E$row, 3) * 100 & \"%\"";
-				$participant[] = "=COUNTA(E$row:T$row)";
+				$participant[] = "={$columns['s1']}$row - LOOKUP(2,1/(ISNUMBER({$columns['s1']}$row:{$columns['s16']}$row)), {$columns['s1']}$row:{$columns['s16']}$row)";
+				$participant[] = "=ROUND({$columns['stat_1a']}$row / {$columns['s1']}$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA({$columns['s1']}$row:{$columns['s16']}$row)";
 			}
 			if ($i == 28) {
 				// add final 5 formula cells
-				$participant[] = "=LOOKUP(2,1/(ISNUMBER(E$row:T$row)), E$row:T$row) - LOOKUP(2,1/(ISNUMBER(X$row:AI$row)), X$row:AI$row)";
-				$participant[] = "=U$row+AJ$row";
-				$participant[] = "=ROUND(AK$row / E$row, 3) * 100 & \"%\"";
-				$participant[] = "=COUNTA(X$row:AI$row)";
-				$participant[] = "=W$row+AM$row";
+				$participant[] = "=LOOKUP(2,1/(ISNUMBER({$columns['s1']}$row:{$columns['s16']}$row)), {$columns['s1']}$row:{$columns['s16']}$row) - LOOKUP(2,1/(ISNUMBER({$columns['s17']}$row:{$columns['s28']}$row)), {$columns['s17']}$row:{$columns['s28']}$row)";
+				$participant[] = "={$columns['stat_1a']}$row+{$columns['stat_2a']}$row";
+				$participant[] = "=ROUND({$columns['stat_2b']}$row / {$columns['s1']}$row, 3) * 100 & \"%\"";
+				$participant[] = "=COUNTA({$columns['s17']}$row:{$columns['s28']}$row)";
+				$participant[] = "={$columns['stat_1c']}$row+{$columns['stat_2d']}$row";
 			}
 		}
 		
