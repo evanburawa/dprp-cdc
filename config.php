@@ -11,11 +11,11 @@ if(!defined("ENVIRONMENT")) {
 			define("PROJECT_ID", 93783);	// real project on prod
 		} elseif ($envConf[Victr_Env::ENV_CURRENT] === Victr_Env::ENV_DEV) {
 			define("ENVIRONMENT", "TEST");
-			define("PROJECT_ID", 1376);
+			define("PROJECT_ID", 1469);
 		}
 	} else {
 		define("ENVIRONMENT", "DEV");
-		// define("PROJECT_ID", 46);
-		define("PROJECT_ID", 25);
+		define("PROJECT_ID", 46);
+		// define("PROJECT_ID", 25);
 	}
 }
