@@ -14,28 +14,30 @@ function numberToExcelColumn($n) {
     return $r;
 }
 
+// changing this array should suffice to correct for moved columns in the masterTemplate.xlsx file
 $columns = [
-	"org" => "D",
-	"s1" => "E",
-	"s2" => "F",
-	"s16" => "T",
-	"s17" => "X",
-	"s18" => "Y",
-	"s28" => "AI",
-	"stat_1a" => "U",
-	"stat_1b" => "V",
-	"stat_1c" => "W",
-	"stat_2a" => "AJ",
-	"stat_2b" => "AK",
-	"stat_2c" => "AL",
-	"stat_2d" => "AM",
-	"last" => "AN",
-	"offset1" => 3,
-	"offset2" => 6
+	"org" => "C",
+	"s1" => "D",
+	"s2" => "E",
+	"s16" => "S",
+	"s17" => "W",
+	"stat_1a" => "T",
+	"stat_1b" => "U",
+	"stat_1c" => "V",
+	"s18" => "X",
+	"s28" => "AH",
+	"stat_2a" => "AI",
+	"stat_2b" => "AJ",
+	"stat_2c" => "AK",
+	"stat_2d" => "AL",
+	"last" => "AM",
+	"offset1" => 2,
+	"offset2" => 5,
+	"table2cols" => [2, "U", "V", "T", "AJ", "AK", "AL", "AM", "AI"]
 ];
 
 // file_put_contents("C:/vumc/log.txt", "log start\n");
-\REDCap::logEvent("DPRP", "Generating DPP Master File", null, $rid, $eid, PROJECT_ID);
+\REDCap::logEvent("DPRP", "Generating Coach-Cohort Workbook File", null, $rid, $eid, PROJECT_ID);
 function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	// REDCap::logEvent("DPRP", "In appendTableTwo", null, $rid, $eid, PROJECT_ID);
 	global $records;
@@ -65,6 +67,7 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 		$participant[] = $record[$eid]["last_name"];
 		$participant[] = $record[$eid]["first_name"];
 		// $participant[] = $record[$eid]["participant_employee_id"];
+		// $participant[] = null;
 		preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
 		$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
 		
@@ -134,7 +137,7 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 	$header = $workbook->getSheet(0)->rangeToArray("A1:{$columns['last']}1", NULL, TRUE, TRUE, TRUE)[1];
 	$temp_header_array = [];
 	foreach ($header as $col => $value) {
-		if (array_search($col, [2, "U", "V", "W", "AJ", "AK", "AL", "AM", "AN"])) {
+		if (array_search($col, $columns['table2cols'])) {
 			$temp_header_array[] = NULL;
 		} else {
 			$temp_header_array[] = $value;
@@ -270,7 +273,8 @@ if ($_GET['action'] == 'export') {
 		// add last name, first name, emp id, org code
 		$participant[] = $record[$eid]["last_name"];
 		$participant[] = $record[$eid]["first_name"];
-		$participant[] = $record[$eid]["participant_employee_id"];
+		// $participant[] = $record[$eid]["participant_employee_id"];
+		// $participant[] = null;
 		
 		preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
 		$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
@@ -328,7 +332,8 @@ if ($_GET['action'] == 'export') {
 		// add last name, first name, emp id, org code
 		$participant[] = $record[$eid]["last_name"];
 		$participant[] = $record[$eid]["first_name"];
-		$participant[] = $record[$eid]["participant_employee_id"];
+		// $participant[] = $record[$eid]["participant_employee_id"];
+		// $participant[] = null;
 		
 		preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
 		$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
