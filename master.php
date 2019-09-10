@@ -59,7 +59,7 @@ function appendTableTwo(&$sheetMatrix, $sheetNumber) {
 		
 		$sheetTitle = $workbook->getSheet($sheetNumber)->getTitle();
 		$need_record_for_non_conform_sheet = ($sheetTitle == "MISSING COACH OR COHORT VALUE" and (empty($cohort) or empty($coach)));
-		if ($sheetTitle != $coach . " -- " . $cohort and $sheetTitle != "Combined" and !$need_record_for_non_conform_sheet)
+		if ($sheetTitle != $coach . " -- " . $cohort and $sheetTitle != "Header" and !$need_record_for_non_conform_sheet)
 			continue;
 		unset($coach, $cohort, $sheetTitle, $need_record_for_non_conform_sheet);
 		
@@ -241,6 +241,10 @@ function appendStatRows(&$sheetMatrix) {
 	$sheetMatrix[] = $stat_goal5;
 }
 
+function appendLegend(&$sheetMatrix) {
+	
+}
+
 if ($_GET['action'] == 'export') {
 	global $columns;
 	
@@ -256,14 +260,14 @@ if ($_GET['action'] == 'export') {
 	
 	// this will hold spreadsheets data that we want to write to DPP excel file
 	$dppData = [];
-	$dppData["Combined"] = [];
+	$dppData["Header"] = [];
 	
 	if (empty($records)) {
-		$dppData["Combined"][] = ["[no records in project]"];
+		$dppData["Header"][] = ["[no records in project]"];
 		goto writeWorkbook;
 	}
 	
-	// iterate over records, adding all participants to "Combined" sheet
+	// iterate over records, adding all participants to "Header" sheet
 	$row = 2;
 	// REDCap::logEvent("DPRP", "Iterating over records", null, $rid, $eid, PROJECT_ID);
 	foreach ($records as $rid => $record) {
@@ -300,7 +304,7 @@ if ($_GET['action'] == 'export') {
 			}
 		}
 		
-		$dppData["Combined"][] = $participant;
+		$dppData["Header"][] = $participant;
 		$row++;
 	}
 	
@@ -320,7 +324,7 @@ if ($_GET['action'] == 'export') {
 		// see if coach-cohort sheet is created, if not, create it
 		if (in_array($targetSheetName, array_keys($dppData)) === FALSE) {
 			$dppData[$targetSheetName] = [];
-			$cloneSheet = clone $workbook->getSheetByName("Combined");
+			$cloneSheet = clone $workbook->getSheetByName("Header");
 			$cloneSheet->setTitle($targetSheetName);
 			$workbook->addSheet($cloneSheet);
 		}
@@ -364,7 +368,7 @@ if ($_GET['action'] == 'export') {
 	
 	writeWorkbook:
 	// write all sheet data to workbook
-	$i = 0;
+	$i = 1;
 	foreach ($dppData as $name => $sheetData) {
 		// REDCap::logEvent("DPRP", "Writing data to sheet " . ($i+1), null, $rid, $eid, PROJECT_ID);
 		// add stat rows to sheet, below participant data
