@@ -11,6 +11,28 @@ function numberToExcelColumn($n) {
     return $r;
 }
 
+// changing this array should suffice to correct for moved columns in the masterTemplate.xlsx file
+$columns = [
+	"org" => "C",
+	"s1" => "D",
+	"s2" => "E",
+	"s16" => "S",
+	"s17" => "W",
+	"stat_1a" => "T",
+	"stat_1b" => "U",
+	"stat_1c" => "V",
+	"s18" => "X",
+	"s28" => "AH",
+	"stat_2a" => "AI",
+	"stat_2b" => "AJ",
+	"stat_2c" => "AK",
+	"stat_2d" => "AL",
+	"last" => "AM",
+	"offset1" => 2,
+	"offset2" => 5,
+	"table2cols" => [2, "U", "V", "T", "AJ", "AK", "AL", "AM", "AI"]
+];
+
 function appendStatRows(&$sheetMatrix) {
 	// REDCap::logEvent("DPRP", "In appendStatRows()", null, $rid, $eid, PROJECT_ID);
 	// create and append rows of statistics that should show below participant data rows
@@ -25,17 +47,17 @@ function appendStatRows(&$sheetMatrix) {
 	$weeklyRow = $lastRow + 4;
 	$programRow = $lastRow + 5;
 	
-	$stat_program = ["Program weight loss—group", NULL, NULL, "=SUM(F$weeklyRow:AI$weeklyRow)"];
-	$stat_percent = ["Percent loss", NULL, NULL, "=ROUND((D$programRow/E$sumRow), 3) * 100 & \"%\""];
-	$stat_goal7 = ["Program weight loss goal—7%", NULL, NULL, "=ROUND(0.07*SUM(E2:E$lastRow), 0)"];
-	$stat_goal5 = ["Program weight loss goal—5%", NULL, NULL, "=ROUND(0.05*SUM(E2:E$lastRow), 0)"];
+	$stat_program = ["Program weight loss—group", NULL, NULL, "=SUM({$columns['s2']}$weeklyRow:{$columns['s28']}$weeklyRow)"];
+	$stat_percent = ["Percent loss", NULL, NULL, "=ROUND(({$columns['org']}$programRow/{$columns['s1']}$sumRow), 3) * 100 & \"%\""];
+	$stat_goal7 = ["Program weight loss goal—7%", NULL, NULL, "=ROUND(0.07*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
+	$stat_goal5 = ["Program weight loss goal—5%", NULL, NULL, "=ROUND(0.05*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
 	
 	// write formulas for stat_sum, stat_ave, stat_weekly -- fill in arrays with formula values
 	for ($i = 1; $i <= 28; $i++) {
 		if ($i > 16) {
-			$col = numberToExcelColumn(6 + $i);
+			$col = numberToExcelColumn($columns["offset2"] + $i);
 		} else {
-			$col = numberToExcelColumn(3 + $i);
+			$col = numberToExcelColumn($columns['offset1'] + $i);
 		}
 		
 		// // need more complicated summing / averaging formulae
@@ -46,12 +68,12 @@ function appendStatRows(&$sheetMatrix) {
 		$sum_formula = "=ROUND(SUM(";
 		for ($j = 1; $j <= count($sheetMatrix); $j++) {
 			$j2 = $j + 1;
-			$range1 = "E$j2:$col{$j2}";
+			$range1 = "{$columns['s1']}$j2:$col{$j2}";
 			$last_value1 = "LOOKUP(2, 1/(ISNUMBER($range1)), $range1)";
 			if ($i > 16) {
-				$range1 = "E$j2:T{$j2}";
+				$range1 = "{$columns['s1']}$j2:{$columns['s16']}{$j2}";
 				$last_value1 = "LOOKUP(2, 1/(ISNUMBER($range1)), $range1)";
-				$range2 = "X$j2:$col{$j2}";
+				$range2 = "{$columns['s17']}$j2:$col{$j2}";
 				$last_value2 = "LOOKUP(2, 1/(ISNUMBER($range2)), $range2)";
 				$formula = "IF(ISERROR($last_value2), $last_value1, $last_value2)";
 				$average_formula .= $j == count($sheetMatrix) ? "$formula), 0)" : "$formula, ";
@@ -266,28 +288,6 @@ $records = \REDCap::getData($pid, 'array', $targetRecordIDs);
 // make DPP file
 $workbook = IOFactory::load("masterTemplate.xlsx");
 
-// changing this array should suffice to correct for moved columns in the masterTemplate.xlsx file
-$columns = [
-	"org" => "C",
-	"s1" => "D",
-	"s2" => "E",
-	"s16" => "S",
-	"s17" => "W",
-	"stat_1a" => "T",
-	"stat_1b" => "U",
-	"stat_1c" => "V",
-	"s18" => "X",
-	"s28" => "AH",
-	"stat_2a" => "AI",
-	"stat_2b" => "AJ",
-	"stat_2c" => "AK",
-	"stat_2d" => "AL",
-	"last" => "AM",
-	"offset1" => 2,
-	"offset2" => 5,
-	"table2cols" => [2, "U", "V", "T", "AJ", "AK", "AL", "AM", "AI"]
-];
-
 // append weight table (table 1) to "Header" sheet
 $row = 2;
 $sheetValues = [];
@@ -345,6 +345,7 @@ $workbook->getActiveSheet()
 		NULL,
 		"A2"
 	);
+$workbook->getActiveSheet()->setTitle("DPRP Sessions");
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

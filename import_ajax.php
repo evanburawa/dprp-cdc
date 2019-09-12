@@ -136,7 +136,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 try {
 	$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
 	// $reader->setReadDataOnly(true);
-	$reader->setLoadSheetsOnly("Combined");
+	$reader->setLoadSheetsOnly("DPRP Sessions");
 	$workbook = $reader->load($_FILES["workbook"]["tmp_name"]);
 	unlink($_FILES["workbook"]["tmp_name"]);
 } catch(\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
@@ -149,8 +149,8 @@ try {
     exit(json_encode([
 		"error" => true,
 		"notes" => [
-			"There was an issue loading the workbook. Make sure it is an .xlsx file with a worksheet named 'Combined'.",
-			"If you believe your file is a valid .xlsx workbook, please contact your REDCap administrator."
+			"There was an issue loading the workbook. Make sure it is an .xlsx file with a worksheet named 'DPRP Sessions'.",
+			"If you believe your file is a valid DPRP Workbook file, please contact your REDCap administrator."
 		]
 	]));
 }
@@ -180,14 +180,13 @@ while (!$done) {
 		
 		$participant = [
 			"firstName" => $firstName,
-			"lastName" => $lastName,
-			"empID" => $empID
+			"lastName" => $lastName
 		];
 		
-		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = \"$firstName\" AND [last_name] = \"$lastName\" AND [participant_employee_id] = \"$empID\"");
+		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = \"$firstName\" AND [last_name] = \"$lastName\"");
 		
 		if (empty($records) and (!is_int($row2) and !is_string($row2))) {
-			$participant["error"] = "The DPRP plugin found no record with first name: $firstName, last name: $lastName, and employee ID: $empID in the second table.";
+			$participant["error"] = "The DPRP plugin found no record with first name: $firstName, last name: $lastName in the second table.";
 		} elseif (is_string($row2)) {
 			$participant["error"] = $row2;
 		} else {
@@ -203,7 +202,7 @@ while (!$done) {
 			$participant["after"] = [];
 			
 			for ($i = 1; $i <= 28; $i++) {
-				$offset = ($i >= 17) ? 7 : 4;
+				$offset = ($i >= 17) ? 6 : 3;
 				
 				$sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
 				if (empty($sessions[$i]) and !empty($sess_weight)) {
@@ -215,6 +214,7 @@ while (!$done) {
 					$participant["before"][$i] = [
 						"sess_id" => $sessions[$i]["sess_id"],
 						"sess_type" => $sessions[$i]["sess_type"],
+						"sess_attended" => $sessions[$i]["sess_attended"],
 						"sess_mode" => $sessions[$i]["sess_mode"],
 						"sess_month" => $sessions[$i]["sess_month"],
 						"sess_scheduled_date" => $sessions[$i]["sess_scheduled_date"],
@@ -248,10 +248,12 @@ while (!$done) {
 					// must be retrieved from table 2
 					$sess_pa = NULL;
 					
+					$sess_attended = NULL;
+					
 					$table_2_values = explode(",", $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row2)->getValue());
 					$table_2_cell_color = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row2)->getStyle()->getFill()->getStartColor()->getRGB();
 					foreach ($table_2_values as $value) {
-						$value = trim($value);
+						$value = strtoupper(trim($value));
 						if (is_numeric($value))
 							$sess_pa = (int) $value;
 						preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $value, $matches);
@@ -264,6 +266,8 @@ while (!$done) {
 							$sess_mode = 2;
 						if ($value === "D")
 							$sess_mode = 3;
+						if ($value === "A")
+							$sess_attended = 1;
 						if ($value == "M" or ($table_2_cell_color != "000000" and $table_2_cell_color != "FFFFFF")) // OR table 2 cell HIGHLIGHTED (TODO)
 							$sess_type = 3; // 3 is "MU" or make-up session
 					}
@@ -296,6 +300,7 @@ while (!$done) {
 					// apply determined session values
 					$sessions[$i]["sess_id"] = $sess_id;
 					$sessions[$i]["sess_type"] = $sess_type;
+					$sessions[$i]["sess_attended"] = $sess_attended;
 					$sessions[$i]["sess_mode"] = $sess_mode;
 					$sessions[$i]["sess_month"] = $sess_month;
 					$sessions[$i]["sess_scheduled_date"] = $sess_scheduled_date;
@@ -330,7 +335,7 @@ while (!$done) {
 		}
 		
 		for ($i = 1; $i <= 28; $i++) {
-			$offset = ($i >= 17) ? 7 : 4;
+			$offset = ($i >= 17) ? 6 : 3;
 			if (isset($sessions[$i])) {
 				$participant["after"][$i] = [
 					"sess_id" => $sessions[$i]["sess_id"],
@@ -354,8 +359,8 @@ if (empty($participants)) {
     exit(json_encode([
 		"error" => true,
 		"notes" => [
-			"The workbook was opened successfully, however cells A2, B2, and C2 in the 'Combined' worksheet are empty.",
-			"This plugin expects a first name, last name, or employee ID for at least one participant."
+			"The workbook was opened successfully, however cells A2, B2, and C2 in the 'DPRP Sessions' worksheet are empty.",
+			"This plugin expects a first name and last name for at least one participant."
 		]
 	]));
 }
