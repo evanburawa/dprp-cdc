@@ -141,9 +141,9 @@ try {
 	unlink($_FILES["workbook"]["tmp_name"]);
 } catch(\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
 	if (!file_exists("libs/errorlog.txt")) {
-		file_put_contents("libs/errorlog.txt", $e);
+		// file_put_contents("libs/errorlog.txt", $e);
 	} else {
-		file_put_contents("libs/errorlog.txt", $e, FILE_APPEND);
+		// file_put_contents("libs/errorlog.txt", $e, FILE_APPEND);
 	}
 	REDCap::logEvent("DPRP import failure", "PhpSpreadsheet library errors -> " . print_r($e, true) . "\n", null, $rid, $eid, PROJECT_ID);
     exit(json_encode([
@@ -155,11 +155,7 @@ try {
 	]));
 }
 
-// // check to see what we have in-memory after transfer
-// $writer = IOFactory::createWriter($workbook, 'Xlsx');
-// $writer->save("workbook check.xlsx");
-
-file_put_contents("C:/vumc/log.txt", "temp log:\n");
+// file_put_contents("C:/log.txt", "temp log:\n");
 
 // iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
@@ -173,17 +169,16 @@ while (!$done) {
 	if (empty($firstName) and empty($lastName) and empty($empID)) {
 		$done = true;
 	} else {
-		// file_put_contents("C:/vumc/log.txt", "fn, ln, eid: $firstName, $lastName, $empID \n", FILE_APPEND);
 		// get row number for this participant in 2nd table
 		$row2 = getParticipantRowNumber($firstName, $lastName, $empID);
-		// file_put_contents("C:/vumc/log.txt", "participant row number: " . $row2 . "\n", FILE_APPEND);
 		
 		$participant = [
 			"firstName" => $firstName,
 			"lastName" => $lastName
 		];
 		
-		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = \"$firstName\" AND [last_name] = \"$lastName\"");
+		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = '$firstName' AND [last_name] = '$lastName'");
+			// file_put_contents("C:/log.txt", print_r($records, true) . "\n\n", FILE_APPEND);
 		
 		if (empty($records) and (!is_int($row2) and !is_string($row2))) {
 			$participant["error"] = "The DPRP plugin found no record with first name: $firstName, last name: $lastName in the second table.";
@@ -195,7 +190,7 @@ while (!$done) {
 			$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
 			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 			
-			file_put_contents("C:/vumc/log.txt", print_r($sessions[1], true));
+			// file_put_contents("C:/log.txt", print_r($records, true) . "\n\n", FILE_APPEND);
 			
 			$participant["recordID"] = $rid;
 			$participant["before"] = [];
@@ -309,7 +304,7 @@ while (!$done) {
 					$sessions[$i]["sess_pa"] = $sess_pa;
 					$sessions[$i]["sessionscoaching_log_complete"] = 2;
 					
-					unset($sess_id, $sess_type, $sess_mode, $sess_month, $sess_scheduled_date, $sess_actual_date, $sess_weight, $sess_pa, $sess_date);
+					unset($sess_id, $sess_type, $sess_attended, $sess_mode, $sess_month, $sess_scheduled_date, $sess_actual_date, $sess_weight, $sess_pa, $sess_date);
 				}
 			}
 		}
@@ -323,12 +318,12 @@ while (!$done) {
 		// $sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 		
 		// save data
-		// file_put_contents("C:/vumc/log.txt", "sess_scheduled_date:" . $sessions[1]["sess_scheduled_date"] . "\n", FILE_APPEND);
+		// file_put_contents("C:/log.txt", print_r($records, true) . "\n\n", FILE_APPEND);
 		$result = \REDCap::saveData(PROJECT_ID, 'array', $records, "overwrite");
-		// \Records::resetRecordCountAndListCache(PROJECT_ID);
 		if (!empty($result["errors"])) {
+			// file_put_contents("C:/log.txt", print_r($result["errors"], true) . "\n", FILE_APPEND);
 			$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
-			REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
+			\REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
 			$row++;
 			$participants[] = $participant;
 			continue;

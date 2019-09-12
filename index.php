@@ -1,4 +1,5 @@
 <?php
+file_put_contents("C:/log.txt", "logging...\n");
 define("NOAUTH", true);
 require('config.php');
 
@@ -13,8 +14,8 @@ $lastdate = strtotime($_GET['lastdate']);
 if ((int) $lastdate !== $lastdate)
 	$lastdate = null;
 
-file_put_contents("C:/log.txt", print_r($_GET, true) . "\n");
-file_put_contents("C:/log.txt", "firstdate: " . gettype($firstdate) . "\n", FILE_APPEND);
+// file_put_contents("C:/log.txt", print_r($_GET, true) . "\n");
+// file_put_contents("C:/log.txt", "firstdate: " . gettype($firstdate) . "\n", FILE_APPEND);
 
 if (isset($_GET['orgcode'])) {
 	preg_match("/\d+/", $_GET['orgcode'], $orgcode);
@@ -30,11 +31,11 @@ if (isset($_GET['noncompliant']))
 	$filename .= " Non-Compliant";
 $filename .= ".csv";
 
-file_put_contents("C:/log.txt", "\$filename: $filename\n", FILE_APPEND);
+// file_put_contents("C:/log.txt", "\$filename: $filename\n", FILE_APPEND);
 
 // detect which if any values are not compliant with DPRP standards
 // if non-compliance is detected, error messages are appended to $line
-function validateLine(& $line) {
+function validateLine(& $line, $attended) {
 	$errors = [];
 	
 	$stateAbbrevs = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "AS", "DC", "FM", "GU", "MH", "MP", "PW", "PR", "VI", "AE", "AA", "AP"];
@@ -117,13 +118,40 @@ function validateLine(& $line) {
 	// validate WEIGHT
 	if (preg_match('/[^0-9]/', $line[22]))
 		$errors[] = "WEIGHT must contain numeric characters only";
-	if ((intval($line[22]) < 70 or intval($line[22]) > 997) and intval($line[22]) !== 999)
-		$errors[] = "WEIGHT must be an integer value 70-997 OR 999 (if not reported)";
+	// if ((intval($line[22]) < 70 or intval($line[22]) > 997) and intval($line[22]) !== 999 and !$attended) {
+		// file_put_contents("C:/log.txt", "sessid: {$line[19]} - intval weight " . intval($line[22]) . "\n", FILE_APPEND);
+		// $errors[] = "WEIGHT must be an integer value 70-997 OR 999 (if not reported) -- OR [sess_attended] must be true";
+	// }
+	if (empty($line[22])) {
+		if ($attended) {
+			$line[22] = 999;
+		} else {
+			$errors[] = "WEIGHT value missing and [sess_attended] != TRUE";
+		}
+	} else {
+		$weight = intval($line[22]);
+		if (($weight < 0 or $weight > 997) and $weight != 999)
+			$errors[] = "Valid WEIGHT values are 0 - 997. If a participant chooses not to submit a weight, please use value 999";
+	}
+	
 	// validate PA
 	if (preg_match('/[^0-9]/', $line[23]))
 		$errors[] = "PA must contain numeric characters only";
-	if ($line[23] == "" or $line[23] == null or ((intval($line[23]) < 0 or intval($line[23]) > 997) and intval($line[23]) !== 999))
-		$errors[] = "PA must be an integer value 0-997 OR 999 (if not reported)";
+	// if (($line[23] == "" or $line[23] == null and !$attended) or ((intval($line[23]) < 0 or intval($line[23]) > 997) and intval($line[23]) != 999)) {
+		// file_put_contents("C:/log.txt", "sessid: {$line[19]} - intval pa " . intval($line[23]) . "\n", FILE_APPEND);
+		// $errors[] = "PA must be an integer value 0-997 OR 999 (if not reported) -- OR [sess_attended] must be true";
+	// }
+	if (empty($line[23])) {
+		if ($attended) {
+			$line[23] = 999;
+		} else {
+			$errors[] = "PA value missing and [sess_attended] != TRUE";
+		}
+	} else {
+		$pa = intval($line[23]);
+		if (($pa < 0 or $pa > 997) and $pa != 999)
+			$errors[] = "Valid PA values are 0 - 997. If a participant chooses not to submit a physical activity value for this session, please use value 999";
+	}
 	
 	// append error messages to end of line array
 	$line = array_merge($line, $errors);
@@ -180,7 +208,7 @@ function sendExport() {
 		}
 	}
 	
-	file_put_contents("C:/log.txt", print_r($sql, true));
+	// file_put_contents("C:/log.txt", print_r($sql, true));
 	// file_put_contents("C:/log.txt", print_r($recordCreationDates, true));
 	
 	// regex for getting labels for project fields (like state, sess_type, etc)
@@ -191,7 +219,7 @@ function sendExport() {
 		
 		// skip if orgcode set and not match
 		if (isset($orgcode) and $orgcode != $record[$eid]['orgcode']) {
-			file_put_contents("C:/log.txt", "filtering $rid - $i - orgcode mismatch - $orgcode - " . $record[$eid]['orgcode'] . "\n", FILE_APPEND);
+			// file_put_contents("C:/log.txt", "filtering $rid - $i - orgcode mismatch - $orgcode - " . $record[$eid]['orgcode'] . "\n", FILE_APPEND);
 			continue;
 		}
 		
@@ -242,7 +270,7 @@ function sendExport() {
 			
 			$thisdate = strtotime($sess_date);
 			if (empty($sess_date) or (!empty($firstdate) and $firstdate > $thisdate) or (!empty($lastdate) and $lastdate < $thisdate)) {
-				file_put_contents("C:/log.txt", "skipping $rid - $i : $firstdate $thisdate $lastdate\n", FILE_APPEND);
+				// file_put_contents("C:/log.txt", "skipping $rid - $i : $firstdate $thisdate $lastdate\n", FILE_APPEND);
 				continue;
 			}
 			
@@ -263,7 +291,17 @@ function sendExport() {
 			$line_copy[22] = $instance['sess_weight'];
 			$line_copy[23] = $instance['sess_pa'];
 			
-			validateLine($line_copy);
+			$session_attended = false;
+			if ($instance["sess_attended"] or $instance['sess_weight'] or $instance['sess_pa'])
+				$session_attended = true;
+			
+			validateLine($line_copy, $session_attended);
+			
+			// if session is marked as attended but weight and/or pa values not included, use 999
+			if ($instance["sess_attended"] and empty($line_copy[22]))
+				$line_copy[22] = 999;
+			if ($instance["sess_attended"] and empty($line_copy[23]))
+				$line_copy[23] = 999;
 			
 			// if error messages were appended...
 			if (isset($line_copy[24]) and isset($_GET['noncompliant'])) {
@@ -272,7 +310,7 @@ function sendExport() {
 			
 			// no errors and no non-compliant param
 			if (!isset($line_copy[24]) and !isset($_GET['noncompliant'])) {
-				file_put_contents("C:/log.txt", "writing line: $rid - $i\n", FILE_APPEND);
+				// file_put_contents("C:/log.txt", "writing line: $rid - $i\n", FILE_APPEND);
 				$data[] = $line_copy;
 			}
 		}

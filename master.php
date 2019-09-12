@@ -38,19 +38,19 @@ function appendStatRows(&$sheetMatrix) {
 	// create and append rows of statistics that should show below participant data rows
 	
 	global $columns;
-	$stat_sum = ["Group weight—sum", NULL, NULL, NULL];
-	$stat_ave = ["Group weight—average", NULL, NULL, NULL];
-	$stat_weekly = ["Weekly weight loss—group", NULL, NULL, NULL];
+	$stat_sum = ["Group weight—sum", NULL, NULL];
+	$stat_ave = ["Group weight—average", NULL, NULL];
+	$stat_weekly = ["Weekly weight loss—group", NULL, NULL];
 	
 	$lastRow = count($sheetMatrix) + 1;
 	$sumRow = $lastRow + 2;
 	$weeklyRow = $lastRow + 4;
 	$programRow = $lastRow + 5;
 	
-	$stat_program = ["Program weight loss—group", NULL, NULL, "=SUM({$columns['s2']}$weeklyRow:{$columns['s28']}$weeklyRow)"];
-	$stat_percent = ["Percent loss", NULL, NULL, "=ROUND(({$columns['org']}$programRow/{$columns['s1']}$sumRow), 3) * 100 & \"%\""];
-	$stat_goal7 = ["Program weight loss goal—7%", NULL, NULL, "=ROUND(0.07*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
-	$stat_goal5 = ["Program weight loss goal—5%", NULL, NULL, "=ROUND(0.05*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
+	$stat_program = ["Program weight loss—group", NULL, "=SUM({$columns['s2']}$weeklyRow:{$columns['s28']}$weeklyRow)"];
+	$stat_percent = ["Percent loss", NULL, "=ROUND(({$columns['org']}$programRow/{$columns['s1']}$sumRow), 3) * 100 & \"%\""];
+	$stat_goal7 = ["Program weight loss goal—7%", NULL, "=ROUND(0.07*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
+	$stat_goal5 = ["Program weight loss goal—5%", NULL, "=ROUND(0.05*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
 	
 	// write formulas for stat_sum, stat_ave, stat_weekly -- fill in arrays with formula values
 	for ($i = 1; $i <= 28; $i++) {
@@ -145,8 +145,6 @@ function appendTableTwo(&$sheetMatrix) {
 		$participant = [];
 		$participant[] = $record[$eid]["last_name"];
 		$participant[] = $record[$eid]["first_name"];
-		// $participant[] = $record[$eid]["participant_employee_id"];
-		// $participant[] = null;
 		preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
 		$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
 		
@@ -218,6 +216,8 @@ function appendTableTwo(&$sheetMatrix) {
 	foreach ($header as $col => $value) {
 		if (array_search($col, $columns['table2cols'])) {
 			$temp_header_array[] = NULL;
+		} elseif ($value == "TABLE 1: WEIGHT\nLAST NAME") {
+			$temp_header_array[] = "TABLE 2: PHYSICAL ACTIVITY\nLAST NAME";
 		} else {
 			$temp_header_array[] = $value;
 		}
@@ -225,11 +225,11 @@ function appendTableTwo(&$sheetMatrix) {
 	$sheetMatrix[] = $temp_header_array;
 	
 	// style new header row
-	$header_cells_range = "A" . (1 + count($sheetMatrix)) . ":AN" . (1 + count($sheetMatrix));
+	$header_cells_range = "A" . (1 + count($sheetMatrix)) . ":{$columns['last']}" . (1 + count($sheetMatrix));
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getFont()->setBold(true);
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getAlignment()->setWrapText(true);
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-	$workbook->getSheet($sheetNumber)->getStyle("D" . (1 + count($sheetMatrix)))->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+	$workbook->getSheet($sheetNumber)->getStyle($columns['s1'] . (1 + count($sheetMatrix)))->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 	$workbook->getSheet($sheetNumber)->getRowDimension((string) 1 + count($sheetMatrix))->setRowHeight(45.75);
 	
 	foreach ($participants as $p) {
@@ -334,8 +334,8 @@ appendLegend($sheetValues);
 
 // debugging
 // $records = \REDCap::getData($pid, null, null, null, null, null, null, null, null, $filterLogic);
-file_put_contents("C:/log.txt", "debugging:\n");
-file_put_contents("C:/log.txt", "records -> \n" . print_r($records, true) . "\n", FILE_APPEND);
+// file_put_contents("C:/log.txt", "debugging:\n");
+// file_put_contents("C:/log.txt", "records -> \n" . print_r($records, true) . "\n", FILE_APPEND);
 
 // finally write sheetValues to workbook
 $workbook->setActiveSheetIndex(1);
