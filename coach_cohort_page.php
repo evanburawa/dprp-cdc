@@ -4,17 +4,26 @@ require_once('config.php');
 require_once "../../redcap_connect.php";
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
+$project = new \Project((int) $_GET["pid"]);
+
 // // debug printing
-file_put_contents("C:/vumc/log.txt", print_r($project->metadata["coach_name"]["element_enum"], true) . "\n\n");
+// file_put_contents("C:/vumc/log.txt", print_r($project->metadata["coach_name"]["element_enum"], true) . "\n\n");
 
 // query for potential coach and cohort values
-$project = new \Project((int) $_GET["pid"]);
 preg_match_all("/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/", $project->metadata["coach_name"]["element_enum"], $matches);
-$coaches = $matches[2];
+$coaches = array_map("trim", $matches[2]);
 preg_match_all("/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/", $project->metadata["cohort"]["element_enum"], $matches);
 $cohorts = $matches[2];
-file_put_contents("C:/vumc/log.txt", print_r($coaches, true) . "\n\n", FILE_APPEND);
-file_put_contents("C:/vumc/log.txt", print_r($cohorts, true) . "\n\n", FILE_APPEND);
+// file_put_contents("C:/vumc/log.txt", print_r($coaches, true) . "\n\n", FILE_APPEND);
+// file_put_contents("C:/vumc/log.txt", print_r($cohorts, true) . "\n\n", FILE_APPEND);
+
+
+// build list of which cohorts which coaches belong / have belonged to
+// $records = \REDCap::getData((int) $_GET['pid'], 'array', null, ['coach_name, cohort']);
+// foreach ($records as $rid => $record) {
+	// file_put_contents("C:/vumc/log.txt", print_r($records, true) . "\n\n");
+	
+// }
 
 // create dropdowns
 $coach_dd = "
@@ -30,7 +39,7 @@ foreach ($coaches as $i => $name) {
 }
 $coach_dd .= "
 			</div>
-		</div>";
+		</div><br/>";
 		
 $cohort_dd = "
 		<div class='dropdown'>
@@ -45,7 +54,7 @@ foreach ($cohorts as $i => $name) {
 }
 $cohort_dd .= "
 			</div>
-		</div>";
+		</div><br/>";
 
 $ccwb_js = file_get_contents("js/ccwb.js");
 $html = "
@@ -55,7 +64,9 @@ $html = "
 	$coach_dd
 	<h5>Select Cohorts to Include:</h5>
 	$cohort_dd
-	<button id='generateWorkbook' class='btn btn-primary' style='margin: 32px 80px'>Generate Coach-Cohort Workbook</button>
+	<br/>
+	<p style='display: none' id='ajaxInfo'></p>
+	<button id='generateWorkbook' class='btn btn-primary' disabled=true style='margin: 32px 80px'>Generate Coach-Cohort Workbook</button>
 ";
 
 echo $html;
