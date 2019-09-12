@@ -1,5 +1,5 @@
 <?php
-file_put_contents("C:/log.txt", "logging...\n");
+// file_put_contents("C:/log.txt", "logging...\n");
 define("NOAUTH", true);
 require('config.php');
 
