@@ -6,24 +6,11 @@ require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
 $project = new \Project((int) $_GET["pid"]);
 
-// // debug printing
-// file_put_contents("C:/vumc/log.txt", print_r($project->metadata["coach_name"]["element_enum"], true) . "\n\n");
-
 // query for potential coach and cohort values
 preg_match_all("/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/", $project->metadata["coach_name"]["element_enum"], $matches);
 $coaches = array_map("trim", $matches[2]);
 preg_match_all("/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/", $project->metadata["cohort"]["element_enum"], $matches);
-$cohorts = $matches[2];
-// file_put_contents("C:/vumc/log.txt", print_r($coaches, true) . "\n\n", FILE_APPEND);
-// file_put_contents("C:/vumc/log.txt", print_r($cohorts, true) . "\n\n", FILE_APPEND);
-
-
-// build list of which cohorts which coaches belong / have belonged to
-// $records = \REDCap::getData((int) $_GET['pid'], 'array', null, ['coach_name, cohort']);
-// foreach ($records as $rid => $record) {
-	// file_put_contents("C:/vumc/log.txt", print_r($records, true) . "\n\n");
-	
-// }
+$cohorts = array_map("trim", $matches[2]);
 
 // create dropdowns
 $coach_dd = "

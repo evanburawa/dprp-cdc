@@ -1,5 +1,4 @@
 <?php
-// file_put_contents("C:/log.txt", "logging...\n");
 define("NOAUTH", true);
 require('config.php');
 
@@ -14,9 +13,6 @@ $lastdate = strtotime($_GET['lastdate']);
 if ((int) $lastdate !== $lastdate)
 	$lastdate = null;
 
-// file_put_contents("C:/log.txt", print_r($_GET, true) . "\n");
-// file_put_contents("C:/log.txt", "firstdate: " . gettype($firstdate) . "\n", FILE_APPEND);
-
 if (isset($_GET['orgcode'])) {
 	preg_match("/\d+/", $_GET['orgcode'], $orgcode);
 	$orgcode = $orgcode[0];
@@ -30,8 +26,6 @@ if (strval($orgcode) == "792184")
 if (isset($_GET['noncompliant']))
 	$filename .= " Non-Compliant";
 $filename .= ".csv";
-
-// file_put_contents("C:/log.txt", "\$filename: $filename\n", FILE_APPEND);
 
 // detect which if any values are not compliant with DPRP standards
 // if non-compliance is detected, error messages are appended to $line
@@ -118,10 +112,6 @@ function validateLine(& $line, $attended) {
 	// validate WEIGHT
 	if (preg_match('/[^0-9]/', $line[22]))
 		$errors[] = "WEIGHT must contain numeric characters only";
-	// if ((intval($line[22]) < 70 or intval($line[22]) > 997) and intval($line[22]) !== 999 and !$attended) {
-		// file_put_contents("C:/log.txt", "sessid: {$line[19]} - intval weight " . intval($line[22]) . "\n", FILE_APPEND);
-		// $errors[] = "WEIGHT must be an integer value 70-997 OR 999 (if not reported) -- OR [sess_attended] must be true";
-	// }
 	if (empty($line[22])) {
 		if ($attended) {
 			$line[22] = 999;
@@ -137,10 +127,6 @@ function validateLine(& $line, $attended) {
 	// validate PA
 	if (preg_match('/[^0-9]/', $line[23]))
 		$errors[] = "PA must contain numeric characters only";
-	// if (($line[23] == "" or $line[23] == null and !$attended) or ((intval($line[23]) < 0 or intval($line[23]) > 997) and intval($line[23]) != 999)) {
-		// file_put_contents("C:/log.txt", "sessid: {$line[19]} - intval pa " . intval($line[23]) . "\n", FILE_APPEND);
-		// $errors[] = "PA must be an integer value 0-997 OR 999 (if not reported) -- OR [sess_attended] must be true";
-	// }
 	if (empty($line[23])) {
 		if ($attended) {
 			$line[23] = 999;
@@ -208,9 +194,6 @@ function sendExport() {
 		}
 	}
 	
-	// file_put_contents("C:/log.txt", print_r($sql, true));
-	// file_put_contents("C:/log.txt", print_r($recordCreationDates, true));
-	
 	// regex for getting labels for project fields (like state, sess_type, etc)
 	$labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
 	
@@ -219,7 +202,6 @@ function sendExport() {
 		
 		// skip if orgcode set and not match
 		if (isset($orgcode) and $orgcode != $record[$eid]['orgcode']) {
-			// file_put_contents("C:/log.txt", "filtering $rid - $i - orgcode mismatch - $orgcode - " . $record[$eid]['orgcode'] . "\n", FILE_APPEND);
 			continue;
 		}
 		
@@ -270,7 +252,6 @@ function sendExport() {
 			
 			$thisdate = strtotime($sess_date);
 			if (empty($sess_date) or (!empty($firstdate) and $firstdate > $thisdate) or (!empty($lastdate) and $lastdate < $thisdate)) {
-				// file_put_contents("C:/log.txt", "skipping $rid - $i : $firstdate $thisdate $lastdate\n", FILE_APPEND);
 				continue;
 			}
 			
@@ -310,7 +291,6 @@ function sendExport() {
 			
 			// no errors and no non-compliant param
 			if (!isset($line_copy[24]) and !isset($_GET['noncompliant'])) {
-				// file_put_contents("C:/log.txt", "writing line: $rid - $i\n", FILE_APPEND);
 				$data[] = $line_copy;
 			}
 		}
@@ -334,21 +314,5 @@ function sendExport() {
 	}
 	fclose($fp);
 }
-
-// // test record fetching / regex
-// $records = \REDCap::getData(35);
-// $project = new \Project(35);
-// $labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
-// preg_match_all($labelPattern, $project->metadata['sess_type']['element_enum'], $matches);
-// echo("<pre>");
-// print_r($records[1]);
-// echo("</pre>");
-
-// // test getEmployeeID
-// echo("<pre>");
-// $vunetid = "reedcw1";
-// print_r(getEmployeeID($vunetid));
-// echo("</pre>");
-
 
 sendExport();

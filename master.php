@@ -289,6 +289,9 @@ foreach ($records as $rid => $record) {
 	$targetRecordIDs[] = $rid;
 }
 
+if (empty($targetRecordIDs))
+	exit("Error:<br/>The DPRP REDCap plugin found no record IDs found for this coach and cohort combination.");
+
 $records = \REDCap::getData($pid, 'array', $targetRecordIDs);
 
 // make DPP file
@@ -340,14 +343,11 @@ foreach ($records as $rid => $record) {
 }
 
 // update header scheduled dates with collected schedule dates
-// file_put_contents("C:/vumc/log.txt", "logging...\n");
 $workbook->setActiveSheetIndex(1);
 foreach ($session_scheduled_dates as $i => $date) {
 	list($year, $month, $day) = explode("-", $date);
 	$col = $i > 16 ? $i + 6 : $i + 3;
-	// file_put_contents("C:/vumc/log.txt", "pieces: " . print_r($pieces, true) . "\n", FILE_APPEND);
 	if (checkdate($month, $day, $year)) {
-		// file_put_contents("C:/vumc/log.txt", "setting cell col: $i, row: 1, with date: " . "$month/$day/$year\n", FILE_APPEND);
 		$workbook->getActiveSheet()->setCellValueByColumnAndRow($col, 1, "SESSION $i\n$month/$day/$year");
 	}
 }
@@ -355,11 +355,6 @@ foreach ($session_scheduled_dates as $i => $date) {
 appendStatRows($sheetValues);
 
 appendTableTwo($sheetValues);
-
-// debugging
-// $records = \REDCap::getData($pid, null, null, null, null, null, null, null, null, $filterLogic);
-// file_put_contents("C:/log.txt", "debugging:\n");
-// file_put_contents("C:/log.txt", "records -> \n" . print_r($records, true) . "\n", FILE_APPEND);
 
 // finally write sheetValues to workbook
 $workbook->getSheet(1)

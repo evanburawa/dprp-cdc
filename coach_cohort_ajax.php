@@ -4,14 +4,11 @@ require_once('config.php');
 header('Content-type:application/json;charset=utf-8');
 $project = new \Project((int) $_GET["pid"]);
 
-// // debug printing
-// file_put_contents("C:/vumc/log.txt", print_r($project->metadata["coach_name"]["element_enum"], true) . "\n\n");
-
 // query for potential coach and cohort values
 preg_match_all("/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/", $project->metadata["coach_name"]["element_enum"], $matches);
 $coaches = array_map("trim", $matches[2]);
 preg_match_all("/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/", $project->metadata["cohort"]["element_enum"], $matches);
-$cohorts = $matches[2];
+$cohorts = array_map("trim", $matches[2]);
 
 // AJAX: given coach and cohort POST values, count applicable records and send json back to user
 $coach = $_GET['coach'];

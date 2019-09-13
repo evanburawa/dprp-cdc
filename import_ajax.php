@@ -154,16 +154,10 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 try {
 	$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
-	// $reader->setReadDataOnly(true);
 	$reader->setLoadSheetsOnly("DPRP Sessions");
 	$workbook = $reader->load($_FILES["workbook"]["tmp_name"]);
 	unlink($_FILES["workbook"]["tmp_name"]);
 } catch(\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
-	if (!file_exists("libs/errorlog.txt")) {
-		// file_put_contents("libs/errorlog.txt", $e);
-	} else {
-		// file_put_contents("libs/errorlog.txt", $e, FILE_APPEND);
-	}
 	REDCap::logEvent("DPRP import failure", "PhpSpreadsheet library errors -> " . print_r($e, true) . "\n", null, $rid, $eid, PROJECT_ID);
     exit(json_encode([
 		"error" => true,
@@ -173,8 +167,6 @@ try {
 		]
 	]));
 }
-
-// file_put_contents("C:/log.txt", "temp log:\n");
 
 // iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
@@ -197,7 +189,6 @@ while (!$done) {
 		];
 		
 		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = '$firstName' AND [last_name] = '$lastName'");
-			// file_put_contents("C:/log.txt", print_r($records, true) . "\n\n", FILE_APPEND);
 		
 		if (empty($records) and (!is_int($row2) and !is_string($row2))) {
 			$participant["error"] = "The DPRP plugin found no record with first name: $firstName, last name: $lastName in the second table.";
@@ -208,8 +199,6 @@ while (!$done) {
 			$eid = array_keys($records[$rid])[0];
 			$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
 			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
-			
-			// file_put_contents("C:/log.txt", print_r($records, true) . "\n\n", FILE_APPEND);
 			
 			$participant["recordID"] = $rid;
 			$participant["before"] = [];
@@ -255,9 +244,6 @@ while (!$done) {
 					$headerValue = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue();
 					preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $headerValue, $matches);
 					$sess_scheduled_date = empty($matches) ? NULL : trim($matches[0]);
-					
-					// get weight from table 1
-					// $sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
 					
 					// must be retrieved from table 2
 					$sess_pa = NULL;
@@ -327,14 +313,6 @@ while (!$done) {
 				}
 			}
 		}
-		
-		 // we are deciding to do this without re-fetching from REDCap getData
-		// // write "after" import table
-		// $records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = \"$firstName\" AND [last_name] = \"$lastName\" AND [participant_employee_id] = \"$empID\"");
-		// $rid = array_keys($records)[0];
-		// $eid = array_keys($records[$rid])[0];
-		// $records = \REDCap::getData(PROJECT_ID, 'array', $rid);
-		// $sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 		
 		// save data
 		// file_put_contents("C:/log.txt", print_r($records, true) . "\n\n", FILE_APPEND);
