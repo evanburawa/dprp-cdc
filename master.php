@@ -340,14 +340,14 @@ foreach ($records as $rid => $record) {
 }
 
 // update header scheduled dates with collected schedule dates
-file_put_contents("C:/vumc/log.txt", "logging...\n");
+// file_put_contents("C:/vumc/log.txt", "logging...\n");
 $workbook->setActiveSheetIndex(1);
 foreach ($session_scheduled_dates as $i => $date) {
 	list($year, $month, $day) = explode("-", $date);
 	$col = $i > 16 ? $i + 6 : $i + 3;
-	file_put_contents("C:/vumc/log.txt", "pieces: " . print_r($pieces, true) . "\n", FILE_APPEND);
+	// file_put_contents("C:/vumc/log.txt", "pieces: " . print_r($pieces, true) . "\n", FILE_APPEND);
 	if (checkdate($month, $day, $year)) {
-		file_put_contents("C:/vumc/log.txt", "setting cell col: $i, row: 1, with date: " . "$month/$day/$year\n", FILE_APPEND);
+		// file_put_contents("C:/vumc/log.txt", "setting cell col: $i, row: 1, with date: " . "$month/$day/$year\n", FILE_APPEND);
 		$workbook->getActiveSheet()->setCellValueByColumnAndRow($col, 1, "SESSION $i\n$month/$day/$year");
 	}
 }
