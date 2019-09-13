@@ -54,7 +54,7 @@ function getParticipantRowNumber($firstName, $lastName, $empID) {
 	// first, find header row of 2nd table
 	$headerRow = 0;
 	for ($i = 3; $i <= 19999; $i++) {
-		if ($workbook->getActiveSheet()->getCellByColumnAndRow(1, $i)->getValue() == "LAST NAME") {
+		if (strpos($workbook->getActiveSheet()->getCellByColumnAndRow(1, $i)->getValue(), "LAST NAME") !== false) {
 			$headerRow = $i;
 			break;
 		}
@@ -76,6 +76,25 @@ function getParticipantRowNumber($firstName, $lastName, $empID) {
 		}
 		$nextRow++;
 	}
+}
+
+$labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
+$labels = [];
+function getLabel($rawValue, $fieldName) {
+	global $project;
+	global $labels;
+	global $labelPattern;
+	if (empty($labels[$fieldName])) {
+		$labels[$fieldName] = [];
+		preg_match_all($labelPattern, $project->metadata[$fieldName]['element_enum'], $matches);
+		foreach ($matches[0] as $value) {
+			$arr = explode(",", $value);
+			$key = trim($arr[0]);
+			$val = trim($arr[1]);
+			$labels[$fieldName][$key] = $val;
+		}
+	}
+	return $labels[$fieldName][$rawValue];
 }
 
 // check for $_FILES["workbook"]
@@ -161,7 +180,7 @@ try {
 $participants = [];
 $done = false;
 $row = 2;
-$project = new Project(PROJECT_ID);
+$project = new \Project(PROJECT_ID);
 while (!$done) {
 	$firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
 	$lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
@@ -208,9 +227,9 @@ while (!$done) {
 					// record info so client can build "Before Import:" table
 					$participant["before"][$i] = [
 						"sess_id" => $sessions[$i]["sess_id"],
-						"sess_type" => $sessions[$i]["sess_type"],
+						"sess_type" => getLabel($sessions[$i]["sess_type"], "sess_type"),
 						"sess_attended" => $sessions[$i]["sess_attended"],
-						"sess_mode" => $sessions[$i]["sess_mode"],
+						"sess_mode" => getLabel($sessions[$i]["sess_mode"], "sess_mode"),
 						"sess_month" => $sessions[$i]["sess_month"],
 						"sess_scheduled_date" => $sessions[$i]["sess_scheduled_date"],
 						"sess_actual_date" => $sessions[$i]["sess_actual_date"],
@@ -334,8 +353,8 @@ while (!$done) {
 			if (isset($sessions[$i])) {
 				$participant["after"][$i] = [
 					"sess_id" => $sessions[$i]["sess_id"],
-					"sess_type" => $sessions[$i]["sess_type"],
-					"sess_mode" => $sessions[$i]["sess_mode"],
+					"sess_type" => getLabel($sessions[$i]["sess_type"], "sess_type"),
+					"sess_mode" => getLabel($sessions[$i]["sess_mode"], "sess_mode"),
 					"sess_month" => $sessions[$i]["sess_month"],
 					"sess_scheduled_date" => $sessions[$i]["sess_scheduled_date"],
 					"sess_actual_date" => $sessions[$i]["sess_actual_date"],

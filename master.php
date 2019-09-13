@@ -229,7 +229,7 @@ function appendTableTwo(&$sheetMatrix) {
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getFont()->setBold(true);
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getAlignment()->setWrapText(true);
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-	$workbook->getSheet($sheetNumber)->getStyle($columns['s1'] . (1 + count($sheetMatrix)))->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+	$workbook->getSheet($sheetNumber)->getStyle($columns['org'] . (1 + count($sheetMatrix)))->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 	$workbook->getSheet($sheetNumber)->getRowDimension((string) 1 + count($sheetMatrix))->setRowHeight(45.75);
 	
 	foreach ($participants as $p) {
@@ -238,7 +238,13 @@ function appendTableTwo(&$sheetMatrix) {
 }
 
 function appendLegend(&$sheetMatrix) {
-	
+	// copy legend
+	global $workbook;
+	global $sheetValues;
+	$row = count($sheetValues) + 3;
+	$legend = $workbook->getSheet(0)->rangeToArray('A27:C35');
+	$workbook->getSheet(1)->fromArray($legend, null, "A$row");
+	$workbook->getSheet(1)->duplicateStyle($workbook->getSheet(0)->getStyle("A27"), "A$row");
 }
 
 // get actual coach/cohort values
@@ -291,6 +297,7 @@ $workbook = IOFactory::load("masterTemplate.xlsx");
 // append weight table (table 1) to "Header" sheet
 $row = 2;
 $sheetValues = [];
+$session_scheduled_dates = [];
 foreach ($records as $rid => $record) {
 	$eid = array_keys($record)[0];
 	
@@ -305,6 +312,12 @@ foreach ($records as $rid => $record) {
 	// add sessions 1-28 weights
 	for ($i = 1; $i <= 28; $i++) {
 		$instance = $record["repeat_instances"][$eid]["sessionscoaching_log"][$i];
+		
+		// find set header date value to scheduled session date
+		if (empty($session_scheduled_dates[$i]) and !empty($instance['sess_scheduled_date'])) {
+			$session_scheduled_dates[$i] = $instance['sess_scheduled_date'];
+		}
+		
 		$participant[] = $instance["sess_weight"];
 		if ($i == 16) {
 			// add WT LOSS CORE, % CHANGE CORE, and Number sessions attended formulas
@@ -326,11 +339,22 @@ foreach ($records as $rid => $record) {
 	$row++;
 }
 
+// update header scheduled dates with collected schedule dates
+file_put_contents("C:/vumc/log.txt", "logging...\n");
+$workbook->setActiveSheetIndex(1);
+foreach ($session_scheduled_dates as $i => $date) {
+	list($year, $month, $day) = explode("-", $date);
+	$col = $i > 16 ? $i + 6 : $i + 3;
+	file_put_contents("C:/vumc/log.txt", "pieces: " . print_r($pieces, true) . "\n", FILE_APPEND);
+	if (checkdate($month, $day, $year)) {
+		file_put_contents("C:/vumc/log.txt", "setting cell col: $i, row: 1, with date: " . "$month/$day/$year\n", FILE_APPEND);
+		$workbook->getActiveSheet()->setCellValueByColumnAndRow($col, 1, "SESSION $i\n$month/$day/$year");
+	}
+}
+
 appendStatRows($sheetValues);
 
 appendTableTwo($sheetValues);
-
-appendLegend($sheetValues);
 
 // debugging
 // $records = \REDCap::getData($pid, null, null, null, null, null, null, null, null, $filterLogic);
@@ -338,8 +362,7 @@ appendLegend($sheetValues);
 // file_put_contents("C:/log.txt", "records -> \n" . print_r($records, true) . "\n", FILE_APPEND);
 
 // finally write sheetValues to workbook
-$workbook->setActiveSheetIndex(1);
-$workbook->getActiveSheet()
+$workbook->getSheet(1)
 	->fromArray(
 		$sheetValues,
 		NULL,
@@ -347,6 +370,9 @@ $workbook->getActiveSheet()
 	);
 $workbook->getActiveSheet()->setTitle("DPRP Sessions");
 
+appendLegend();
+
+$workbook->setActiveSheetIndex(1);
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header("Content-Disposition: attachment;filename=\"DPP Workbook File - $coach_actual - $cohort_actual.xlsx\"");
