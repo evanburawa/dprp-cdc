@@ -115,8 +115,8 @@ function validateLine(& $line, $attended) {
 	if (empty($line[22])) {
 		if ($attended) {
 			$line[22] = 999;
-		} else {
-			$errors[] = "WEIGHT value missing and [sess_attended] != TRUE";
+		// } else {
+			// $errors[] = "WEIGHT value missing and [sess_attended] != TRUE";
 		}
 	} else {
 		$weight = intval($line[22]);
@@ -130,13 +130,17 @@ function validateLine(& $line, $attended) {
 	if (empty($line[23])) {
 		if ($attended) {
 			$line[23] = 999;
-		} else {
-			$errors[] = "PA value missing and [sess_attended] != TRUE";
+		// } else {
+			// $errors[] = "PA value missing and [sess_attended] != TRUE";
 		}
 	} else {
 		$pa = intval($line[23]);
 		if (($pa < 0 or $pa > 997) and $pa != 999)
 			$errors[] = "Valid PA values are 0 - 997. If a participant chooses not to submit a physical activity value for this session, please use value 999";
+	}
+	
+	if (!$attended and empty($line[22]) and empty($line[23])) {
+		$errors[] = "PA value, WEIGHT value, and [sess_attended] are all missing/blank/empty for this session.";
 	}
 	
 	// append error messages to end of line array
