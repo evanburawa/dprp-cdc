@@ -34,7 +34,7 @@ $columns = [
 ];
 
 function appendStatRows(&$sheetMatrix) {
-	// REDCap::logEvent("DPRP", "In appendStatRows()", null, $rid, $eid, PROJECT_ID);
+	// REDCap::logEvent("DPP", "In appendStatRows()", null, $rid, $eid, PROJECT_ID);
 	// create and append rows of statistics that should show below participant data rows
 	
 	global $columns;
@@ -117,7 +117,7 @@ function appendStatRows(&$sheetMatrix) {
 }
 
 function appendTableTwo(&$sheetMatrix) {
-	// REDCap::logEvent("DPRP", "In appendTableTwo", null, $rid, $eid, PROJECT_ID);
+	// REDCap::logEvent("DPP", "In appendTableTwo", null, $rid, $eid, PROJECT_ID);
 	global $records;
 	global $project;
 	global $workbook;
@@ -290,7 +290,7 @@ foreach ($records as $rid => $record) {
 }
 
 if (empty($targetRecordIDs))
-	exit("Error:<br/>The DPRP REDCap plugin found no record IDs found for this coach and cohort combination.");
+	exit("Error:<br/>The DPP REDCap plugin found no record IDs found for this coach and cohort combination.");
 
 $records = \REDCap::getData($pid, 'array', $targetRecordIDs);
 
@@ -363,7 +363,7 @@ $workbook->getSheet(1)
 		NULL,
 		"A2"
 	);
-$workbook->getActiveSheet()->setTitle("DPRP Sessions");
+$workbook->getActiveSheet()->setTitle("DPP Sessions");
 
 appendLegend();
 
@@ -375,4 +375,4 @@ header('Cache-Control: max-age=0');
 
 $writer = IOFactory::createWriter($workbook, 'Xlsx');
 $writer->save('php://output');
-REDCap::logEvent("DPRP", "Generated DPRP Workbook File - Coach: $coach_actual - Cohort: $cohort_actual", null, $rid, $eid, PROJECT_ID);
+REDCap::logEvent("DPP", "Generated DPP Workbook File - Coach: $coach_actual - Cohort: $cohort_actual", null, $rid, $eid, PROJECT_ID);
