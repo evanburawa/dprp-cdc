@@ -24,7 +24,7 @@ if (!empty($coach) and !empty($cohort)) {
 		$json->recordCount = count($records);
 		exit(json_encode($json));
 	} else {
-		$json->error = "The REDCap server encountered an issue -- REDCap can't find the specified coach or cohort value in the DPRP project. Please notify a REDCap administrator";
+		$json->error = "The REDCap server encountered an issue -- REDCap can't find the specified coach or cohort value in the DPP project. Please notify a REDCap administrator";
 		exit(json_encode($json));
 	}
 }

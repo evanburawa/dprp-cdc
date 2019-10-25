@@ -49,8 +49,8 @@ function appendStatRows(&$sheetMatrix) {
 	
 	$stat_program = ["Program weight loss—group", NULL, "=SUM({$columns['s2']}$weeklyRow:{$columns['s28']}$weeklyRow)"];
 	$stat_percent = ["Percent loss", NULL, "=ROUND(({$columns['org']}$programRow/{$columns['s1']}$sumRow), 3) * 100 & \"%\""];
-	$stat_goal7 = ["Program weight loss goal—7%", NULL, "=ROUND(0.07*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
-	$stat_goal5 = ["Program weight loss goal—5%", NULL, "=ROUND(0.05*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
+	$stat_goal7 = ["Program weight loss goal—7%", NULL, "=-ROUND(0.07*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
+	$stat_goal5 = ["Program weight loss goal—5%", NULL, "=-ROUND(0.05*SUM({$columns['s1']}2:{$columns['s1']}$lastRow), 0)"];
 	
 	// write formulas for stat_sum, stat_ave, stat_weekly -- fill in arrays with formula values
 	for ($i = 1; $i <= 28; $i++) {
@@ -91,7 +91,7 @@ function appendStatRows(&$sheetMatrix) {
 		} else {
 			$range1 = "$col" . "2:$col$lastRow";
 			$range2 = "$lastCol" . "2:$lastCol$lastRow";
-			$stat_weekly[] = "=SUMIF($range1, \"<>\", $range2) - SUMIF($range2, \"<>\", $range1)";
+			$stat_weekly[] = "=SUMIF($range2, \"<>\", $range1) - SUMIF($range1, \"<>\", $range2)";
 		}
 		
 		$lastCol = $col;
@@ -237,7 +237,7 @@ function appendTableTwo(&$sheetMatrix) {
 	}
 }
 
-function appendLegend(&$sheetMatrix) {
+function appendLegend() {
 	// copy legend
 	global $workbook;
 	global $sheetValues;

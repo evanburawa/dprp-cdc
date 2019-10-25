@@ -1,9 +1,9 @@
 // on document ready
-var DPRP = {};
+var DPP = {};
 
 $('body').on('click', '#generateWorkbook', function() {
-	if (DPRP.cohort && DPRP.coach && pid) {
-		let url = "master.php?pid=" + pid + "&coach=" + DPRP.coach + "&cohort=" + DPRP.cohort;
+	if (DPP.cohort && DPP.coach && pid) {
+		let url = "master.php?pid=" + pid + "&coach=" + DPP.coach + "&cohort=" + DPP.cohort;
 		url = encodeURI(url);
 		window.open(url);
 	}
@@ -15,15 +15,15 @@ $('body').on('click', '.dropdown-menu a', function() {
 	$(".btn:first-child").val($(this).text());
 	
 	if (dd[0] == $("#coachDropdown")[0]) {
-		DPRP.coach = dd.text();
+		DPP.coach = dd.text();
 	} else if (dd[0] == $("#cohortDropdown")[0]) {
-		DPRP.cohort = dd.text();
+		DPP.cohort = dd.text();
 	}
 	
 	let pid = getUrlParameter("pid");
-	if (DPRP.cohort && DPRP.coach && pid) {
+	if (DPP.cohort && DPP.coach && pid) {
 		// show user record count for this coach-cohort
-		let url = encodeURI(`coach_cohort_ajax.php?pid=${pid}&coach=${DPRP.coach}&cohort=${DPRP.cohort}`);
+		let url = encodeURI(`coach_cohort_ajax.php?pid=${pid}&coach=${DPP.coach}&cohort=${DPP.cohort}`);
 		$.get({
 			url: url,
 			dataType: "json",

@@ -18,7 +18,7 @@ if (isset($_GET['orgcode'])) {
 	$orgcode = $orgcode[0];
 }
 
-$filename = "DPRP CDC Export";
+$filename = "DPP CDC Export";
 if (strval($orgcode) == "8540168")
 	$filename .= " - Digital";
 if (strval($orgcode) == "792184")
@@ -27,7 +27,7 @@ if (isset($_GET['noncompliant']))
 	$filename .= " Non-Compliant";
 $filename .= ".csv";
 
-// detect which if any values are not compliant with DPRP standards
+// detect which if any values are not compliant with DPP standards
 // if non-compliance is detected, error messages are appended to $line
 function validateLine(& $line, $attended) {
 	$errors = [];

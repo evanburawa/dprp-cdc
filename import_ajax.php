@@ -61,7 +61,7 @@ function getParticipantRowNumber($firstName, $lastName, $empID) {
 	}
 	
 	if ($headerRow == 0) {
-		return "DPRP plugin couldn't find 2nd table of participant data. Please see sample master file for formatting help.";
+		return "DPP plugin couldn't find 2nd table of participant data. Please see sample master file for formatting help.";
 	}
 	
 	$nextRow = $headerRow + 1;
@@ -70,7 +70,7 @@ function getParticipantRowNumber($firstName, $lastName, $empID) {
 		$thisRowFirstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $nextRow)->getValue();
 		$thisRowEmpID = $workbook->getActiveSheet()->getCellByColumnAndRow(3, $nextRow)->getValue();
 		if (empty($thisRowLastName) and empty($thisRowFirstName) and empty($thisRowEmpID)) {
-			return "DPRP plugin couldn't find this participant in 2nd data table (first name, last name, and employee ID must match).";
+			return "DPP plugin couldn't find this participant in 2nd data table (first name, last name, and employee ID must match).";
 		} elseif ($thisRowLastName == $lastName and $thisRowFirstName == $firstName and $thisRowEmpID == $empID) {
 			return $nextRow;
 		}
@@ -154,16 +154,16 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 try {
 	$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
-	$reader->setLoadSheetsOnly("DPRP Sessions");
+	$reader->setLoadSheetsOnly("DPP Sessions");
 	$workbook = $reader->load($_FILES["workbook"]["tmp_name"]);
 	unlink($_FILES["workbook"]["tmp_name"]);
 } catch(\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
-	REDCap::logEvent("DPRP import failure", "PhpSpreadsheet library errors -> " . print_r($e, true) . "\n", null, $rid, $eid, PROJECT_ID);
+	REDCap::logEvent("DPP import failure", "PhpSpreadsheet library errors -> " . print_r($e, true) . "\n", null, $rid, $eid, PROJECT_ID);
     exit(json_encode([
 		"error" => true,
 		"notes" => [
-			"There was an issue loading the workbook. Make sure it is an .xlsx file with a worksheet named 'DPRP Sessions'.",
-			"If you believe your file is a valid DPRP Workbook file, please contact your REDCap administrator."
+			"There was an issue loading the workbook. Make sure it is an .xlsx file with a worksheet named 'DPP Sessions'.",
+			"If you believe your file is a valid DPP Workbook file, please contact your REDCap administrator."
 		]
 	]));
 }
@@ -191,7 +191,7 @@ while (!$done) {
 		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = '$firstName' AND [last_name] = '$lastName'");
 		
 		if (empty($records) and (!is_int($row2) and !is_string($row2))) {
-			$participant["error"] = "The DPRP plugin found no record with first name: $firstName, last name: $lastName in the second table.";
+			$participant["error"] = "The DPP plugin found no record with first name: $firstName, last name: $lastName in the second table.";
 		} elseif (is_string($row2)) {
 			$participant["error"] = $row2;
 		} else {
@@ -285,6 +285,15 @@ while (!$done) {
 						$sess_month = 12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + 1;
 					}
 					
+					// sess type CORE or CORE MAINTENANCE depending on month (unless make-up)
+					if ($sess_month >= 7 and $sess_type == 1) {
+						$sess_type = 2;
+					}
+					
+					if (empty($sess_weight) and empty($sess_pa) and $sess_attended != 1) {
+						$sess_attended = 0;
+					}
+					
 					// convert date to Y-m-d
 					if (!empty($sess_actual_date)) {
 						$sess_actual_date = new DateTime($sess_actual_date);
@@ -320,7 +329,7 @@ while (!$done) {
 		if (!empty($result["errors"])) {
 			// file_put_contents("C:/log.txt", print_r($result["errors"], true) . "\n", FILE_APPEND);
 			$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
-			\REDCap::logEvent("DPRP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
+			\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
 			$row++;
 			$participants[] = $participant;
 			continue;
@@ -351,7 +360,7 @@ if (empty($participants)) {
     exit(json_encode([
 		"error" => true,
 		"notes" => [
-			"The workbook was opened successfully, however cells A2, B2, and C2 in the 'DPRP Sessions' worksheet are empty.",
+			"The workbook was opened successfully, however cells A2, B2, and C2 in the 'DPP Sessions' worksheet are empty.",
 			"This plugin expects a first name and last name for at least one participant."
 		]
 	]));
