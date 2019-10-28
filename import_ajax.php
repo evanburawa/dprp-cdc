@@ -1,6 +1,12 @@
 <?php
 
 /////////////
+
+// file_put_contents("C:/vumc/log.txt", "logging...\n");
+function _log($text) {
+	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
+}
+
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 function file_upload_max_size() {
   static $max_size = -1;
@@ -205,7 +211,7 @@ while (!$done) {
 			$participant["after"] = [];
 			
 			for ($i = 1; $i <= 28; $i++) {
-				$offset = ($i >= 17) ? 6 : 3;
+				$offset = ($i >= 17) ? 7 : 4;
 				
 				$sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
 				if (empty($sessions[$i]) and !empty($sess_weight)) {
@@ -256,8 +262,15 @@ while (!$done) {
 						$value = strtoupper(trim($value));
 						if (is_numeric($value))
 							$sess_pa = (int) $value;
-						preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $value, $matches);
-						$date = empty($matches) ? NULL : $matches[0];
+						$date = null;
+						foreach (['/', '-', '.'] as $sep) {
+							$pieces = explode($sep, $value);
+							if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
+								$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
+								_log('d1 ' . $value);
+								break;
+							}
+						}
 						if ($date !== NULL)
 							$sess_actual_date = $date;
 						if ($value === "I")
@@ -282,7 +295,8 @@ while (!$done) {
 					if (!empty($matches) and !empty($sess_date)) {
 						$d1 = new DateTime($matches[0]);
 						$d2 = new DateTime($sess_date);
-						$sess_month = 12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + 1;
+						// the following assumes 4 weeks (28 days) is 1 month -- this is in line with what is stated in the DPRP standards is a program "month"
+						$sess_month = round(12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + ((int) $d2->format('d') - (int) $d1->format('d'))/28 - 1/4)+1;
 					}
 					
 					// sess type CORE or CORE MAINTENANCE depending on month (unless make-up)
@@ -292,6 +306,8 @@ while (!$done) {
 					
 					if (empty($sess_weight) and empty($sess_pa) and $sess_attended != 1) {
 						$sess_attended = 0;
+					} else {
+						$sess_attended = 1;
 					}
 					
 					// convert date to Y-m-d
@@ -324,10 +340,8 @@ while (!$done) {
 		}
 		
 		// save data
-		// file_put_contents("C:/log.txt", print_r($records, true) . "\n\n", FILE_APPEND);
 		$result = \REDCap::saveData(PROJECT_ID, 'array', $records, "overwrite");
 		if (!empty($result["errors"])) {
-			// file_put_contents("C:/log.txt", print_r($result["errors"], true) . "\n", FILE_APPEND);
 			$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
 			\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
 			$row++;
@@ -336,7 +350,7 @@ while (!$done) {
 		}
 		
 		for ($i = 1; $i <= 28; $i++) {
-			$offset = ($i >= 17) ? 6 : 3;
+			$offset = ($i >= 17) ? 7 : 4;
 			if (isset($sessions[$i])) {
 				$participant["after"][$i] = [
 					"sess_id" => $sessions[$i]["sess_id"],
@@ -352,6 +366,7 @@ while (!$done) {
 		}
 		
 		$participants[] = $participant;
+		// _logprint_r($participant, true));
 	}
 	$row++;
 }

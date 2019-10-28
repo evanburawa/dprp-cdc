@@ -14,23 +14,23 @@ function numberToExcelColumn($n) {
 // changing this array should suffice to correct for moved columns in the masterTemplate.xlsx file
 $columns = [
 	"org" => "C",
-	"s1" => "D",
-	"s2" => "E",
-	"s16" => "S",
-	"s17" => "W",
-	"stat_1a" => "T",
-	"stat_1b" => "U",
-	"stat_1c" => "V",
-	"s18" => "X",
-	"s28" => "AH",
-	"stat_2a" => "AI",
-	"stat_2b" => "AJ",
-	"stat_2c" => "AK",
-	"stat_2d" => "AL",
-	"last" => "AM",
-	"offset1" => 2,
-	"offset2" => 5,
-	"table2cols" => [2, "U", "V", "T", "AJ", "AK", "AL", "AM", "AI"]
+	"s1" => "E",
+	"s2" => "F",
+	"s16" => "T",
+	"s17" => "X",
+	"stat_1a" => "U",
+	"stat_1b" => "V",
+	"stat_1c" => "W",
+	"s18" => "Y",
+	"s28" => "AI",
+	"stat_2a" => "AJ",
+	"stat_2b" => "AK",
+	"stat_2c" => "AL",
+	"stat_2d" => "AM",
+	"last" => "AN",
+	"offset1" => 3,
+	"offset2" => 6,
+	"table2cols" => [3, "V", "W", "U", "AK", "AL", "AM", "AN", "AJ"]
 ];
 
 function appendStatRows(&$sheetMatrix) {
@@ -38,9 +38,9 @@ function appendStatRows(&$sheetMatrix) {
 	// create and append rows of statistics that should show below participant data rows
 	
 	global $columns;
-	$stat_sum = ["Group weight—sum", NULL, NULL];
-	$stat_ave = ["Group weight—average", NULL, NULL];
-	$stat_weekly = ["Weekly weight loss—group", NULL, NULL];
+	$stat_sum = ["Group weight—sum", NULL, NULL, NULL];
+	$stat_ave = ["Group weight—average", NULL, NULL, NULL];
+	$stat_weekly = ["Weekly weight loss—group", NULL, NULL, NULL];
 	
 	$lastRow = count($sheetMatrix) + 1;
 	$sumRow = $lastRow + 2;
@@ -95,7 +95,7 @@ function appendStatRows(&$sheetMatrix) {
 		}
 		
 		$lastCol = $col;
-		if ($i == 16) {		// add 3 blank cells to each stat row (for WT LOSS CORE and other calc columns)
+		if ($i == 16) {		// add 4 blank cells to each stat row (for WT LOSS CORE and other calc columns)
 			for ($j = 1; $j <= 3; $j++) {
 				$stat_sum[] = NULL;
 				$stat_ave[] = NULL;
@@ -147,6 +147,7 @@ function appendTableTwo(&$sheetMatrix) {
 		$participant[] = $record[$eid]["first_name"];
 		preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
 		$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
+		$participant[] = $record[$eid]["participant_id"];
 		
 		$orgcode = $record[$eid]["orgcode"];
 		
@@ -229,7 +230,7 @@ function appendTableTwo(&$sheetMatrix) {
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getFont()->setBold(true);
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getAlignment()->setWrapText(true);
 	$workbook->getSheet($sheetNumber)->getStyle($header_cells_range)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-	$workbook->getSheet($sheetNumber)->getStyle($columns['org'] . (1 + count($sheetMatrix)))->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+	// $workbook->getSheet($sheetNumber)->getStyle($columns['org']+1 . (1 + count($sheetMatrix)))->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 	$workbook->getSheet($sheetNumber)->getRowDimension((string) 1 + count($sheetMatrix))->setRowHeight(45.75);
 	
 	foreach ($participants as $p) {
@@ -311,6 +312,7 @@ foreach ($records as $rid => $record) {
 	
 	preg_match_all($labelPattern, $project->metadata['status']['element_enum'], $matches);
 	$participant[] = trim($matches[2][$record[$eid]['status'] - 1]);
+	$participant[] = $record[$eid]["participant_id"];
 	
 	// add sessions 1-28 weights
 	for ($i = 1; $i <= 28; $i++) {
@@ -346,7 +348,7 @@ foreach ($records as $rid => $record) {
 $workbook->setActiveSheetIndex(1);
 foreach ($session_scheduled_dates as $i => $date) {
 	list($year, $month, $day) = explode("-", $date);
-	$col = $i > 16 ? $i + 6 : $i + 3;
+	$col = $i > 16 ? $i + $columns['offset2']+1 : $i + $columns['offset1']+1;
 	if (checkdate($month, $day, $year)) {
 		$workbook->getActiveSheet()->setCellValueByColumnAndRow($col, 1, "SESSION $i\n$month/$day/$year");
 	}
