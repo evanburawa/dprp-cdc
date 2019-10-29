@@ -1,5 +1,7 @@
 <?php
 
+require_once("../../redcap_connect.php");
+define("PROJECT_ID", 1524);
 /////////////
 // file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
@@ -150,7 +152,6 @@ if (!empty($errors)) {
 }
 
 // open workbook
-require "config.php";
 require "libs/PhpSpreadsheet/vendor/autoload.php";
 require_once "libs/PhpSpreadsheet/src/Bootstrap.php";
 
@@ -180,6 +181,7 @@ $done = false;
 $row = 2;
 $project = new \Project(PROJECT_ID);
 $records = \REDCap::getData(PROJECT_ID);
+$info[] = "PROJECT_ID:\n" . PROJECT_ID;
 $info[] = "records:\n" . print_r($records, true);
 $records_to_update = [];
 while (!$done) {
