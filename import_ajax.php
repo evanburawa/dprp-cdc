@@ -2,9 +2,9 @@
 
 /////////////
 
-// file_put_contents("C:/vumc/log.txt", "logging...\n");
+file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
-	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
+	file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
 }
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
@@ -249,17 +249,18 @@ while (!$done) {
 					}
 					
 					// get scheduled date (from header row)
-					$headerValue = explode(' ', $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue())[2];
+					$headerValue = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue();
+					$datePart = preg_split("/[\s]+/", $headerValue)[2];
 					$date = null;
 					foreach (['/', '-', '.'] as $sep) {
-						$pieces = explode($sep, $headerValue);
+						$pieces = explode($sep, $datePart);
 						if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
 							$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
 							break;
 						}
 					}
 					$sess_scheduled_date = empty($date) ? NULL : $date;
-					// _log('header value: ' . $headerValue . ' -- scheduled date: ' . print_r($sess_scheduled_date, true));
+					unset($datePart);
 					
 					// must be retrieved from table 2
 					$sess_pa = NULL;
@@ -295,10 +296,12 @@ while (!$done) {
 					}
 					
 					// determine sess_month
-					$session_1_header_value = explode(' ' , $workbook->getActiveSheet()->getCell("E1")->getValue())[2];
+					$session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
+					$datePart = preg_split("/[\s]+/", $session_1_header_value)[2];
+					// _log('data part: ' . $datePart);
 					$date = null;
 					foreach (['/', '-', '.'] as $sep) {
-						$pieces = explode($sep, $session_1_header_value);
+						$pieces = explode($sep, $datePart);
 						if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
 							$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
 							break;
@@ -314,6 +317,7 @@ while (!$done) {
 						// the following assumes 4 weeks (28 days) is 1 month -- this is in line with what is stated in the DPRP standards is a program "month"
 						$sess_month = round(12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + ((int) $d2->format('d') - (int) $d1->format('d'))/28 - 1/4)+1;
 					}
+					unset($datePart);
 					
 					// sess type CORE or CORE MAINTENANCE depending on month (unless make-up)
 					if ($sess_month >= 7 and $sess_type == 1) {
