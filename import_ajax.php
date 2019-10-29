@@ -1,7 +1,6 @@
 <?php
 
 /////////////
-
 file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
 	file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
