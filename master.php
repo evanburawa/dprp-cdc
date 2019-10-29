@@ -305,7 +305,7 @@ $session_scheduled_dates = [];
 foreach ($records as $rid => $record) {
 	$eid = array_keys($record)[0];
 	
-	// add last name, first name, emp id, org code
+	// add last name, first name, participant id, org code
 	$participant = [];
 	$participant[] = $record[$eid]["last_name"];
 	$participant[] = $record[$eid]["first_name"];

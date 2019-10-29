@@ -55,13 +55,13 @@ function writeResultsTable(participants) {
 							<th>Record ID</th>
 							<th>First Name</th>
 							<th>Last Name</th>
-							<th>Employee ID</th>
+							<th>Participant ID</th>
 						</tr>
 						<tr>
 							<td>${participant.recordID}</td>
 							<td>${participant.firstName}</td>
 							<td>${participant.lastName}</td>
-							<td>${participant.empID}</td>
+							<td>${participant.partID}</td>
 						</tr>`;
 		if (typeof participant.error == "string") {
 			results += `
@@ -119,9 +119,9 @@ function writeResultsTable(participants) {
 						let a = participant.before[i][field];
 						let b = participant.after[i][field];
 						let style = "neutral";
-						if (a && !b) {
+						if (a && !(b || b===0)) {
 							style = "deleted";
-						} else if (a != b && b) {
+						} else if (a != b && (b || b===0)) {
 							style = "updated";
 						}
 						

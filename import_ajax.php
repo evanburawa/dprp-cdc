@@ -54,7 +54,7 @@ function humanFileSize($size,$unit="") {
 }
 /////////////
 
-function getParticipantRowNumber($firstName, $lastName, $empID) {
+function getParticipantRowNumber($firstName, $lastName, $partID) {
 	// return row number of 2nd table that has args given
 	global $workbook;
 	// first, find header row of 2nd table
@@ -74,10 +74,11 @@ function getParticipantRowNumber($firstName, $lastName, $empID) {
 	while (true) {
 		$thisRowLastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $nextRow)->getValue();
 		$thisRowFirstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $nextRow)->getValue();
-		$thisRowEmpID = $workbook->getActiveSheet()->getCellByColumnAndRow(3, $nextRow)->getValue();
-		if (empty($thisRowLastName) and empty($thisRowFirstName) and empty($thisRowEmpID)) {
-			return "DPP plugin couldn't find this participant in 2nd data table (first name, last name, and employee ID must match).";
-		} elseif ($thisRowLastName == $lastName and $thisRowFirstName == $firstName and $thisRowEmpID == $empID) {
+		$thisRowPartID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $nextRow)->getValue();
+		_log('get part row num details: ' . print_r([$thisRowLastName, $thisRowFirstName, $thisRowPartID], true));
+		if (empty($thisRowLastName) and empty($thisRowFirstName) and empty($thisRowPartID)) {
+			return "DPP plugin couldn't find this participant in 2nd data table. First and last name provided must match, if a participant ID is provided, it must also match.";
+		} elseif ($thisRowLastName == $lastName and $thisRowFirstName == $firstName and $thisRowPartID == $partID) {
 			return $nextRow;
 		}
 		$nextRow++;
@@ -182,16 +183,17 @@ $project = new \Project(PROJECT_ID);
 while (!$done) {
 	$firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
 	$lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-	$empID = $workbook->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
-	if (empty($firstName) and empty($lastName) and empty($empID)) {
+	$partID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
+	if (empty($firstName) and empty($lastName) and empty($partID)) {
 		$done = true;
 	} else {
 		// get row number for this participant in 2nd table
-		$row2 = getParticipantRowNumber($firstName, $lastName, $empID);
+		$row2 = getParticipantRowNumber($firstName, $lastName, $partID);
 		
 		$participant = [
 			"firstName" => $firstName,
-			"lastName" => $lastName
+			"lastName" => $lastName,
+			"partID" => $partID,
 		];
 		
 		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = '$firstName' AND [last_name] = '$lastName'");
@@ -247,9 +249,17 @@ while (!$done) {
 					}
 					
 					// get scheduled date (from header row)
-					$headerValue = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue();
-					preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $headerValue, $matches);
-					$sess_scheduled_date = empty($matches) ? NULL : trim($matches[0]);
+					$headerValue = explode(' ', $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue())[2];
+					$date = null;
+					foreach (['/', '-', '.'] as $sep) {
+						$pieces = explode($sep, $headerValue);
+						if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
+							$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
+							break;
+						}
+					}
+					$sess_scheduled_date = empty($date) ? NULL : $date;
+					// _log('header value: ' . $headerValue . ' -- scheduled date: ' . print_r($sess_scheduled_date, true));
 					
 					// must be retrieved from table 2
 					$sess_pa = NULL;
@@ -267,7 +277,6 @@ while (!$done) {
 							$pieces = explode($sep, $value);
 							if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
 								$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
-								_log('d1 ' . $value);
 								break;
 							}
 						}
@@ -286,14 +295,21 @@ while (!$done) {
 					}
 					
 					// determine sess_month
-					$session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
-					preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/", $session_1_header_value, $matches);
+					$session_1_header_value = explode(' ' , $workbook->getActiveSheet()->getCell("E1")->getValue())[2];
+					$date = null;
+					foreach (['/', '-', '.'] as $sep) {
+						$pieces = explode($sep, $session_1_header_value);
+						if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
+							$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
+							break;
+						}
+					}
 					$sess_month = NULL;
 					$sess_date = $sess_actual_date;
 					if (empty($sess_actual_date))
 						$sess_date = $sess_scheduled_date;
-					if (!empty($matches) and !empty($sess_date)) {
-						$d1 = new DateTime($matches[0]);
+					if (!empty($date) and !empty($sess_date)) {
+						$d1 = new DateTime($date);
 						$d2 = new DateTime($sess_date);
 						// the following assumes 4 weeks (28 days) is 1 month -- this is in line with what is stated in the DPRP standards is a program "month"
 						$sess_month = round(12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + ((int) $d2->format('d') - (int) $d1->format('d'))/28 - 1/4)+1;
