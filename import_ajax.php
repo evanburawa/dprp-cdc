@@ -1,9 +1,9 @@
 <?php
 
 /////////////
-file_put_contents("C:/vumc/log.txt", "logging...\n");
+// file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
-	file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
+	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
 }
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
