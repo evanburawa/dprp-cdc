@@ -203,8 +203,8 @@ while (!$done) {
 		} elseif (empty($records)) {
 			$participant["error"] = "The DPP plugin found no REDCap database record with first name: $firstName, last name: $lastName.";
 		} else {
-			$rid = key($records);
-			$eid = key($records[$rid]);
+			$rid = array_keys($records)[0];
+			$eid = array_keys($records[$rid])[0];
 			$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
 			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 			
