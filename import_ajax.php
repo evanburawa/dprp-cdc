@@ -174,12 +174,13 @@ try {
 }
 
 // iterate through participant data and make changes, recording before, after values, or errors
+$info = [];
 $participants = [];
 $done = false;
 $row = 2;
 $project = new \Project(PROJECT_ID);
 $records = \REDCap::getData(PROJECT_ID);
-_log("records:\n" . print_r($records, true));
+$info[] = "records:\n" . print_r($records, true);
 $records_to_update = [];
 while (!$done) {
 	$firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
@@ -310,7 +311,6 @@ while (!$done) {
 					// determine sess_month
 					$session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
 					$datePart = preg_split("/[\s]+/", $session_1_header_value)[2];
-					// _log('data part: ' . $datePart);
 					$date = null;
 					foreach (['/', '-', '.'] as $sep) {
 						$pieces = explode($sep, $datePart);
@@ -388,7 +388,6 @@ while (!$done) {
 		}
 		
 		$participants[] = $participant;
-		// _logprint_r($participant, true));
 	}
 	$row++;
 }
@@ -400,8 +399,8 @@ foreach ($records as $rid => $record) {
 	}
 }
 
-_log("records_to_update:\n" . print_r($records_to_update, true));
-_log("\n\nfiltered records:\n" . print_r($records, true));
+$info[] = "records_to_update:\n" . print_r($records_to_update, true);
+$info[] = "\n\nfiltered records:\n" . print_r($records, true);
 
 // save data
 $result = \REDCap::saveData(PROJECT_ID, 'array', $records, "overwrite");
@@ -424,5 +423,6 @@ if (empty($participants)) {
 }
 
 exit(json_encode([
-	"participants" => $participants
+	"participants" => $participants,
+	'info' => $info
 ]));

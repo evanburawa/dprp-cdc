@@ -15,7 +15,7 @@ $('#upload').on('click', function() {
 		data: form_data,
 		type: 'post',
 		success: function(response){
-			// console.log(response);
+			console.log(response);
 			if (response.error === true) {
 				$("#notes").show();
 				response.notes.forEach(function(element) {
@@ -30,7 +30,7 @@ $('#upload').on('click', function() {
 			}
 		},
 		complete: function(data) {
-			// console.log(data);
+			console.log(data);
 		}
 	});
 });
