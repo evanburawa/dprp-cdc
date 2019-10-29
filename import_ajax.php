@@ -396,7 +396,7 @@ while (!$done) {
 		
 // filter out records we didn't touch
 foreach ($records as $rid => $record) {
-	if (!array_search($rid, $records_to_update)) {
+	if (array_search($rid, $records_to_update) !== false) {
 		unset($records[$rid]);
 	}
 }
