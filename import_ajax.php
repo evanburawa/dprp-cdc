@@ -1,9 +1,9 @@
 <?php
 require('config.php');
 /////////////
-// file_put_contents("C:/vumc/log.txt", "logging...\n");
+file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
-	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
+	file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
 }
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
@@ -178,14 +178,18 @@ $participants = [];
 $done = false;
 $row = 2;
 $project = new \Project(PROJECT_ID);
-$records = \REDCap::getData(PROJECT_ID);
-$info[] = "PROJECT_ID:\n" . PROJECT_ID;
-$info[] = "records:\n" . print_r($records, true);
-$records_to_update = [];
+
+$parameters = [
+	'project_id' => PROJECT_ID,
+	'return_format' => 'json'
+];
+
+$filterLogic = [];
 while (!$done) {
 	$firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
 	$lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
 	$partID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
+	_log($firstName . ' ' . $lastName . ' ' . $partID);
 	if (empty($firstName) and empty($lastName) and empty($partID)) {
 		$done = true;
 	} else {
@@ -198,30 +202,100 @@ while (!$done) {
 			"partID" => $partID,
 		];
 		
-		// find which record from REDCap applies to this participant
-		$target_record = null;
-		$target_rid = null;
-		foreach ($records as $rid => $record) {
-			$eid = key($record);
-			if ((int) $eid !== 0) {
-				if ($record[$eid]['first_name'] == $firstName && $record[$eid]['last_name'] == $lastName) {
-					$target_record = &$record;
-					$target_rid = $rid;
+		if (is_string($row2)) {
+			$participant["error"] = $row2;
+		}
+		
+		$participants[] = $participant;
+		
+		$filterLogic[] = "([last_name]='$lastName' and [first_name]='$firstName')";
+	}
+	$row++;
+}
+
+$parameters['filterLogic'] = implode(' or ', $filterLogic);
+$records = json_decode(\REDCap::getData($parameters), true);
+
+// refetch with rids to get repeat instances (session data)
+$record_ids = [];
+foreach ($records as $record) {
+	$record_ids[] = $record['record_id'];
+	foreach ($participants as $participant) {
+		if ($record['first_name'] === $participant['firstName'] and $record['last_name'] === $participant['lastName']) {
+			$participant['record_id'] = $record['record_id'];
+		}
+	}
+}
+unset($parameters['filterLogic']);
+
+$parameters['records'] = $record_ids;
+$records = json_decode(\REDCap::getData($parameters), true);
+
+_log("records:\n" . print_r($records, true));
+_log("count:" . count($records));
+
+// exit();
+
+// while (!$done) {
+	// $firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
+	// $lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
+	// $partID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
+	// if (empty($firstName) and empty($lastName) and empty($partID)) {
+		// $done = true;
+	// } else {
+		// // get row number for this participant in 2nd table
+		// $row2 = getParticipantRowNumber($firstName, $lastName, $partID);
+		
+		// $participant = [
+			// "firstName" => $firstName,
+			// "lastName" => $lastName,
+			// "partID" => $partID,
+		// ];
+		
+		// // find which record from REDCap applies to this participant
+		// $target_record = null;
+		// $target_rid = null;
+		// foreach ($records as $rid => $record) {
+			// $eid = key($record);
+			// if ((int) $eid !== 0) {
+				// if ($record[$eid]['first_name'] == $firstName && $record[$eid]['last_name'] == $lastName) {
+					// $target_record = &$record;
+					// $target_rid = $rid;
+				// }
+			// }
+		// }
+_log('ac');
+foreach ($participants as $participant_index => $participant) {
+		$base_record = null;
+		$session_template = null;
+		$sessions = [];
+		foreach ($records as $record) {
+			if ($record['first_name'] === $participant['firstName'] and $record['last_name'] === $participant['lastName']) {
+				$base_record = &$record;
+				$session_template = $record;
+				foreach($session_template as $key => $value) {
+					$session_template[$key] = null;
 				}
+				$session_template['record_id'] = $participant['record_id'];
+				$session_template['redcap_repeat_instrument'] = "sessionscoaching_log";
+			} elseif ($record['record_id'] == $participant['record_id'] and $record["redcap_repeat_instrument"] == "sessionscoaching_log") {
+				$sessions[$record["redcap_repeat_instance"]] = &$record;
 			}
 		}
 		
-		if (is_string($row2)) {
-			$participant["error"] = $row2;
-		} elseif ($target_record === null or $target_rid === null) {
+		_log("base:\n" . print_r($base_record));
+		_log("session_template:\n" . print_r($session_template));
+		_log("sessions:\n" . print_r($sessions));
+		exit();
+		if ($base_record === null) {
 			$participant["error"] = "The DPP plugin found no REDCap database record with first name: $firstName, last name: $lastName.";
 		} else {
-			$rid = $target_rid;
-			$records_to_update[] = $rid;
-			$eid = key($target_record);
+			// $rid = $target_rid;
+			// $records_to_update[] = $rid;
+			// $eid = key($target_record);
 			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 			
-			$participant["recordID"] = $rid;
+			// $participant["recordID"] = $rid;
 			$participant["before"] = [];
 			$participant["after"] = [];
 			
@@ -392,18 +466,20 @@ while (!$done) {
 	$row++;
 }
 		
-// filter out records we didn't touch
-foreach ($records as $rid => $record) {
-	if (array_search($rid, $records_to_update) === false) {
-		unset($records[$rid]);
-	}
-}
+// // filter out records we didn't touch
+// foreach ($records as $rid => $record) {
+	// if (array_search($rid, $records_to_update) === false) {
+		// unset($records[$rid]);
+	// }
+// }
 
-$info[] = "records_to_update:\n" . print_r($records_to_update, true);
-$info[] = "\n\nfiltered records:\n" . print_r($records, true);
+// _log("records_to_update:\n" . print_r($records_to_update, true));
+// _log("\n\nfiltered records:\n" . print_r($records, true));
+// $info[] = "records_to_update:\n" . print_r($records_to_update, true);
+// $info[] = "\n\nfiltered records:\n" . print_r($records, true);
 
 // save data
-$result = \REDCap::saveData(PROJECT_ID, 'array', $records, "overwrite");
+$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records), "overwrite");
 if (!empty($result["errors"])) {
 	$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
 	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
@@ -412,7 +488,8 @@ if (!empty($result["errors"])) {
 	continue;
 }
 
-$info[] = "save results -- " . print_r($result, true);
+// $info[] = "save results -- " . print_r($result, true);
+_log("save results -- " . print_r($result, true));
 
 if (empty($participants)) {
     exit(json_encode([
