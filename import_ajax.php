@@ -74,7 +74,6 @@ function getParticipantRowNumber($firstName, $lastName, $partID) {
 		$thisRowLastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $nextRow)->getValue();
 		$thisRowFirstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $nextRow)->getValue();
 		$thisRowPartID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $nextRow)->getValue();
-		_log('get part row num details: ' . print_r([$thisRowLastName, $thisRowFirstName, $thisRowPartID], true));
 		if (empty($thisRowLastName) and empty($thisRowFirstName) and empty($thisRowPartID)) {
 			return "DPP plugin couldn't find this participant in 2nd data table. First and last name provided must match, if a participant ID is provided, it must also match.";
 		} elseif ($thisRowLastName == $lastName and $thisRowFirstName == $firstName and $thisRowPartID == $partID) {
@@ -179,6 +178,9 @@ $participants = [];
 $done = false;
 $row = 2;
 $project = new \Project(PROJECT_ID);
+$records = \REDCap::getData(PROJECT_ID);
+_log("records:\n" . print_r($records, true));
+$records_to_update = [];
 while (!$done) {
 	$firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
 	$lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
@@ -195,17 +197,29 @@ while (!$done) {
 			"partID" => $partID,
 		];
 		
-		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = '$firstName' AND [last_name] = '$lastName'");
+		// find which record from REDCap applies to this participant
+		$target_record = null;
+		$target_rid = null;
+		foreach ($records as $rid => $record) {
+			$eid = key($record);
+			if ((int) $eid !== 0) {
+				if ($record[$eid]['first_name'] == $firstName && $record[$eid]['last_name'] == $lastName) {
+					$target_record = &$record;
+					$target_rid = $rid;
+				}
+			}
+		}
 		
 		if (is_string($row2)) {
 			$participant["error"] = $row2;
-		} elseif (empty($records)) {
+		} elseif ($target_record === null or $target_rid === null) {
 			$participant["error"] = "The DPP plugin found no REDCap database record with first name: $firstName, last name: $lastName.";
 		} else {
-			$rid = array_keys($records)[0];
-			$eid = array_keys($records[$rid])[0];
-			$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
-			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
+			$rid = $target_rid;
+			$records_to_update[] = $rid;
+			$eid = key($target_record);
+			$record = $target_record;
+			$sessions = $target_record["repeat_instances"][$eid]["sessionscoaching_log"];
 			
 			$participant["recordID"] = $rid;
 			$participant["before"] = [];
@@ -358,16 +372,6 @@ while (!$done) {
 			}
 		}
 		
-		// save data
-		$result = \REDCap::saveData(PROJECT_ID, 'array', $records, "overwrite");
-		if (!empty($result["errors"])) {
-			$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
-			\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
-			$row++;
-			$participants[] = $participant;
-			continue;
-		}
-		
 		for ($i = 1; $i <= 28; $i++) {
 			$offset = ($i >= 17) ? 7 : 4;
 			if (isset($sessions[$i])) {
@@ -388,6 +392,26 @@ while (!$done) {
 		// _logprint_r($participant, true));
 	}
 	$row++;
+}
+		
+// filter out records we didn't touch
+foreach ($records as $rid => $record) {
+	if (!array_search($rid, $records_to_update)) {
+		unset($records[$rid]);
+	}
+}
+
+_log("records_to_update:\n" . print_r($records_to_update, true));
+_log("\n\nfiltered records:\n" . print_r($records, true));
+
+// save data
+$result = \REDCap::saveData(PROJECT_ID, 'array', $records, "overwrite");
+if (!empty($result["errors"])) {
+	$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
+	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
+	$row++;
+	$participants[] = $participant;
+	continue;
 }
 
 if (empty($participants)) {
