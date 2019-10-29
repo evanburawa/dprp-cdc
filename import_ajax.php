@@ -198,13 +198,13 @@ while (!$done) {
 		
 		$records = \REDCap::getData(PROJECT_ID, 'array', NULL, NULL, NULL, NULL, NULL, NULL, NULL, "[first_name] = '$firstName' AND [last_name] = '$lastName'");
 		
-		if (empty($records) and (!is_int($row2) and !is_string($row2))) {
-			$participant["error"] = "The DPP plugin found no record with first name: $firstName, last name: $lastName in the second table.";
-		} elseif (is_string($row2)) {
+		if (is_string($row2)) {
 			$participant["error"] = $row2;
+		} elseif (empty($records)) {
+			$participant["error"] = "The DPP plugin found no REDCap database record with first name: $firstName, last name: $lastName.";
 		} else {
-			$rid = array_keys($records)[0];
-			$eid = array_keys($records[$rid])[0];
+			$rid = key($records);
+			$eid = key($records[$rid]);
 			$records = \REDCap::getData(PROJECT_ID, 'array', $rid);
 			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 			
