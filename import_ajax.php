@@ -414,6 +414,8 @@ if (!empty($result["errors"])) {
 	continue;
 }
 
+$info[] = "save results -- " . print_r($result, true);
+
 if (empty($participants)) {
     exit(json_encode([
 		"error" => true,
