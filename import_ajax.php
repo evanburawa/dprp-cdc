@@ -1,5 +1,5 @@
 <?php
-require('config.php')
+require('config.php');
 /////////////
 // file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
