@@ -221,7 +221,7 @@ while (!$done) {
 			$rid = $target_rid;
 			$records_to_update[] = $rid;
 			$eid = key($target_record);
-			$sessions = $records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
+			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
 			
 			$participant["recordID"] = $rid;
 			$participant["before"] = [];
