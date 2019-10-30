@@ -6,6 +6,10 @@ require('config.php');
 $response = [];
 $response['pid'] = PROJECT_ID;
 
+$records = \REDCap::getData(PROJECT_ID, 'json');
+$response['records count:'] = count(json_decode($records, true));
+exit(json_encode($response));
+
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 function file_upload_max_size() {
   static $max_size = -1;
@@ -213,10 +217,10 @@ unset($filterLogic);
 $response['params1'] = $parameters;
 
 
-ob_start();
+// ob_start();
 $records = json_decode(\REDCap::getData($parameters), true);
-$response['ob_first_get_data_call'] = print_r(ob_flush(), true);
-ob_end_clean();
+// $response['ob_first_get_data_call'] = print_r(ob_flush(), true);
+// ob_end_clean();
 
 $response['record by name count'] = count($records);
 
