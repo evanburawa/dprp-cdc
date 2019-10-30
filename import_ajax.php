@@ -496,12 +496,12 @@ if (!empty($result["errors"])) {
 	echo json_encode([
 		'error' => true,
 		'notes' => "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info."
-		// "info" => $info
+		"info" => $info
 	]);
 	return;
 }
 
 echo json_encode([
 	"participants" => $participants
-	// "info" => $info
+	"info" => $info
 ]);
