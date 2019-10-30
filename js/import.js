@@ -116,6 +116,8 @@ function writeResultsTable(participants) {
 					fields.forEach(function(field, f_index) {
 						if (participant.after[i][field] == null)
 							participant.after[i][field] = "";
+						if (participant.before[i][field] == null)
+							participant.before[i][field] = "";
 						let a = participant.before[i][field];
 						let b = participant.after[i][field];
 						let style = "neutral";
