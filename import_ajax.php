@@ -1,4 +1,5 @@
 <?php
+exit(json_encode(['abc' => 'def']));
 // Report all PHP errors
 // error_reporting(-1);
 
