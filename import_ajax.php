@@ -164,7 +164,6 @@ if (!empty($errors)) {
 }
 
 // open workbook
-exit(json_encode(['abc' => 'def']));
 require "libs/PhpSpreadsheet/vendor/autoload.php";
 require_once "libs/PhpSpreadsheet/src/Bootstrap.php";
 
@@ -231,6 +230,7 @@ $parameters['filterLogic'] = implode(' or ', $filterLogic);
 unset($filterLogic);
 $info['params1'] = $parameters;
 
+exit(json_encode(['abc' => 'def']));
 ob_start();
 $records = json_decode(\REDCap::getData($parameters), true);
 $info['ob_first_get_data_call'] = print_r(ob_flush(), true);
