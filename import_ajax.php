@@ -467,7 +467,7 @@ if (!empty($result["errors"])) {
 	continue;
 }
 
-// $info[] = "save results -- " . print_r($result, true);
+$info['save results'] = print_r($result, true);
 // _log("save results -- " . print_r($result, true));
 
 if (empty($participants)) {
