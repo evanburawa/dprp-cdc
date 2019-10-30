@@ -1,13 +1,5 @@
 <?php
-define("NOAUTH", true);
 require "config.php";
-\REDCap::allowProjects([PROJECT_ID]);
-
-$msg = "<pre>records:\n" . print_r(\REDCap::getData(PROJECT_ID), true) . "</pre>";
-exit(json_encode([
-	'msg' => $msg,
-	'pid' => PROJECT_ID
-]));
 
 /////////////
 // file_put_contents("C:/vumc/log.txt", PROJECT_ID);
