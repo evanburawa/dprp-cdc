@@ -453,11 +453,11 @@ foreach ($participants as $participant_index => $participant) {
 	$row++;
 }
 
+// save data
+$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 exit(json_encode([
 	'count' => count($records)
 ]));
-// save data
-$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 if (!empty($result["errors"])) {
 	$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
 	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
