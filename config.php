@@ -1,5 +1,5 @@
 <?php
-require_once("../../redcap_connect.php");
+require_once str_replace("temp" . DIRECTORY_SEPARATOR, "", APP_PATH_TEMP) . "redcap_connect.php";
 
 if(!defined("ENVIRONMENT")) {
 	if (is_file('/app001/victrcore/lib/Victr/Env.php')) include_once('/app001/victrcore/lib/Victr/Env.php');
