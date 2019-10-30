@@ -217,6 +217,7 @@ while (!$done) {
 
 $parameters['filterLogic'] = implode(' or ', $filterLogic);
 unset($filterLogic);
+$info['params1'] = $parameters;
 $records = json_decode(\REDCap::getData($parameters), true);
 
 $info['record by name count'] = count($records);
@@ -234,6 +235,7 @@ foreach ($records as $record) {
 unset($parameters['filterLogic']);
 
 $parameters['records'] = $record_ids;
+$info['params2'] = $parameters;
 $records = json_decode(\REDCap::getData($parameters), true);
 $info['record by rids count'] = count($records);
 $session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
