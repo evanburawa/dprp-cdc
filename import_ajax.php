@@ -5,6 +5,7 @@ require('config.php');
 
 $response = [];
 $response['pid'] = PROJECT_ID;
+exit(json_encode($response));
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 function file_upload_max_size() {
