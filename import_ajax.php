@@ -455,22 +455,6 @@ foreach ($participants as $participant_index => $participant) {
 	$row++;
 }
 
-// save data
-$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
-exit(json_encode([
-	'participants' => $participants,
-	'info' => $info
-]));
-if (!empty($result["errors"])) {
-	$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
-	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
-	$participants[] = $participant;
-	continue;
-}
-
-$info['save results'] = print_r($result, true);
-// _log("save results -- " . print_r($result, true));
-
 if (empty($participants)) {
     exit(json_encode([
 		"error" => true,
@@ -478,6 +462,24 @@ if (empty($participants)) {
 			"The workbook was opened successfully, however cells A2, B2, and C2 in the 'DPP Sessions' worksheet are empty.",
 			"This plugin expects a first name and last name for at least one participant."
 		]
+	]));
+}
+
+// save data
+$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
+$info['save results'] = print_r($result, true);
+exit(json_encode([
+	'participants' => $participants,
+	'info' => $info
+]));
+
+if (!empty($result["errors"])) {
+	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
+	exit(json_encode([
+		'error' => true,
+		'notes' => "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.",
+		"participants" => $participants,
+		"info" => $info
 	]));
 }
 
