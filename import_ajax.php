@@ -104,6 +104,11 @@ function getLabel($rawValue, $fieldName) {
 	return $labels[$fieldName][$rawValue];
 }
 
+
+$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records));
+$response['save results'] = print_r($result, true);
+exit(json_encode($response));
+
 // check for $_FILES["workbook"]
 if (empty($_FILES["workbook"])) {
 	exit(json_encode([
@@ -150,10 +155,6 @@ if (!empty($errors)) {
 		"notes" => $errors
 	]));
 }
-
-$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records));
-$response['save results'] = print_r($result, true);
-exit(json_encode($response));
 
 // open workbook
 require "libs/PhpSpreadsheet/vendor/autoload.php";
