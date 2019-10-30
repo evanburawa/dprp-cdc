@@ -147,10 +147,10 @@ if (!empty($errors)) {
 }
 
 // open workbook
+exit(json_encode($response));
 require "libs/PhpSpreadsheet/vendor/autoload.php";
 require_once "libs/PhpSpreadsheet/src/Bootstrap.php";
 
-exit(json_encode($response));
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
