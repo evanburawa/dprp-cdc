@@ -7,7 +7,8 @@ $response = [];
 $response['pid'] = PROJECT_ID;
 
 $records = \REDCap::getData(PROJECT_ID, 'json');
-$response['records count:'] = count(json_decode($records, true));
+$response['records count'] = count(json_decode($records, true));
+$response['conn'] = print_r($conn, true);
 exit(json_encode($response));
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
