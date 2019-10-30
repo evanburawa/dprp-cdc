@@ -1,4 +1,9 @@
 <?php
+// Report all PHP errors
+error_reporting(-1);
+
+// Same as error_reporting(E_ALL);
+ini_set('error_reporting', E_ALL);
 define("NOAUTH", true);
 require "config.php";
 
@@ -471,6 +476,7 @@ if (empty($participants)) {
 
 // save data
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
+
 $info['save results'] = print_r($result, true);
 header_remove("X-Content-Type-Options");
 header_remove("X-XSS-Protection");
