@@ -472,7 +472,9 @@ if (empty($participants)) {
 // save data
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 $info['save results'] = print_r($result, true);
-
+header_remove("X-Content-Type-Options");
+header_remove("X-XSS-Protection");
+header("Access-Control-Allow-Origin: *");
 if (!empty($result["errors"])) {
 	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
 	exit(json_encode([
