@@ -6,8 +6,8 @@ require('config.php');
 $response = [];
 $response['pid'] = PROJECT_ID;
 
-$records = \REDCap::getData(PROJECT_ID, 'json');
-$response['records count'] = count(json_decode($records, true));
+$records = \REDCap::getData(PROJECT_ID);
+$response['records count'] = count($records);
 $response['conn'] = print_r($conn, true);
 exit(json_encode($response));
 
