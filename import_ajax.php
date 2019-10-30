@@ -233,10 +233,6 @@ unset($parameters['filterLogic']);
 
 $parameters['records'] = $record_ids;
 $records = json_decode(\REDCap::getData($parameters), true);
-
-exit(json_encode([
-	'count' => count($records)
-]));
 $info['record by rids count'] = count($records);
 $session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
 $records_to_save = [];
@@ -457,6 +453,9 @@ foreach ($participants as $participant_index => $participant) {
 	$row++;
 }
 
+exit(json_encode([
+	'count' => count($records)
+]));
 // save data
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 if (!empty($result["errors"])) {
