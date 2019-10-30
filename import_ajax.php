@@ -1,11 +1,6 @@
 <?php
 require "config.php";
 
-// $records = \REDCap::getData(PROJECT_ID);
-// exit(json_encode([
-	// 'count' => count($records)
-// ]));
-
 /////////////
 // file_put_contents("C:/vumc/log.txt", PROJECT_ID);
 function _log($text) {
@@ -221,6 +216,11 @@ while (!$done) {
 $parameters['filterLogic'] = implode(' or ', $filterLogic);
 unset($filterLogic);
 $records = json_decode(\REDCap::getData($parameters), true);
+
+exit(json_encode([
+	'count' => count($records)
+]));
+
 $info['record by name count'] = count($records);
 
 // refetch with rids to get repeat instances (session data)
