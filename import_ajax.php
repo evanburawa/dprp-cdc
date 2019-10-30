@@ -11,6 +11,9 @@ $response['pid'] = PROJECT_ID;
 $records = json_decode(\REDCap::getData(PROJECT_ID, 'json'), true);
 $response['record count'] = count($records);
 
+$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records));
+$response['save results'] = print_r($result, true);
+exit(json_encode($response));
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 function file_upload_max_size() {
   static $max_size = -1;
@@ -103,11 +106,6 @@ function getLabel($rawValue, $fieldName) {
 	}
 	return $labels[$fieldName][$rawValue];
 }
-
-
-$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records));
-$response['save results'] = print_r($result, true);
-exit(json_encode($response));
 
 // check for $_FILES["workbook"]
 if (empty($_FILES["workbook"])) {
