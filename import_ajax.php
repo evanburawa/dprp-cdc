@@ -1,19 +1,21 @@
 <?php
 // Report all PHP errors
-error_reporting(-1);
+// error_reporting(-1);
 
 // Same as error_reporting(E_ALL);
-ini_set('error_reporting', E_ALL);
-define("NOAUTH", true);
-require "config.php";
+// ini_set('error_reporting', E_ALL);
+// define("NOAUTH", true);
+// require "config.php";
 
-$info = [];
+// $info = [];
 // $info['conn'] = print_r($conn, true);
 /////////////
 // file_put_contents("C:/vumc/log.txt", PROJECT_ID);
 function _log($text) {
 	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
 }
+
+define(PROJECT_ID, $module->getProjectId());
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 function file_upload_max_size() {
@@ -75,7 +77,7 @@ function getParticipantRowNumber($firstName, $lastName, $partID) {
 	}
 	
 	if ($headerRow == 0) {
-		return "DPP plugin couldn't find 2nd table of participant data. Please see sample master file for formatting help.";
+		return "The DPP module couldn't find 2nd table of participant data. Please see sample master file for formatting help.";
 	}
 	
 	$nextRow = $headerRow + 1;
@@ -84,7 +86,7 @@ function getParticipantRowNumber($firstName, $lastName, $partID) {
 		$thisRowFirstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $nextRow)->getValue();
 		$thisRowPartID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $nextRow)->getValue();
 		if (empty($thisRowLastName) and empty($thisRowFirstName) and empty($thisRowPartID)) {
-			return "DPP plugin couldn't find this participant in 2nd data table. First and last name provided must match, if a participant ID is provided, it must also match.";
+			return "The DPP module couldn't find this participant in 2nd data table. First and last name provided must match, if a participant ID is provided, it must also match.";
 		} elseif ($thisRowLastName == $lastName and $thisRowFirstName == $firstName and $thisRowPartID == $partID) {
 			return $nextRow;
 		}
@@ -113,22 +115,24 @@ function getLabel($rawValue, $fieldName) {
 
 // check for $_FILES["workbook"]
 if (empty($_FILES["workbook"])) {
-	exit(json_encode([
+	echo json_encode([
 		"error" => true,
 		"notes" => [
 			"Please attach a workbook file and then click 'Upload'."
 		]
-	]));
+	]);
+	return;
 }
 
 // check for transfer errors
 if ($_FILES["workbook"]["error"] !== 0) {
-	exit(json_encode([
+	echo json_encode([
 		"error" => true,
 		"notes" => [
 			"An error occured while uploading your workbook. Please try again."
 		]
-	]));
+	]);
+	return;
 }
 
 // have file, so check name, size
@@ -152,10 +156,11 @@ if ($maxsize !== -1) {
 }
 
 if (!empty($errors)) {
-	exit(json_encode([
+	echo json_encode([
 		"error" => true,
 		"notes" => $errors
-	]));
+	]);
+	return;
 }
 
 // open workbook
@@ -171,14 +176,15 @@ try {
 	$workbook = $reader->load($_FILES["workbook"]["tmp_name"]);
 	unlink($_FILES["workbook"]["tmp_name"]);
 } catch(\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
-	REDCap::logEvent("DPP import failure", "PhpSpreadsheet library errors -> " . print_r($e, true) . "\n", null, $rid, $eid, PROJECT_ID);
-    exit(json_encode([
+	\REDCap::logEvent("DPP import failure", "PhpSpreadsheet library errors -> " . print_r($e, true) . "\n", null, $rid, $eid, PROJECT_ID);
+    echo json_encode([
 		"error" => true,
 		"notes" => [
 			"There was an issue loading the workbook. Make sure it is an .xlsx file with a worksheet named 'DPP Sessions'.",
 			"If you believe your file is a valid DPP Workbook file, please contact your REDCap administrator."
 		]
-	]));
+	]);
+	return;
 }
 
 // iterate through participant data and make changes, recording before, after values, or errors
@@ -280,7 +286,7 @@ foreach ($participants as $participant_index => $participant) {
 	// exit();
 	
 	if ($base_record === null) {
-		$participant["error"] = "The DPP plugin found no REDCap database record with first name: $firstName, last name: $lastName.";
+		$participant["error"] = "The DPP module found no REDCap database record with first name: $firstName, last name: $lastName.";
 	} else {
 		// $rid = $target_rid;
 		// $records_to_update[] = $rid;
@@ -467,41 +473,35 @@ foreach ($participants as $participant_index => $participant) {
 }
 
 if (empty($participants)) {
-    exit(json_encode([
+    echo json_encode([
 		"error" => true,
 		"notes" => [
 			"The workbook was opened successfully, however cells A2, B2, and C2 in the 'DPP Sessions' worksheet are empty.",
-			"This plugin expects a first name and last name for at least one participant."
+			"This module expects a first name and last name for at least one participant."
 		]
-	]));
+	]);
+	return;
 }
-
-
 
 // save data
 ob_start();
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 
-exit(json_encode([
-	"participants" => $participants,
-	"info" => $info
-]));
 $info['save results'] = print_r($result, true);
 $info['ob'] = print_r(ob_flush(), true);
 ob_end_clean();
-header_remove("X-Content-Type-Options");
-header_remove("X-XSS-Protection");
-header("Access-Control-Allow-Origin: *");
+
 if (!empty($result["errors"])) {
 	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
-	exit(json_encode([
+	echo json_encode([
 		'error' => true,
-		'notes' => "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.",
-		"info" => $info
-	]));
+		'notes' => "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info."
+		// "info" => $info
+	]);
+	return;
 }
 
-// exit(json_encode([
-	// "participants" => $participants,
+echo json_encode([
+	"participants" => $participants
 	// "info" => $info
-// ]));
+]);

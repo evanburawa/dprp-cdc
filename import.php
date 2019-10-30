@@ -1,35 +1,47 @@
 <?php
-define("NOAUTH", true);
-require_once('config.php');
+// define("NOAUTH", true);
+// require_once('config.php');
 require_once "../../redcap_connect.php";
-require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
-?>
-<div id="container">
-	<div id="notes" class="card p5" style="width: 50rem;">
-		<div class="card-body">
-			<h5>File upload failed</h5>
-		</div>
-	</div>
-	<div id="filepicker" class="card-body pb5 m3" style="width: 50rem;">
-		<h5>Select a DPP Master File workbook to upload</h5>
-		<div class="input-group">
-			<div class="custom-file">
-				<input type="file" class="custom-file-input" id="workbook" aria-describedby="upload">
-				<label class="custom-file-label text-truncate" for="workbook">Choose file</label>
-			</div>
-			<div class="input-group-append">
-				<button class="btn btn-outline-secondary" type="button" id="upload">Upload</button>
+
+file_put_contents("C:/vumc/log.txt", "logging...\n");
+function _log($text) {
+	file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
+}
+
+if (!empty($_POST)) {
+	include($module->getUrl('import_ajax.php'));
+} else {
+	require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
+	?>
+	<div id="container">
+		<div id="notes" class="card p5" style="width: 50rem;">
+			<div class="card-body">
+				<h5>File upload failed</h5>
 			</div>
 		</div>
-	</div>
-	<div id="results" class="card pb5 m5">
-		<div class="card-body">
+		<div id="filepicker" class="card-body pb5 m3" style="width: 50rem;">
+			<h5>Select a DPP Master File workbook to upload</h5>
+			<div class="input-group">
+				<div class="custom-file">
+					<input type="file" class="custom-file-input" id="workbook" aria-describedby="upload">
+					<label class="custom-file-label text-truncate" for="workbook">Choose file</label>
+				</div>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" id="upload">Upload</button>
+				</div>
+			</div>
+		</div>
+		<div id="results" class="card pb5 m5">
+			<div class="card-body">
+			</div>
 		</div>
 	</div>
-</div>
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/import.js"></script>
-<?php
-require_once APP_PATH_DOCROOT . 'ProjectGeneral/footer.php';
-?>
+	<?php
+	$js = file_get_contents($module->getUrl("js/import.js"));
+	$js = str_replace('import_ajax.php', $module->getUrl("import_ajax.php"), $js);
+	?>
+	<script type="text/javascript"><?php echo $js;?></script>
+	<link rel="stylesheet" href="<?=$module->getUrl('css/import.css')?>"/>
+	<?php
+	require_once APP_PATH_DOCROOT . 'ProjectGeneral/footer.php';
+}

@@ -1,0 +1,50 @@
+{
+	"name": "Diabetes Prevention Program",
+	
+	"namespace": "Vanderbilt\\DiabetesPreventionProgram",
+	
+	"description": "External module for Vanderbilt's Diabetes Prevention Program projects.",
+	
+	"authors": [
+		{
+			"name": "Carl Reed",
+			"email": "carl.w.reed@vumc.org",
+			"institution": "Vanderbilt University Medical Center"
+		}
+	],
+	
+	"links": {
+		"project": [
+			{
+				"name": "DPP Workbook Export",
+				"icon": "file-export",
+				"url": "coach_cohort_page.php"
+			},
+			{
+				"name": "DPP Workbook Import",
+				"icon": "file-export",
+				"url": "import.php"
+			},
+			{
+				"name": "CDC Export",
+				"icon": "file-upload",
+				"url": "cdc.php"
+			}
+		]
+	},
+	
+	"permissions": [
+		"redcap_survey_page",
+		"redcap_data_entry_form"
+	],
+	
+	"system-settings": [
+	
+	],
+	
+	"project-settings": [
+		
+   	],
+	
+	"framework-version": 3
+}
