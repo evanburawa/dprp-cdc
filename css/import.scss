@@ -1,0 +1,60 @@
+// recompile command (in git bash in plugins/nitin folder):
+//sass.bat css/base.scss css/base.css
+
+// @import "C:/UniServerZ/www/redcap/plugins/nitin/css/_normalize.scss";
+// @import "_normalize.scss";
+@import "bootstrap/bootstrap.scss";
+
+#container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+#notes {
+	display: none;
+}
+
+#results {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	
+	.row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: row;
+		.col {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+		}
+	}
+	width: 90%;
+}
+
+.custom-file-control.selected:lang(en)::after {
+	content: "" !important;
+}
+
+table, th, td {
+	padding: 8px;
+	border: 1px solid black;
+	.updated {
+		background-color: #C7FFBD;
+	}
+	.neutral {
+		background-color: #FFFFFF;
+	}
+	.deleted {
+		background-color: #FFE8BD;
+	}
+}
+
+tr {
+	max-height: 23px !important;
+}
