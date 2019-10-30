@@ -1,6 +1,7 @@
 <?php
 define("NOAUTH", true);
 require "config.php";
+/REDCap::allowProjects(PROJECT_ID);
 
 $msg = "<pre>records:\n" . print_r(\REDCap::getData(PROJECT_ID), true) . "</pre>";
 exit(json_encode([
