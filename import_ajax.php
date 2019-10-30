@@ -475,6 +475,10 @@ if (empty($participants)) {
 
 
 // save data
+exit(json_encode([
+	"participants" => $participants,
+	"info" => $info
+]));
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 
 $info['save results'] = print_r($result, true);
@@ -489,7 +493,3 @@ if (!empty($result["errors"])) {
 		"info" => $info
 	]));
 }
-exit(json_encode([
-	"participants" => $participants,
-	"info" => $info
-]));
