@@ -475,13 +475,12 @@ if (empty($participants)) {
 
 
 // save data
-exit(json_encode([
-	"participants" => $participants,
-	"info" => $info
-]));
+ob_start();
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 
 $info['save results'] = print_r($result, true);
+$info['ob'] = ob_flush();
+ob_end_clean();
 header_remove("X-Content-Type-Options");
 header_remove("X-XSS-Protection");
 header("Access-Control-Allow-Origin: *");
@@ -493,3 +492,8 @@ if (!empty($result["errors"])) {
 		"info" => $info
 	]));
 }
+
+exit(json_encode([
+	"participants" => $participants,
+	"info" => $info
+]));
