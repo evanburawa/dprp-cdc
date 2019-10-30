@@ -150,6 +150,7 @@ if (!empty($errors)) {
 require "libs/PhpSpreadsheet/vendor/autoload.php";
 require_once "libs/PhpSpreadsheet/src/Bootstrap.php";
 
+exit(json_encode($response));
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
@@ -169,7 +170,6 @@ try {
 	]));
 }
 
-exit(json_encode($response));
 // iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
 $done = false;
