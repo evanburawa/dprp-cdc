@@ -3,7 +3,7 @@ define("NOAUTH", true);
 require "config.php";
 
 $info = [];
-$info['conn'] = print_r($conn, true);
+// $info['conn'] = print_r($conn, true);
 /////////////
 // file_put_contents("C:/vumc/log.txt", PROJECT_ID);
 function _log($text) {
@@ -456,8 +456,11 @@ foreach ($participants as $participant_index => $participant) {
 }
 
 // save data
+exit(json_encode([
+	'participants' => $participants,
+	'info' => $info
+]));
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
-$info['closed'] = mysqli_close($conn);
 if (!empty($result["errors"])) {
 	$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
 	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
