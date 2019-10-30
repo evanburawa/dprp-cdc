@@ -479,7 +479,7 @@ ob_start();
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 
 $info['save results'] = print_r($result, true);
-$info['ob'] = ob_flush();
+$info['ob'] = print_r(ob_flush(), true);
 ob_end_clean();
 header_remove("X-Content-Type-Options");
 header_remove("X-XSS-Protection");
