@@ -76,7 +76,7 @@ class DiabetesPreventionProgram extends \ExternalModules\AbstractExternalModule 
 	}
 }
 
-file_put_contents("C:/vumc/log.txt", "logging...\n");
+// file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
-	file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
+	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
 }

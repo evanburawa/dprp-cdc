@@ -283,7 +283,6 @@ foreach ($participants as $participant_index => $participant) {
 	// _log("session_template:\n" . print_r($session_template, true));
 	// _log("sessions:\n" . print_r($sessions, true));
 	// _log("participants:\n" . print_r($participants, true));
-	// exit();
 	
 	if ($base_record === null) {
 		$participant["error"] = "The DPP module found no REDCap database record with first name: $firstName, last name: $lastName.";
@@ -495,13 +494,13 @@ if (!empty($result["errors"])) {
 	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
 	echo json_encode([
 		'error' => true,
-		'notes' => "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info."
+		'notes' => "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.",
 		"info" => $info
 	]);
 	return;
 }
 
 echo json_encode([
-	"participants" => $participants
+	"participants" => $participants,
 	"info" => $info
 ]);
