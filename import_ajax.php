@@ -1,19 +1,19 @@
 <?php
 // Report all PHP errors
 error_reporting(-1);
-
-// Same as error_reporting(E_ALL);
 ini_set('error_reporting', E_ALL);
-define("NOAUTH", true);
+
+// db connection
 require "config.php";
 
-$info = [];
-// $info['conn'] = print_r($conn, true);
-/////////////
-// file_put_contents("C:/vumc/log.txt", PROJECT_ID);
-function _log($text) {
-	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
-}
+$response = [];
+$response['pid'] = PROJECT_ID;
+$records = json_decode(\REDCap::getData(PROJECT_ID, 'json'), true);
+$response['record count'] = count($records);
+$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records));
+$response['save results'] = print_r($result, true);
+exit(json_encode($response));
+
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 function file_upload_max_size() {
@@ -47,9 +47,7 @@ function parse_size($size) {
     return round($size);
   }
 }
-/////////////
 
-/////////////
 // from: https://stackoverflow.com/questions/15188033/human-readable-file-size
 function humanFileSize($size,$unit="") {
   if( (!$unit && $size >= 1<<30) || $unit == "GB")
@@ -60,7 +58,6 @@ function humanFileSize($size,$unit="") {
     return number_format($size/(1<<10),2)."KB";
   return number_format($size)." bytes";
 }
-/////////////
 
 function getParticipantRowNumber($firstName, $lastName, $partID) {
 	// return row number of 2nd table that has args given
