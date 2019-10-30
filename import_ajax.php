@@ -1,9 +1,9 @@
 <?php
 // Report all PHP errors
-// error_reporting(-1);
+error_reporting(-1);
 
 // Same as error_reporting(E_ALL);
-// ini_set('error_reporting', E_ALL);
+ini_set('error_reporting', E_ALL);
 // define("NOAUTH", true);
 // require "config.php";
 
@@ -164,13 +164,13 @@ if (!empty($errors)) {
 }
 
 // open workbook
+exit(json_encode(['abc' => 'def']));
 require $module->getUrl("libs/PhpSpreadsheet/vendor/autoload.php");
 require_once $module->getUrl("libs/PhpSpreadsheet/src/Bootstrap.php");
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-exit(json_encode(['abc' => 'def']));
 try {
 	$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
 	$reader->setLoadSheetsOnly("DPP Sessions");
