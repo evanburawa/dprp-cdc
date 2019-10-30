@@ -169,7 +169,6 @@ try {
 	]));
 }
 
-exit(json_encode($response));
 // iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
 $done = false;
