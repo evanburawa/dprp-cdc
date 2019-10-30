@@ -1,4 +1,5 @@
 <?php
+define("NOAUTH", true);
 require "config.php";
 
 $info = [];
