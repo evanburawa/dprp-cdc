@@ -146,7 +146,6 @@ if (!empty($errors)) {
 	]));
 }
 
-exit(json_encode($response));
 // open workbook
 require "libs/PhpSpreadsheet/vendor/autoload.php";
 require_once "libs/PhpSpreadsheet/src/Bootstrap.php";
@@ -170,6 +169,7 @@ try {
 	]));
 }
 
+exit(json_encode($response));
 // iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
 $done = false;
