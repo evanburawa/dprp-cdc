@@ -1,13 +1,15 @@
 <?php
-require_once "../../redcap_connect.php";
-define('PROJECT_ID', $_GET['pid']);
+require "../../redcap_connect.php";
+define(PROJECT_ID, 1498);
+
 // $msg = "<pre>records:\n" . print_r(\REDCap::getData(PROJECT_ID), true) . "</pre>";
 // exit(json_encode([
-	// 'msg' => $msg
+	// 'msg' => $msg,
+	// 'pid' => PROJECT_ID
 // ]));
 
 /////////////
-// file_put_contents("C:/vumc/log.txt", "logging...\n");
+// file_put_contents("C:/vumc/log.txt", PROJECT_ID);
 function _log($text) {
 	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
 }
