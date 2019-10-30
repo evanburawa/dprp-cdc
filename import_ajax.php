@@ -151,6 +151,10 @@ if (!empty($errors)) {
 	]));
 }
 
+$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records));
+$response['save results'] = print_r($result, true);
+exit(json_encode($response));
+
 // open workbook
 require "libs/PhpSpreadsheet/vendor/autoload.php";
 require_once "libs/PhpSpreadsheet/src/Bootstrap.php";
@@ -217,9 +221,6 @@ $parameters['filterLogic'] = implode(' or ', $filterLogic);
 unset($filterLogic);
 $info['params1'] = $parameters;
 
-$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records));
-$response['save results'] = print_r($result, true);
-exit(json_encode($response));
 
 ob_start();
 $records = json_decode(\REDCap::getData($parameters), true);
