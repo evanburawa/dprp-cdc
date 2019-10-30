@@ -30,7 +30,7 @@ $('#upload').on('click', function() {
 			}
 		},
 		complete: function(data) {
-			// console.log(data);
+			console.log(data);
 		}
 	});
 });

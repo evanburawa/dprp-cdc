@@ -9,7 +9,7 @@ function _log($text) {
 }
 
 if (!empty($_POST)) {
-	include($module->getUrl('import_ajax.php'));
+	include('import_ajax.php');
 } else {
 	require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 	?>
