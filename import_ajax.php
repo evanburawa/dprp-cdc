@@ -1,6 +1,6 @@
 <?php
-include('config.php');
-
+require_once "../../redcap_connect.php";
+define('PROJECT_ID', $_GET['pid']);
 // $msg = "<pre>records:\n" . print_r(\REDCap::getData(PROJECT_ID), true) . "</pre>";
 // exit(json_encode([
 	// 'msg' => $msg
