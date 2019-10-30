@@ -170,6 +170,7 @@ require_once "libs/PhpSpreadsheet/src/Bootstrap.php";
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
+exit(json_encode(['abc' => 'def']));
 try {
 	$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
 	$reader->setLoadSheetsOnly("DPP Sessions");
@@ -187,7 +188,6 @@ try {
 	return;
 }
 
-exit(json_encode(['abc' => 'def']));
 // iterate through participant data and make changes, recording before, after values, or errors
 $participants = [];
 $done = false;
