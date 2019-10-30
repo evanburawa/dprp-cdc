@@ -1,6 +1,11 @@
 <?php
 require "config.php";
 
+$records = \REDCap::getData(PROJECT_ID);
+exit(json_encode([
+	'count' => count($records)
+]));
+
 /////////////
 // file_put_contents("C:/vumc/log.txt", PROJECT_ID);
 function _log($text) {
