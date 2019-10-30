@@ -1,9 +1,9 @@
 <?php
 require('config.php');
 /////////////
-file_put_contents("C:/vumc/log.txt", "logging...\n");
+// file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
-	file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
+	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
 }
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
@@ -188,7 +188,7 @@ while (!$done) {
 	$firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
 	$lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
 	$partID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
-	_log($firstName . ' ' . $lastName . ' ' . $partID);
+	// _log($firstName . ' ' . $lastName . ' ' . $partID);
 	if (empty($firstName) and empty($lastName) and empty($partID)) {
 		$done = true;
 	} else {
