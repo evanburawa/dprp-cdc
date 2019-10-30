@@ -164,8 +164,8 @@ if (!empty($errors)) {
 }
 
 // open workbook
-require "libs/PhpSpreadsheet/vendor/autoload.php";
-require_once "libs/PhpSpreadsheet/src/Bootstrap.php";
+require $module->getUrl("libs/PhpSpreadsheet/vendor/autoload.php");
+require_once $module->getUrl("libs/PhpSpreadsheet/src/Bootstrap.php");
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
