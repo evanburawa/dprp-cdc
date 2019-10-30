@@ -223,7 +223,11 @@ while (!$done) {
 $parameters['filterLogic'] = implode(' or ', $filterLogic);
 unset($filterLogic);
 $info['params1'] = $parameters;
+
+ob_start();
 $records = json_decode(\REDCap::getData($parameters), true);
+$info['ob_first_get_data_call'] = print_r(ob_flush(), true);
+ob_end_clean();
 
 $info['record by name count'] = count($records);
 
@@ -478,6 +482,10 @@ if (empty($participants)) {
 ob_start();
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
 
+exit(json_encode([
+	"participants" => $participants,
+	"info" => $info
+]));
 $info['save results'] = print_r($result, true);
 $info['ob'] = print_r(ob_flush(), true);
 ob_end_clean();
@@ -493,7 +501,7 @@ if (!empty($result["errors"])) {
 	]));
 }
 
-exit(json_encode([
-	"participants" => $participants,
-	"info" => $info
-]));
+// exit(json_encode([
+	// "participants" => $participants,
+	// "info" => $info
+// ]));
