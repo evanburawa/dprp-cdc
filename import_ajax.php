@@ -1,13 +1,13 @@
 <?php
 require('config.php');
 
-// $msg = "<pre>records:\n" . print_r(\REDCap::getData(PROJECT_ID, 'json'), true) . "</pre>";
+$msg = "<pre>records:\n" . print_r(\REDCap::getData(PROJECT_ID, 'json'), true) . "</pre>";
 // file_put_contents("C:/vumc/log.txt", "$msg");
-// exit(json_encode([
-	// 'msg' => $msg
-// ]));
+exit(json_encode([
+	'msg' => $msg
+]));
 // file_put_contents("C:/vumc/log.txt", "$msg");
-// exit();
+exit();
 /////////////
 // file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
