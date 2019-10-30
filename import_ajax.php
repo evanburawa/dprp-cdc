@@ -164,8 +164,8 @@ if (!empty($errors)) {
 }
 
 // open workbook
-exit(json_encode(['abc' => 'def']));
 require $module->getUrl("libs/PhpSpreadsheet/vendor/autoload.php");
+exit(json_encode(['abc' => 'def']));
 require_once $module->getUrl("libs/PhpSpreadsheet/src/Bootstrap.php");
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
