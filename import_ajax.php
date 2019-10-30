@@ -1,13 +1,11 @@
 <?php
 require('config.php');
 
-$msg = "<pre>records:\n" . print_r(\REDCap::getData(PROJECT_ID, 'json'), true) . "</pre>";
-// file_put_contents("C:/vumc/log.txt", "$msg");
-exit(json_encode([
-	'msg' => $msg
-]));
-// file_put_contents("C:/vumc/log.txt", "$msg");
-exit();
+// $msg = "<pre>records:\n" . print_r(\REDCap::getData(PROJECT_ID), true) . "</pre>";
+// exit(json_encode([
+	// 'msg' => $msg
+// ]));
+
 /////////////
 // file_put_contents("C:/vumc/log.txt", "logging...\n");
 function _log($text) {
@@ -223,6 +221,7 @@ while (!$done) {
 $parameters['filterLogic'] = implode(' or ', $filterLogic);
 unset($filterLogic);
 $records = json_decode(\REDCap::getData($parameters), true);
+$info['record by name count'] = count($records);
 
 // refetch with rids to get repeat instances (session data)
 $record_ids = [];
@@ -238,42 +237,11 @@ unset($parameters['filterLogic']);
 
 $parameters['records'] = $record_ids;
 $records = json_decode(\REDCap::getData($parameters), true);
+$info['record by rids count'] = count($records);
 $session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
 $records_to_save = [];
 $row = 2;
-// _log("records:\n" . print_r($records, true));
-// _log("count:" . count($records));
 
-// exit();
-
-// while (!$done) {
-	// $firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
-	// $lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-	// $partID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
-	// if (empty($firstName) and empty($lastName) and empty($partID)) {
-		// $done = true;
-	// } else {
-		// // get row number for this participant in 2nd table
-		// $row2 = getParticipantRowNumber($firstName, $lastName, $partID);
-		
-		// $participant = [
-			// "firstName" => $firstName,
-			// "lastName" => $lastName,
-			// "partID" => $partID,
-		// ];
-		
-		// // find which record from REDCap applies to this participant
-		// $target_record = null;
-		// $target_rid = null;
-		// foreach ($records as $rid => $record) {
-			// $eid = key($record);
-			// if ((int) $eid !== 0) {
-				// if ($record[$eid]['first_name'] == $firstName && $record[$eid]['last_name'] == $lastName) {
-					// $target_record = &$record;
-					// $target_rid = $rid;
-				// }
-			// }
-		// }
 foreach ($participants as $participant_index => $participant) {
 	$base_record = null;
 	$session_template = null;
@@ -488,17 +456,6 @@ foreach ($participants as $participant_index => $participant) {
 	$participants[$participant_index] = $participant;
 	$row++;
 }
-// // filter out records we didn't touch
-// foreach ($records as $rid => $record) {
-	// if (array_search($rid, $records_to_update) === false) {
-		// unset($records[$rid]);
-	// }
-// }
-
-// _log("records_to_update:\n" . print_r($records_to_update, true));
-// _log("\n\nfiltered records:\n" . print_r($records, true));
-// $info[] = "records_to_update:\n" . print_r($records_to_update, true);
-// $info[] = "\n\nfiltered records:\n" . print_r($records, true);
 
 // save data
 $result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
@@ -524,5 +481,6 @@ if (empty($participants)) {
 }
 
 exit(json_encode([
-	"participants" => $participants
+	"participants" => $participants,
+	"info" => $info
 ]));
