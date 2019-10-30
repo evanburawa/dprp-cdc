@@ -1,10 +1,10 @@
 <?php
+error_reporting(-1);
+ini_set('error_reporting', E_ALL);
 require('config.php');
-/////////////
-// file_put_contents("C:/vumc/log.txt", "logging...\n");
-function _log($text) {
-	// file_put_contents("C:/vumc/log.txt", $text . "\n", FILE_APPEND);
-}
+
+$response = [];
+$response['pid'] = PROJECT_ID;
 
 // from: https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 function file_upload_max_size() {
@@ -38,9 +38,7 @@ function parse_size($size) {
     return round($size);
   }
 }
-/////////////
 
-/////////////
 // from: https://stackoverflow.com/questions/15188033/human-readable-file-size
 function humanFileSize($size,$unit="") {
   if( (!$unit && $size >= 1<<30) || $unit == "GB")
@@ -51,7 +49,6 @@ function humanFileSize($size,$unit="") {
     return number_format($size/(1<<10),2)."KB";
   return number_format($size)." bytes";
 }
-/////////////
 
 function getParticipantRowNumber($firstName, $lastName, $partID) {
 	// return row number of 2nd table that has args given
@@ -173,19 +170,21 @@ try {
 }
 
 // iterate through participant data and make changes, recording before, after values, or errors
-$info = [];
 $participants = [];
 $done = false;
-$row = 2;
 $project = new \Project(PROJECT_ID);
-$records = \REDCap::getData(PROJECT_ID);
-$info[] = "PROJECT_ID:\n" . PROJECT_ID;
-$info[] = "records:\n" . print_r($records, true);
-$records_to_update = [];
+$row = 2;
+$parameters = [
+	'project_id' => PROJECT_ID,
+	'return_format' => 'json'
+];
+
+$filterLogic = [];
 while (!$done) {
 	$firstName = $workbook->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
 	$lastName = $workbook->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
 	$partID = $workbook->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
+	// _log($firstName . ' ' . $lastName . ' ' . $partID);
 	if (empty($firstName) and empty($lastName) and empty($partID)) {
 		$done = true;
 	} else {
@@ -198,185 +197,108 @@ while (!$done) {
 			"partID" => $partID,
 		];
 		
-		// find which record from REDCap applies to this participant
-		$target_record = null;
-		$target_rid = null;
-		foreach ($records as $rid => $record) {
-			$eid = key($record);
-			if ((int) $eid !== 0) {
-				if ($record[$eid]['first_name'] == $firstName && $record[$eid]['last_name'] == $lastName) {
-					$target_record = &$record;
-					$target_rid = $rid;
-				}
-			}
-		}
-		
 		if (is_string($row2)) {
 			$participant["error"] = $row2;
-		} elseif ($target_record === null or $target_rid === null) {
-			$participant["error"] = "The DPP plugin found no REDCap database record with first name: $firstName, last name: $lastName.";
-		} else {
-			$rid = $target_rid;
-			$records_to_update[] = $rid;
-			$eid = key($target_record);
-			$sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
-			
-			$participant["recordID"] = $rid;
-			$participant["before"] = [];
-			$participant["after"] = [];
-			
-			for ($i = 1; $i <= 28; $i++) {
-				$offset = ($i >= 17) ? 7 : 4;
-				
-				$sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
-				if (empty($sessions[$i]) and !empty($sess_weight)) {
-					$sessions[$i] = [];
-				}
-				
-				if (isset($sessions[$i])) {
-					// record info so client can build "Before Import:" table
-					$participant["before"][$i] = [
-						"sess_id" => $sessions[$i]["sess_id"],
-						"sess_type" => getLabel($sessions[$i]["sess_type"], "sess_type"),
-						"sess_attended" => $sessions[$i]["sess_attended"],
-						"sess_mode" => getLabel($sessions[$i]["sess_mode"], "sess_mode"),
-						"sess_month" => $sessions[$i]["sess_month"],
-						"sess_scheduled_date" => $sessions[$i]["sess_scheduled_date"],
-						"sess_actual_date" => $sessions[$i]["sess_actual_date"],
-						"sess_weight" => $sessions[$i]["sess_weight"],
-						"sess_pa" => $sessions[$i]["sess_pa"]
-					];
-					
-					// -- -- -- -- -- -- -- -- -- -- -- -- --
-					// change data in $records to be saved via REDCap::saveData
-					
-					// establish some defaults
-					$sess_id = $i;
-					$sess_type = 1; // for "C" = core
-					
-					// use default group from processing form
-					if ((string) $records[$rid][$eid]["orgcode"] == "8540168") {
-						$sess_mode = 3; // 3 for "digital / distance learning" in sessions form
-					} elseif ((string) $records[$rid][$eid]["orgcode"] == "792184") {
-						$sess_mode = 1; // 1 for "In-person"
-					}
-					
-					// get scheduled date (from header row)
-					$headerValue = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue();
-					$datePart = preg_split("/[\s]+/", $headerValue)[2];
-					$date = null;
-					foreach (['/', '-', '.'] as $sep) {
-						$pieces = explode($sep, $datePart);
-						if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
-							$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
-							break;
-						}
-					}
-					$sess_scheduled_date = empty($date) ? NULL : $date;
-					unset($datePart);
-					
-					// must be retrieved from table 2
-					$sess_pa = NULL;
-					
-					$sess_attended = NULL;
-					
-					$table_2_values = explode(",", $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row2)->getValue());
-					$table_2_cell_color = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row2)->getStyle()->getFill()->getStartColor()->getRGB();
-					foreach ($table_2_values as $value) {
-						$value = strtoupper(trim($value));
-						if (is_numeric($value))
-							$sess_pa = (int) $value;
-						$date = null;
-						foreach (['/', '-', '.'] as $sep) {
-							$pieces = explode($sep, $value);
-							if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
-								$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
-								break;
-							}
-						}
-						if ($date !== NULL)
-							$sess_actual_date = $date;
-						if ($value === "I")
-							$sess_mode = 1;
-						if ($value === "O")
-							$sess_mode = 2;
-						if ($value === "D")
-							$sess_mode = 3;
-						if ($value === "A")
-							$sess_attended = 1;
-						if ($value == "M" or ($table_2_cell_color != "000000" and $table_2_cell_color != "FFFFFF")) // OR table 2 cell HIGHLIGHTED (TODO)
-							$sess_type = 3; // 3 is "MU" or make-up session
-					}
-					
-					// determine sess_month
-					$session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
-					$datePart = preg_split("/[\s]+/", $session_1_header_value)[2];
-					$date = null;
-					foreach (['/', '-', '.'] as $sep) {
-						$pieces = explode($sep, $datePart);
-						if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
-							$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
-							break;
-						}
-					}
-					$sess_month = NULL;
-					$sess_date = $sess_actual_date;
-					if (empty($sess_actual_date))
-						$sess_date = $sess_scheduled_date;
-					if (!empty($date) and !empty($sess_date)) {
-						$d1 = new DateTime($date);
-						$d2 = new DateTime($sess_date);
-						// the following assumes 4 weeks (28 days) is 1 month -- this is in line with what is stated in the DPRP standards is a program "month"
-						$sess_month = round(12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + ((int) $d2->format('d') - (int) $d1->format('d'))/28 - 1/4)+1;
-					}
-					unset($datePart);
-					
-					// sess type CORE or CORE MAINTENANCE depending on month (unless make-up)
-					if ($sess_month >= 7 and $sess_type == 1) {
-						$sess_type = 2;
-					}
-					
-					if (empty($sess_weight) and empty($sess_pa) and $sess_attended != 1) {
-						$sess_attended = 0;
-					} else {
-						$sess_attended = 1;
-					}
-					
-					// convert date to Y-m-d
-					if (!empty($sess_actual_date)) {
-						$sess_actual_date = new DateTime($sess_actual_date);
-						$sess_actual_date = $sess_actual_date->format("Y-m-d");
-					}
-					
-					// convert date to Y-m-d
-					if (!empty($sess_scheduled_date)) {
-						$sess_scheduled_date = new DateTime($sess_scheduled_date);
-						$sess_scheduled_date = trim($sess_scheduled_date->format("Y-m-d"));
-					}
-					
-					// apply determined session values
-					$sessions[$i]["sess_id"] = $sess_id;
-					$sessions[$i]["sess_type"] = $sess_type;
-					$sessions[$i]["sess_attended"] = $sess_attended;
-					$sessions[$i]["sess_mode"] = $sess_mode;
-					$sessions[$i]["sess_month"] = $sess_month;
-					$sessions[$i]["sess_scheduled_date"] = $sess_scheduled_date;
-					$sessions[$i]["sess_actual_date"] = $sess_actual_date;
-					$sessions[$i]["sess_weight"] = $sess_weight;
-					$sessions[$i]["sess_pa"] = $sess_pa;
-					$sessions[$i]["sessionscoaching_log_complete"] = 2;
-					
-					unset($sess_id, $sess_type, $sess_attended, $sess_mode, $sess_month, $sess_scheduled_date, $sess_actual_date, $sess_weight, $sess_pa, $sess_date);
-				}
-			}
 		}
+		
+		$participants[] = $participant;
+		
+		$filterLogic[] = "([last_name]='$lastName' and [first_name]='$firstName')";
+	}
+	$row++;
+}
+
+$parameters['filterLogic'] = implode(' or ', $filterLogic);
+unset($filterLogic);
+$response['params1'] = $parameters;
+
+
+ob_start();
+$records = json_decode(\REDCap::getData($parameters), true);
+$response['ob_first_get_data_call'] = print_r(ob_flush(), true);
+ob_end_clean();
+
+$response['record by name count'] = count($records);
+
+// refetch with rids to get repeat instances (session data)
+$record_ids = [];
+foreach ($records as $record) {
+	$record_ids[] = $record['record_id'];
+	foreach ($participants as $p_index => $participant) {
+		if ($record['first_name'] == $participant['firstName'] and $record['last_name'] == $participant['lastName']) {
+			$participants[$p_index]['record_id'] = $record['record_id'];
+		}
+	}
+}
+unset($parameters['filterLogic']);
+
+$parameters['records'] = $record_ids;
+// $info['params2'] = $parameters;
+$records = json_decode(\REDCap::getData($parameters), true);
+$response['record by rids count'] = count($records);
+$session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
+$records_to_save = [];
+$row = 2;
+
+foreach ($participants as $participant_index => $participant) {
+	$base_record = null;
+	$session_template = null;
+	$sessions = [];
+	foreach ($records as $ri => $record) {
+		if (!empty($record['participant_id']) and !empty($participant['partID'])) {
+			if ($record['participant_id'] != $participant['partID'])
+				continue;
+		}
+		if ($record['first_name'] === $participant['firstName'] and $record['last_name'] === $participant['lastName']) {
+			$base_record = &$records[$ri];
+			$session_template = $record;
+			foreach($session_template as $key => $value) {
+				$session_template[$key] = null;
+			}
+			$session_template['record_id'] = $participant['record_id'];
+			$session_template['redcap_repeat_instrument'] = "sessionscoaching_log";
+		} elseif ($record['record_id'] == $participant['record_id'] and $record["redcap_repeat_instrument"] == "sessionscoaching_log") {
+			$sessions[$record["redcap_repeat_instance"]] = &$records[$ri];
+		}
+	}
+	
+	// _log("base:\n" . print_r($base_record, true));
+	// _log("session_template:\n" . print_r($session_template, true));
+	// _log("sessions:\n" . print_r($sessions, true));
+	// _log("participants:\n" . print_r($participants, true));
+	// exit();
+	
+	if ($base_record === null) {
+		$participant["error"] = "The DPP plugin found no REDCap database record with first name: $firstName, last name: $lastName.";
+	} else {
+		// $rid = $target_rid;
+		// $records_to_update[] = $rid;
+		// $eid = key($target_record);
+		// $sessions = &$records[$rid]["repeat_instances"][$eid]["sessionscoaching_log"];
+		
+		$rid = $participant['record_id'];
+		$firstName = $participant['firstName'];
+		$lastName = $participant['lastName'];
+		$partID = $participant['partID'];
+		$participant["before"] = [];
+		$participant["after"] = [];
+		$row2 = getParticipantRowNumber($firstName, $lastName, $partID);
 		
 		for ($i = 1; $i <= 28; $i++) {
 			$offset = ($i >= 17) ? 7 : 4;
+			
+			$sess_weight = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row)->getValue();
+			$sess_table_2_value = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row2)->getValue();
+			if (empty($sessions[$i]) and (!empty($sess_weight) or !empty($sess_table_2_values))) {
+				$sessions[$i] = $session_template;
+			}
+			
 			if (isset($sessions[$i])) {
-				$participant["after"][$i] = [
+				// record info so client can build "Before Import:" table
+				$participant["before"][$i] = [
 					"sess_id" => $sessions[$i]["sess_id"],
 					"sess_type" => getLabel($sessions[$i]["sess_type"], "sess_type"),
+					"sess_attended" => $sessions[$i]["sess_attended"],
 					"sess_mode" => getLabel($sessions[$i]["sess_mode"], "sess_mode"),
 					"sess_month" => $sessions[$i]["sess_month"],
 					"sess_scheduled_date" => $sessions[$i]["sess_scheduled_date"],
@@ -384,35 +306,154 @@ while (!$done) {
 					"sess_weight" => $sessions[$i]["sess_weight"],
 					"sess_pa" => $sessions[$i]["sess_pa"]
 				];
+				
+				// -- -- -- -- -- -- -- -- -- -- -- -- --
+				// change data in $records to be saved via REDCap::saveData
+				
+				// establish some defaults
+				$sess_id = $i;
+				$sess_type = 1; // for "C" = core
+				
+				// use default group from processing form
+				if ((string) $base_record["orgcode"] == "8540168") {
+					$sess_mode = 3; // 3 for "digital / distance learning" in sessions form
+				} elseif ((string) $base_record["orgcode"] == "792184") {
+					$sess_mode = 1; // 1 for "In-person"
+				}
+				
+				// get scheduled date (from header row)
+				$headerValue = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, 1)->getValue();
+				$datePart = preg_split("/[\s]+/", $headerValue)[2];
+				$date = null;
+				foreach (['/', '-', '.'] as $sep) {
+					$pieces = explode($sep, $datePart);
+					if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
+						$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
+						break;
+					}
+				}
+				$sess_scheduled_date = empty($date) ? NULL : $date;
+				unset($datePart);
+				
+				// must be retrieved from table 2
+				$sess_pa = NULL;
+				
+				$sess_attended = NULL;
+				
+				$table_2_values = explode(",", $sess_table_2_value);
+				$table_2_cell_color = $workbook->getActiveSheet()->getCellByColumnAndRow($i + $offset, $row2)->getStyle()->getFill()->getStartColor()->getRGB();
+				foreach ($table_2_values as $value) {
+					$value = strtoupper(trim($value));
+					if (is_numeric($value))
+						$sess_pa = (int) $value;
+					$date = null;
+					foreach (['/', '-', '.'] as $sep) {
+						$pieces = explode($sep, $value);
+						if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
+							$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
+							break;
+						}
+					}
+					if ($date !== NULL)
+						$sess_actual_date = $date;
+					if ($value === "I")
+						$sess_mode = 1;
+					if ($value === "O")
+						$sess_mode = 2;
+					if ($value === "D")
+						$sess_mode = 3;
+					if ($value === "A")
+						$sess_attended = 1;
+					if ($value == "M" or ($table_2_cell_color != "000000" and $table_2_cell_color != "FFFFFF")) // OR table 2 cell HIGHLIGHTED (TODO)
+						$sess_type = 3; // 3 is "MU" or make-up session
+				}
+				
+				// determine sess_month
+				$datePart = preg_split("/[\s]+/", $session_1_header_value)[2];
+				$date = null;
+				foreach (['/', '-', '.'] as $sep) {
+					$pieces = explode($sep, $datePart);
+					if (count($pieces) == 3 and checkdate($pieces[0], $pieces[1], $pieces[2])) {
+						$date = $pieces[0] . '/' . $pieces[1] . '/' . $pieces[2];
+						break;
+					}
+				}
+				$sess_month = NULL;
+				$sess_date = $sess_actual_date;
+				if (empty($sess_actual_date))
+					$sess_date = $sess_scheduled_date;
+				if (!empty($date) and !empty($sess_date)) {
+					$d1 = new DateTime($date);
+					$d2 = new DateTime($sess_date);
+					// the following assumes 4 weeks (28 days) is 1 month -- this is in line with what is stated in the DPRP standards is a program "month"
+					$sess_month = round(12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + ((int) $d2->format('d') - (int) $d1->format('d'))/28 - 1/4)+1;
+				}
+				unset($datePart);
+				
+				// sess type CORE or CORE MAINTENANCE depending on month (unless make-up)
+				if ($sess_month >= 7 and $sess_type == 1) {
+					$sess_type = 2;
+				}
+				
+				if (empty($sess_weight) and empty($sess_pa) and $sess_attended != 1) {
+					$sess_attended = 0;
+				} else {
+					$sess_attended = 1;
+				}
+				
+				// convert date to Y-m-d
+				if (!empty($sess_actual_date)) {
+					$sess_actual_date = new DateTime($sess_actual_date);
+					$sess_actual_date = $sess_actual_date->format("Y-m-d");
+				}
+				
+				// convert date to Y-m-d
+				if (!empty($sess_scheduled_date)) {
+					$sess_scheduled_date = new DateTime($sess_scheduled_date);
+					$sess_scheduled_date = trim($sess_scheduled_date->format("Y-m-d"));
+				}
+				
+				// apply determined session values
+				$sessions[$i]["sess_id"] = $sess_id;
+				$sessions[$i]["sess_type"] = $sess_type;
+				$sessions[$i]["sess_attended"] = $sess_attended;
+				$sessions[$i]["sess_mode"] = $sess_mode;
+				$sessions[$i]["sess_month"] = $sess_month;
+				$sessions[$i]["sess_scheduled_date"] = $sess_scheduled_date;
+				$sessions[$i]["sess_actual_date"] = $sess_actual_date;
+				$sessions[$i]["sess_weight"] = $sess_weight;
+				$sessions[$i]["sess_pa"] = $sess_pa;
+				$sessions[$i]["sessionscoaching_log_complete"] = 2;
+				
+				unset($sess_id, $sess_type, $sess_attended, $sess_mode, $sess_month, $sess_scheduled_date, $sess_actual_date, $sess_weight, $sess_pa, $sess_date);
 			}
 		}
-		
-		$participants[] = $participant;
 	}
+	
+	
+	if ($base_record) {
+		$records_to_save[] = $base_record;
+	}
+	
+	for ($i = 1; $i <= 28; $i++) {
+		$offset = ($i >= 17) ? 7 : 4;
+		if (isset($sessions[$i])) {
+			$records_to_save[] = &$sessions[$i];
+			$participant["after"][$i] = [
+				"sess_id" => $sessions[$i]["sess_id"],
+				"sess_type" => getLabel($sessions[$i]["sess_type"], "sess_type"),
+				"sess_mode" => getLabel($sessions[$i]["sess_mode"], "sess_mode"),
+				"sess_month" => $sessions[$i]["sess_month"],
+				"sess_scheduled_date" => $sessions[$i]["sess_scheduled_date"],
+				"sess_actual_date" => $sessions[$i]["sess_actual_date"],
+				"sess_weight" => $sessions[$i]["sess_weight"],
+				"sess_pa" => $sessions[$i]["sess_pa"]
+			];
+		}
+	}
+	$participants[$participant_index] = $participant;
 	$row++;
 }
-		
-// filter out records we didn't touch
-foreach ($records as $rid => $record) {
-	if (array_search($rid, $records_to_update) === false) {
-		unset($records[$rid]);
-	}
-}
-
-$info[] = "records_to_update:\n" . print_r($records_to_update, true);
-$info[] = "\n\nfiltered records:\n" . print_r($records, true);
-
-// save data
-$result = \REDCap::saveData(PROJECT_ID, 'array', $records, "overwrite");
-if (!empty($result["errors"])) {
-	$participant["error"] = "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.";
-	\REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
-	$row++;
-	$participants[] = $participant;
-	continue;
-}
-
-$info[] = "save results -- " . print_r($result, true);
 
 if (empty($participants)) {
     exit(json_encode([
@@ -424,7 +465,22 @@ if (empty($participants)) {
 	]));
 }
 
-exit(json_encode([
-	"participants" => $participants,
-	'info' => $info
-]));
+// save data
+ob_start();
+$result = \REDCap::saveData(PROJECT_ID, 'json', json_encode($records_to_save), "overwrite");
+$response['save_result_output_buffer'] = print_r(ob_flush(), true);
+ob_end_clean();
+
+// if (!empty($result["errors"])) {
+	// \REDCap::logEvent("DPP import failure", "REDCap::saveData errors -> " . print_r($result["errors"], true) . "\n", null, $rid, $eid, PROJECT_ID);
+	// exit(json_encode([
+		// 'error' => true,
+		// 'notes' => "There was an issue updating the Coaching/Sessions Log data in REDCap -- changes not made. See log for more info.",
+		// "info" => $info
+	// ]));
+// }
+
+$response['save results'] = print_r($result, true);
+
+$response['participants'] = $participants;
+exit(json_encode($response));
