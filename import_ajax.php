@@ -1,6 +1,8 @@
 <?php
 require "config.php";
 
+$info = [];
+$info['conn'] = print_r($conn, true);
 /////////////
 // file_put_contents("C:/vumc/log.txt", PROJECT_ID);
 function _log($text) {
@@ -174,7 +176,6 @@ try {
 }
 
 // iterate through participant data and make changes, recording before, after values, or errors
-$info = [];
 $participants = [];
 $done = false;
 $project = new \Project(PROJECT_ID);
