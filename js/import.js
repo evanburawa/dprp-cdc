@@ -15,7 +15,10 @@ $('#upload').on('click', function() {
 		data: form_data,
 		type: 'post',
 		success: function(response){
-			console.log(response);
+			$("button#upload").prop('disabled', true)
+			$("#notes h5").text("To import again, click Project Home > DPP Workbook Import")
+			$("#notes").show()
+			// console.log(response);
 			if (response.error === true) {
 				$("#notes").show();
 				response.notes.forEach(function(element) {
@@ -30,7 +33,7 @@ $('#upload').on('click', function() {
 			}
 		},
 		complete: function(data) {
-			console.log(data);
+			// console.log(data);
 		}
 	});
 });
