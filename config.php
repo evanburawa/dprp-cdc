@@ -18,3 +18,8 @@ if(!defined("ENVIRONMENT")) {
 		define("PROJECT_ID", 46);
 	}
 }
+
+// file_put_contents("log.txt", "logging...\n");
+function _log($text) {
+	// file_put_contents("log.txt", "$text\n", FILE_APPEND);
+}

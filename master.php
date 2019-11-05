@@ -248,6 +248,13 @@ function appendLegend() {
 	$workbook->getSheet(1)->duplicateStyle($workbook->getSheet(0)->getStyle("A27"), "A$row");
 }
 
+function sortParticipants($p1, $p2) {
+	global $eid;
+	$val = strcasecmp($p1[$eid]["last_name"], $p2[$eid]["last_name"]);
+	// _log("Sort result for: " . $p1[$eid]["last_name"] . ' - ' . $p2[$eid]["last_name"] . ' / ' . $val);
+	return $val;
+}
+
 // get actual coach/cohort values
 $pid = (int) $_GET['pid'];
 $coach_actual = $_GET['coach'];
@@ -256,6 +263,7 @@ $cohort_actual = $_GET['cohort'];
 // regex for getting labels for project fields (like state, sess_type, etc)
 $labelPattern = "/(\d+),?\s?(.+?)(?=\x{005c}\x{006E}|$)/";
 $project = new \Project((int) $_GET["pid"]);
+$eid = $project->firstEventId;
 
 // determine to raw values so we can filter records from getData
 $foundRawCoachValue = false;
@@ -294,6 +302,9 @@ if (empty($targetRecordIDs))
 	exit("Error:<br/>The DPP REDCap plugin found no record IDs found for this coach and cohort combination.");
 
 $records = \REDCap::getData($pid, 'array', $targetRecordIDs);
+
+// sort participants alphabetically
+uasort($records, 'sortParticipants');
 
 // make DPP file
 $workbook = IOFactory::load("masterTemplate.xlsx");
