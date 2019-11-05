@@ -389,7 +389,7 @@ foreach ($participants as $participant_index => $participant) {
 					$d1 = new DateTime($date);
 					$d2 = new DateTime($sess_date);
 					// the following assumes 4 weeks (28 days) is 1 month -- this is in line with what is stated in the DPRP standards is a program "month"
-					$sess_month = round(12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")) + ((int) $d2->format('d') - (int) $d1->format('d'))/28 - 1/4)+1;
+					$sess_month = round(12 * ((int) $d2->format("Y") - (int) $d1->format("Y")) + ((int) $d2->format("m") - (int) $d1->format("m")))+1;
 				}
 				unset($datePart);
 				
