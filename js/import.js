@@ -18,7 +18,7 @@ $('#upload').on('click', function() {
 			$("button#upload").prop('disabled', true)
 			$("#notes h5").text("To import again, click Project Home > DPP Workbook Import")
 			$("#notes").show()
-			// console.log(response);
+			// console.log('response', response);
 			if (response.error === true) {
 				$("#notes").show();
 				response.notes.forEach(function(element) {
@@ -27,7 +27,6 @@ $('#upload').on('click', function() {
 			} else if (typeof(response.participants) != "object") {
 				$("#notes").show();
 				$("#notes div").append("<li>There was a problem importing the workbook, please try again.</li>");
-				// console.log(response);
 			} else {
 				writeResultsTable(response.participants);
 			}
@@ -51,7 +50,7 @@ function writeResultsTable(participants) {
 	participants.forEach(function(participant, p_index) {
 		results += `
 				<hr>
-				<h6>Participant ${participant.recordID}</h6>
+				<h6>Participant ${participant.record_id}</h6>
 				<table>
 					<tbody>
 						<tr>
@@ -61,10 +60,10 @@ function writeResultsTable(participants) {
 							<th>Participant ID</th>
 						</tr>
 						<tr>
-							<td>${participant.recordID}</td>
+							<td>${participant.record_id}</td>
 							<td>${participant.firstName}</td>
 							<td>${participant.lastName}</td>
-							<td>${participant.partID}</td>
+							<td>` + (participant.partID == null ? '' : participant.partID) + `</td>
 						</tr>`;
 		if (typeof participant.error == "string") {
 			results += `
