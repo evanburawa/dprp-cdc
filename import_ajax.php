@@ -217,10 +217,8 @@ $response['params1'] = $parameters;
 
 
 ob_start();
-$param_aux1 = $parameters;
 $records = json_decode(\REDCap::getData($parameters), true);
 $response['ob_first_get_data_call'] = print_r(ob_flush(), true);
-$resp_aux1 = $records;
 ob_end_clean();
 
 $response['record by name count'] = count($records);
@@ -239,9 +237,7 @@ unset($parameters['filterLogic']);
 
 $parameters['records'] = $record_ids;
 $response['params2'] = $parameters;
-$param_aux2 = $parameters;
 $records = json_decode(\REDCap::getData($parameters), true);
-$resp_aux2 = $records;
 $response['record by rids count'] = count($records);
 $session_1_header_value = $workbook->getActiveSheet()->getCell("E1")->getValue();
 $records_to_save = [];
@@ -489,4 +485,4 @@ if (!empty($result["errors"])) {
 	]));
 }
 
-exit(json_encode(array('response' => $response, 'param1'=>$param_aux1, 'param2' => $param_aux2, 'resp1' => $resp_aux1, 'resp2' => $resp_aux2)));
+exit(json_encode($response));
