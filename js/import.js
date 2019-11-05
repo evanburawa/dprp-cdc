@@ -18,7 +18,7 @@ $('#upload').on('click', function() {
 			$("button#upload").prop('disabled', true)
 			$("#notes h5").text("To import again, click Project Home > DPP Workbook Import")
 			$("#notes").show()
-			// console.log('response', response);
+			console.log('response', response);
 			if (response.error === true) {
 				$("#notes").show();
 				response.notes.forEach(function(element) {
