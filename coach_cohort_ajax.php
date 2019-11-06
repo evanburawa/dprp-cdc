@@ -1,5 +1,4 @@
 <?php
-define("NOAUTH", true);
 require_once('config.php');
 header('Content-type:application/json;charset=utf-8');
 $project = new \Project((int) $_GET["pid"]);

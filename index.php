@@ -1,5 +1,4 @@
 <?php
-define("NOAUTH", true);
 require('config.php');
 
 foreach ($_GET as $key => $val) {

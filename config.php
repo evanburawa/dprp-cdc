@@ -1,5 +1,6 @@
 <?php
-require_once("../../redcap_connect.php");
+require_once(__DIR__ . "/../../redcap_connect.php");
+$plugin_dir = __DIR__;
 
 if(!defined("ENVIRONMENT")) {
 	if (is_file('/app001/victrcore/lib/Victr/Env.php')) include_once('/app001/victrcore/lib/Victr/Env.php');
@@ -19,7 +20,7 @@ if(!defined("ENVIRONMENT")) {
 	}
 }
 
-// file_put_contents("log.txt", "logging...\n");
+file_put_contents("$plugin_dir/log.txt", "logging...\n");
 function _log($text) {
-	// file_put_contents("log.txt", "$text\n", FILE_APPEND);
+	file_put_contents("$plugin_dir/log.txt", "$text\n", FILE_APPEND);
 }
